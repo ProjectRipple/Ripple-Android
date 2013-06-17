@@ -6,10 +6,10 @@
 
     <HorizontalScrollView
             android:layout_width="fill_parent"
-            android:layout_height="200dp"
+            android:layout_height="100dp"
             android:id="@+id/horizontalScrollView"
             android:layout_gravity="left|center_vertical"
-            android:background="#fff3e3">
+            android:background="@drawable/top">
 
         <FrameLayout
                 android:layout_width="fill_parent"
@@ -24,9 +24,10 @@
 >
 
         <FrameLayout
-                android:layout_width="300dp"
+                android:layout_width="500dp"
                 android:layout_height="fill_parent"
-                android:background="#dbe5ff">
+                android:id="@+id/bottomleft"
+                android:background="@drawable/left">
         </FrameLayout>
 
         <FrameLayout
