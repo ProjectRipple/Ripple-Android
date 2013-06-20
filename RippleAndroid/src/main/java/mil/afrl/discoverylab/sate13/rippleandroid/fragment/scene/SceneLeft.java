@@ -28,9 +28,9 @@ public class SceneLeft extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onAttach(Activity activity){
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
-        aci = (ActivityClickInterface)activity;
+        aci = (ActivityClickInterface) activity;
     }
 
     @Override
