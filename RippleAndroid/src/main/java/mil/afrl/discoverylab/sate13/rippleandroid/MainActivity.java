@@ -1,5 +1,6 @@
 package mil.afrl.discoverylab.sate13.rippleandroid;
 
+
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -8,6 +9,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.Window;
 
+import mil.afrl.discoverylab.sate13.rippleandroid.fragment.Banner;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.patient.PatientLeft;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.scene.SceneLeft;
 
@@ -26,7 +28,10 @@ public class MainActivity extends FragmentActivity implements ActivityClickInter
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         PatientLeft patientLeft = new PatientLeft();
+        Banner banner = new Banner();
+
         transaction.add(R.id.bottomleft, patientLeft);
+        transaction.add(R.id.top_frag, banner);
         transaction.commit();
     }
 
