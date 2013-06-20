@@ -71,7 +71,24 @@ public class DatabaseAdapter {
      */
     private DatabaseHelper helper;
 
-    public DatabaseAdapter(Context context) {
+    private static DatabaseAdapter self;
+
+    /**
+     * Get instance of DatabaseAdapter
+     * @param context Valid Context on first call, may be null on all later calls
+     * @return Instance of DatabaseAdapter or null if DatabaseAdapter cannot be created due to null Context
+     */
+    public static DatabaseAdapter getInstance(Context context)
+    {
+        if(self == null && context != null)
+        {
+            // Use global application context instead of passed context
+            self = new DatabaseAdapter(context.getApplicationContext());
+        }
+        return self;
+    }
+
+    private DatabaseAdapter(Context context) {
         this.helper = new DatabaseHelper(context);
         this.context = context;
     }
