@@ -23,7 +23,7 @@ public class SceneLeft extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scene_left, container, false);
         Button button = (Button) view.findViewById(R.id.button1);
-        button.setOnClickListener(this);
+        //button.setOnClickListener(this);
         return view;
     }
 

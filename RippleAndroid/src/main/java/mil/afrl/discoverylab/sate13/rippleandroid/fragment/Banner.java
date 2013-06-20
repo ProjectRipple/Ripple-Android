@@ -7,10 +7,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -45,14 +43,12 @@ public class Banner extends Fragment {
             //Implements a custom view, the custom view is passed the patient object
             PatientView v = new PatientView(mContext, mPatients.get(i), i);
             v.setMinimumHeight(100);
-            v.setMinimumWidth(100);
+            v.setMinimumWidth(200);
             tableRow.addView(v);
         }
 //        tableLayout.addView(tableRow, new TableLayout.LayoutParams());
         return view;
     }
-
-
 
     @Override
     public void onAttach(Activity activity){

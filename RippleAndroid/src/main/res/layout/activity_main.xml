@@ -1,39 +1,42 @@
 <LinearLayout
+        xmlns:tools="http://schemas.android.com/tools"
         android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <FrameLayout
-                android:layout_width="fill_parent"
-                android:layout_height="100dp"
-                android:id="@+id/top_frag">
-        </FrameLayout>
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:id="@+id/top_frag">
+    </FrameLayout>
 
     <LinearLayout
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center"
-            android:weightSum="1.0f"
->
+            android:weightSum="1.0"
+            >
 
-        <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+        <fragment
+                class="mil.afrl.discoverylab.sate13.rippleandroid.fragment.patient.PatientLeft"
                 android:id="@+id/bottomleft"
-                android:background="@drawable/left"
-                android:layout_weight="0.5f">
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
+                tools:layout="@layout/patient_left">
 
-        </FrameLayout>
+        </fragment>
 
-        <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="fill_parent"
+        <fragment
+                class="mil.afrl.discoverylab.sate13.rippleandroid.fragment.scene.SceneLeft"
                 android:id="@+id/bottomright"
+                android:layout_width="0px"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5"
                 android:background="@drawable/left2"
-                android:layout_weight="0.5f">
-
-        </FrameLayout>
+                tools:layout="@layout/scene_left">
+        </fragment>
     </LinearLayout>
 </LinearLayout>

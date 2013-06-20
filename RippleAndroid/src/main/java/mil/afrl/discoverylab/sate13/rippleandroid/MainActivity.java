@@ -1,39 +1,39 @@
 package mil.afrl.discoverylab.sate13.rippleandroid;
 
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.Window;
 
+import mil.afrl.discoverylab.sate13.rippleandroid.adapter.DatabaseAdapter;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.Banner;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.patient.PatientLeft;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.scene.SceneLeft;
 
-public class MainActivity extends FragmentActivity implements ActivityClickInterface {
+
+public class MainActivity extends Activity implements ActivityClickInterface {
 
     private boolean isPatient = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_main);
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        PatientLeft patientLeft = new PatientLeft();
         Banner banner = new Banner();
-
-        transaction.add(R.id.bottomleft, patientLeft);
         transaction.add(R.id.top_frag, banner);
 
         transaction.commit();
+
+        DatabaseAdapter.getInstance(this).storeScanData(1, "ip", "first", "last", "ssn", 1, "M", 1, "type");
     }
 
 

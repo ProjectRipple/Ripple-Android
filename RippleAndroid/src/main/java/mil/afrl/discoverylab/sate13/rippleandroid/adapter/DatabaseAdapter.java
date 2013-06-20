@@ -33,7 +33,7 @@ public class DatabaseAdapter {
      * the data.
      */
     public static enum TableType {
-        PATIENT, VITALS, INTERVENTIONS, TRAUMA
+        PATIENT, VITAL, INTERVENTION, TRAUMA
     }
 
     /**
@@ -53,15 +53,29 @@ public class DatabaseAdapter {
      */
     private static final String PATIENT_TABLE_CREATE =
             "CREATE TABLE IF NOT EXISTS " + TableType.PATIENT.name() + "(\n" +
-            "id INTEGER(4) PRIMARY KEY AUTOINCREMENT,\n" +
-            "ip_addr VARCHAR(15) NOT NULL,\n" +
-            "first_name VARCHAR(20),\n" +
-            "last_name VARCHAR(20),\n" +
-            "ssn VARCHAR(11),\n" +
-            "age INTEGER(3),\n" +
-            "sex VARCHAR(6),\n" +
-            "nbc_contamination INTEGER(1),\n" +
-            "type VARCHAR(10));";
+            "ID INTEGER,\n" +
+            "IP_ADDR TEXT NOT NULL,\n" +
+            "FIRST_NAME TEXT,\n" +
+            "LAST_NAME TEXT,\n" +
+            "SSN TEXT,\n" +
+            "AGE INTEGER,\n" +
+            "SEX VARCHAR,\n" +
+            "NBC_CONTAMINATION INTEGER,\n" +
+            "TYPE TEXT," +
+            "PRIMARY KEY(ID));";
+
+    /**
+     * SQL table creation statement for the Patient table.
+     */
+    private static final String VITAL_TABLE_CREATE =
+            "CREATE TABLE IF NOT EXISTS " + TableType.VITAL.name() + "(\n" +
+            "VID INTEGER PRIMARY KEY,\n" +
+            "TIME INTEGER,\n" +
+            "SENSOR_TYPE TEXT,\n" +
+            "IP_ADDR TEXT,\n" +
+            "VALUE_TYPE TEXT,\n" +
+            "VALUE INTEGER," +
+            "PRIMARY KEY(VID, IP_ADDR));";
 
     private static final int DATABASE_VERSION = 1;
     private final Context context;
@@ -85,6 +99,10 @@ public class DatabaseAdapter {
             self = new DatabaseAdapter(context.getApplicationContext());
         }
         return self;
+    }
+
+    public static DatabaseAdapter getInstance() {
+        return (self != null) ? self : null;
     }
 
     private DatabaseAdapter(Context context) {
@@ -258,7 +276,7 @@ public class DatabaseAdapter {
      */
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
-        DatabaseHelper(Context context) {
+        public DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
         }
 
