@@ -5,6 +5,6 @@ package mil.afrl.discoverylab.sate13.rippleandroid;
  */
 public class Common {
 
-    public static String LOG_TAG = "RIPPLE";
+
 
 }
