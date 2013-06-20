@@ -18,22 +18,28 @@
     </HorizontalScrollView>
 
     <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_gravity="center"
+            android:weightSum="1.0f"
 >
 
         <FrameLayout
-                android:layout_width="500dp"
+                android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
                 android:id="@+id/bottomleft"
-                android:background="@drawable/left">
+                android:background="@drawable/left"
+                android:layout_weight="0.5f">
+
         </FrameLayout>
 
         <FrameLayout
-                android:layout_width="fill_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="fill_parent"
-                android:background="#ccffdc">
+                android:id="@+id/bottomright"
+                android:background="@drawable/left2"
+                android:layout_weight="0.5f">
 
         </FrameLayout>
     </LinearLayout>
