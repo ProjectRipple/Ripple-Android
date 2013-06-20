@@ -10,7 +10,7 @@ import android.util.Log;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-import mil.afrl.discoverylab.sate13.rippleandroid.RippleApp;
+import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 
 /**
  * Created by Matt on 6/19/13.
@@ -125,7 +125,7 @@ public class DatabaseAdapter {
         db.setTransactionSuccessful();
         db.endTransaction();
         db.close();
-        Log.d(RippleApp.LOG_TAG,
+        Log.d(Common.LOG_TAG,
               TableType.PATIENT.name() + " table insertion - " + numrows + " rows inserted");
 
         return true;
@@ -181,7 +181,7 @@ public class DatabaseAdapter {
     public synchronized boolean export(TableType type, BufferedWriter writer) {
 
         if (writer == null) {
-            Log.e(RippleApp.LOG_TAG, "No writer for export available - aborted.");
+            Log.e(Common.LOG_TAG, "No writer for export available - aborted.");
             return false;
         }
 
@@ -190,11 +190,11 @@ public class DatabaseAdapter {
                 case PATIENT:
                     return exportPatientTable(writer);
                 default:
-                    Log.e(RippleApp.LOG_TAG, "Table type not supported for export module.");
+                    Log.e(Common.LOG_TAG, "Table type not supported for export module.");
                     return false;
             }
         } catch (IOException e) {
-            Log.e(RippleApp.LOG_TAG, "Cannot export table: " + e.getMessage());
+            Log.e(Common.LOG_TAG, "Cannot export table: " + e.getMessage());
             return false;
         }
     }
@@ -240,12 +240,12 @@ public class DatabaseAdapter {
         switch (type) {
             case PATIENT:
                 db.execSQL("DELETE FROM " + TableType.PATIENT.name());
-                Log.d(RippleApp.LOG_TAG,
+                Log.d(Common.LOG_TAG,
                       TableType.PATIENT.name() + " table clear finished - all rows removed");
                 db.close();
                 return true;
             default:
-                Log.e(RippleApp.LOG_TAG, "Table type not supported for clear module.");
+                Log.e(Common.LOG_TAG, "Table type not supported for clear module.");
                 db.close();
                 return false;
         }
@@ -264,15 +264,15 @@ public class DatabaseAdapter {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            Log.d(RippleApp.LOG_TAG, "Creating SQlite " + TableType.PATIENT.name() + " table");
+            Log.d(Common.LOG_TAG, "Creating SQlite " + TableType.PATIENT.name() + " table");
             db.execSQL(PATIENT_TABLE_CREATE);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(RippleApp.LOG_TAG, "Upgrading database from version "
-                                     + oldVersion + " to " + newVersion
-                                     + ", which will destroy all old data");
+            Log.w(Common.LOG_TAG, "Upgrading database from version "
+                                  + oldVersion + " to " + newVersion
+                                  + ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS " + TableType.PATIENT.name());
             onCreate(db);
         }

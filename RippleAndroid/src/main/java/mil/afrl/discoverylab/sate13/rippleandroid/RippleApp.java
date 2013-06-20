@@ -13,8 +13,6 @@ import mil.afrl.discoverylab.sate13.rippleandroid.adapter.DatabaseAdapter;
  */
 public class RippleApp extends Application {
 
-    public static String LOG_TAG = "RIPPLE";
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
