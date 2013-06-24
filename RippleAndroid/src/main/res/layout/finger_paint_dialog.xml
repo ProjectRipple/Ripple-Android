@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <view
+            class="mil.afrl.discoverylab.sate13.rippleandroid.view.FingerPaint"
+            android:id="@+id/fingerpaint"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="5"
+            />
+
+    <Button
+            android:id="@+id/fingerbuttonok"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1"
+            android:text=" Ok Buddy "
+            />
+
+</LinearLayout>

@@ -179,7 +179,7 @@ public class DatabaseAdapter {
             db.setTransactionSuccessful();
             db.endTransaction();
             db.close();
-            Log.d(Common.LOG_TAG, TableType.VITAL.name() + " table insertion - " + map.toString());
+            //Log.d(Common.LOG_TAG, TableType.VITAL.name() + " table insertion - " + map.toString());
             return true;
         }
     }
@@ -321,16 +321,12 @@ public class DatabaseAdapter {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
             Log.d(Common.LOG_TAG, "Constructing DB Helper");
             database = getWritableDatabase();
-
-//            Log.d(Common.LOG_TAG, "Creating SQlite " + TableType.PATIENT.name() + " table");
-//            database.execSQL(PATIENT_TABLE_CREATE);
-//            Log.d(Common.LOG_TAG, "Creating SQlite " + TableType.VITAL.name() + " table");
-//            database.execSQL(VITAL_TABLE_CREATE);
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
             database = db;
+
             Log.d(Common.LOG_TAG, "Creating SQlite " + TableType.PATIENT.name() + " table");
             db.execSQL(PATIENT_TABLE_CREATE);
             Log.d(Common.LOG_TAG, "Creating SQlite " + TableType.VITAL.name() + " table");
