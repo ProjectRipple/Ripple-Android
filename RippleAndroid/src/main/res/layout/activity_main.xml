@@ -24,19 +24,20 @@
                 android:id="@+id/bottomleft"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
-                android:layout_weight="0.5"
+                android:layout_weight="1"
                 tools:layout="@layout/patient_left">
 
         </fragment>
 
-        <fragment
-                class="mil.afrl.discoverylab.sate13.rippleandroid.fragment.scene.SceneLeft"
-                android:id="@+id/bottomright"
-                android:layout_width="0px"
-                android:layout_height="match_parent"
-                android:layout_weight="0.5"
-                android:background="@drawable/left2"
-                tools:layout="@layout/scene_left">
-        </fragment>
+        <!--<fragment-->
+                <!--class="mil.afrl.discoverylab.sate13.rippleandroid.fragment.scene.SceneLeft"-->
+                <!--android:id="@+id/bottomright"-->
+                <!--android:layout_width="0px"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="0.5"-->
+                <!--android:background="@drawable/left2"-->
+                <!--tools:layout="@layout/scene_left">-->
+        <!--</fragment>-->
+
     </LinearLayout>
 </LinearLayout>

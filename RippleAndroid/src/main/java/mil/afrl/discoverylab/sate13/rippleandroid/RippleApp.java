@@ -3,6 +3,7 @@ package mil.afrl.discoverylab.sate13.rippleandroid;
 import android.app.Application;
 import android.content.res.Configuration;
 
+import mil.afrl.discoverylab.sate13.rippleandroid.Parse.CSVParser;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.DatabaseAdapter;
 
 /**
@@ -22,6 +23,7 @@ public class RippleApp extends Application {
     public void onCreate() {
         super.onCreate();
         DatabaseAdapter.getInstance(this.getApplicationContext());
+        CSVParser.initializeCSVParser(this.getApplicationContext());
     }
 
     @Override

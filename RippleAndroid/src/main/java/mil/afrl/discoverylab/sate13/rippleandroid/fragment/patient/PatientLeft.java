@@ -8,8 +8,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import org.achartengine.ChartFactory;
@@ -21,6 +19,7 @@ import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
+import mil.afrl.discoverylab.sate13.rippleandroid.adapter.DatabaseAdapter;
 
 /**
  * Created by Brandon on 6/17/13.
@@ -28,6 +27,7 @@ import mil.afrl.discoverylab.sate13.rippleandroid.R;
 public class PatientLeft extends Fragment implements View.OnClickListener {
 
     //private ActivityClickInterface aci;
+    private boolean addedSeries = false;
 
     /**
      * The main dataset that includes all the series that go into a chart.
@@ -45,22 +45,6 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
      * The most recently created renderer, customizing the current series.
      */
     private XYSeriesRenderer mCurrentRenderer;
-    /**
-     * Button for creating a new series of data.
-     */
-    private Button           mNewSeries;
-    /**
-     * Button for adding entered data to the current series.
-     */
-    private Button           mAdd;
-    /**
-     * Edit text field for entering the X value of the data to be added.
-     */
-    private EditText         mX;
-    /**
-     * Edit text field for entering the Y value of the data to be added.
-     */
-    private EditText         mY;
     /**
      * The chart view that displays the data.
      */
@@ -96,11 +80,6 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
         view = inflater.inflate(R.layout.patient_left, container, false);
         assert view != null;
 
-        // the top part of the UI components for adding new data points
-        mX = (EditText) view.findViewById(R.id.xValue);
-        mY = (EditText) view.findViewById(R.id.yValue);
-        mAdd = (Button) view.findViewById(R.id.add);
-
         // set some properties on the main renderer
         mRenderer.setApplyBackgroundColor(true);
         mRenderer.setBackgroundColor(Color.argb(100, 50, 50, 50));
@@ -113,57 +92,32 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
         mRenderer.setPointSize(4);
         mRenderer.setShowGrid(true);
 
-        // the button that handles the new series of data creation
-        mNewSeries = (Button) view.findViewById(R.id.new_series);
-        mNewSeries.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String seriesTitle = "Series " + (mDataset.getSeriesCount() + 1);
-                // create a new series of data
-                XYSeries series = new XYSeries(seriesTitle);
-                mDataset.addSeries(series);
-                mCurrentSeries = series;
-                // create a new renderer for the new series
-                XYSeriesRenderer renderer = new XYSeriesRenderer();
-                mRenderer.addSeriesRenderer(renderer);
-                // set some renderer properties
-                renderer.setPointStyle(PointStyle.CIRCLE);
-                renderer.setFillPoints(true);
-                renderer.setDisplayChartValues(true);
-                renderer.setDisplayChartValuesDistance(10);
-                mCurrentRenderer = renderer;
-                setSeriesWidgetsEnabled(true);
-                mChartView.repaint();
-            }
-        });
-
-        // The add coordinates button
-        mAdd.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                double x = 0;
-                double y = 0;
-                try {
-                    x = Double.parseDouble(mX.getText().toString());
-                } catch (NumberFormatException e) {
-                    mX.requestFocus();
-                    return;
-                }
-                try {
-                    y = Double.parseDouble(mY.getText().toString());
-                } catch (NumberFormatException e) {
-                    mY.requestFocus();
-                    return;
-                }
-                // add a new data point to the current series
-                mCurrentSeries.add(x, y);
-                mX.setText("");
-                mY.setText("");
-                mX.requestFocus();
-                // repaint the chart such as the newly added point to be visible
-                mChartView.repaint();
-            }
-        });
-
         return view;
+    }
+
+    private void setupSeries() {
+        String seriesTitle = "ECG_ShimmerData5";
+        // create a new series of data
+        XYSeries series = new XYSeries(seriesTitle);
+        mDataset.addSeries(series);
+        mCurrentSeries = series;
+        // create a new renderer for the new series
+        XYSeriesRenderer renderer = new XYSeriesRenderer();
+        mRenderer.addSeriesRenderer(renderer);
+        // set some renderer properties
+        renderer.setPointStyle(PointStyle.CIRCLE);
+        renderer.setFillPoints(false);
+        renderer.setDisplayChartValues(false);
+        renderer.setDisplayChartValuesDistance(16);
+        mCurrentRenderer = renderer;
+        mChartView.repaint();
+    }
+
+    private void addDataPoint(double x, double y) {
+        // add a new data point to the current series
+        mCurrentSeries.add(x, y);
+        // repaint the chart such as the newly added point to be visible
+        mChartView.repaint();
     }
 
     @Override
@@ -176,32 +130,24 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
             layout.addView(mChartView,
                            new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                                                          LinearLayout.LayoutParams.MATCH_PARENT));
-            boolean enabled = mDataset.getSeriesCount() > 0;
-            setSeriesWidgetsEnabled(enabled);
+
+            if (!addedSeries) {
+                setupSeries();
+                DatabaseAdapter.getInstance().getVitalXY("localhost", "ECG", mCurrentSeries);
+                addedSeries = true;
+            }
+            mChartView.repaint();
         } else {
             mChartView.repaint();
         }
     }
 
-    /**
-     * Enable or disable the add data to series widgets
-     *
-     * @param enabled the enabled state
-     */
-    private void setSeriesWidgetsEnabled(boolean enabled) {
-        mX.setEnabled(enabled);
-        mY.setEnabled(enabled);
-        mAdd.setEnabled(enabled);
-    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        //aci = (ActivityClickInterface) activity;
     }
 
     @Override
     public void onClick(View view) {
-        //aci.onClickListener(view.getId());
     }
 }

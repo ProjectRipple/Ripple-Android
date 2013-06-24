@@ -8,8 +8,8 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.Window;
+import android.view.WindowManager;
 
-import mil.afrl.discoverylab.sate13.rippleandroid.adapter.DatabaseAdapter;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.Banner;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.patient.PatientLeft;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.scene.SceneLeft;
@@ -23,6 +23,8 @@ public class MainActivity extends Activity implements ActivityClickInterface {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                             WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
         FragmentManager fragmentManager = getFragmentManager();
@@ -33,7 +35,6 @@ public class MainActivity extends Activity implements ActivityClickInterface {
 
         transaction.commit();
 
-        DatabaseAdapter.getInstance(this).storeScanData(1, "ip", "first", "last", "ssn", 1, "M", 1, "type");
     }
 
 

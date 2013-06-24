@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.achartengine.model.XYSeries;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 
@@ -69,13 +71,13 @@ public class DatabaseAdapter {
      */
     private static final String VITAL_TABLE_CREATE =
             "CREATE TABLE IF NOT EXISTS " + TableType.VITAL.name() + "(\n" +
-            "VID INTEGER PRIMARY KEY,\n" +
+            "VID INTEGER,\n" +
             "TIME INTEGER,\n" +
             "SENSOR_TYPE TEXT,\n" +
             "IP_ADDR TEXT,\n" +
             "VALUE_TYPE TEXT,\n" +
-            "VALUE INTEGER," +
-            "PRIMARY KEY(VID, IP_ADDR));";
+            "VALUE REAL," +
+            "PRIMARY KEY(VID));";
 
     private static final int DATABASE_VERSION = 1;
     private final Context context;
@@ -111,25 +113,24 @@ public class DatabaseAdapter {
     }
 
     /**
-     * Inserts all data associated with a scan into the table storing Patient
+     * Inserts all data associated with a Patient into the table storing Patient
      * information
      *
      * @return true, if insertion was successful - false, otherwise
      */
-    public synchronized boolean storeScanData(int id,
-                                              String ip_addr,
-                                              String first_name,
-                                              String last_name,
-                                              String ssn,
-                                              int age,
-                                              String sex,
-                                              int nbc_contamination,
-                                              String type) {
-        int numrows = 9;
+    public synchronized boolean storePatientData(int id,
+                                                 String ip_addr,
+                                                 String first_name,
+                                                 String last_name,
+                                                 String ssn,
+                                                 int age,
+                                                 String sex,
+                                                 int nbc_contamination,
+                                                 String type) {
         SQLiteDatabase db = helper.getWritableDatabase();
         db.beginTransaction();
 
-        ContentValues map = new ContentValues(numrows);
+        ContentValues map = new ContentValues(9);
         map.put("ID", id);
         map.put("IP_ADDR", ip_addr);
         map.put("FIRST_NAME", first_name);
@@ -143,50 +144,86 @@ public class DatabaseAdapter {
         db.setTransactionSuccessful();
         db.endTransaction();
         db.close();
-        Log.d(Common.LOG_TAG,
-              TableType.PATIENT.name() + " table insertion - " + numrows + " rows inserted");
+        //Log.d(Common.LOG_TAG, TableType.PATIENT.name() + " table insertion - " + 1 + " row inserted");
 
         return true;
     }
 
     /**
-     * Gets all information for a patient specified by their id as a string.
+     * Inserts all data associated with a vital row into the table storing Patient Vital
+     * information
      *
-     * @return
+     * @return true, if insertion was successful - false, otherwise
      */
-    public synchronized String getPatientString(int id) {
-        StringBuilder str = new StringBuilder();
+    public synchronized boolean storeVitalData(int time,
+                                               String sensor_type,
+                                               String ip_addr,
+                                               String value_type,
+                                               double value) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        db.beginTransaction();
+
+        ContentValues map = new ContentValues();
+        map.put("TIME", time);
+        map.put("SENSOR_TYPE", sensor_type);
+        map.put("IP_ADDR", ip_addr);
+        map.put("VALUE_TYPE", value_type);
+        map.put("VALUE", value);
+
+        if (db.insert(TableType.VITAL.name(), null, map) == -1) {
+            Log.e(Common.LOG_TAG, "Failed to insert: " + map.toString());
+            db.endTransaction();
+            db.close();
+            return false;
+        } else {
+            db.setTransactionSuccessful();
+            db.endTransaction();
+            db.close();
+            Log.d(Common.LOG_TAG, TableType.VITAL.name() + " table insertion - " + map.toString());
+            return true;
+        }
+    }
+
+    /**
+     * For a specific patient ip address and sensor type, store all time-value pairs in the
+     * provided XYSeries
+     * <p/>
+     * Note: Does not check for duplicate rows in the XYSeries
+     *
+     * @return false if the provided series is null or if an empty set is returned by the query
+     */
+    public synchronized boolean getVitalXY(String ip_addr,
+                                           String sensor_type,
+                                           XYSeries data) {
+        if (data == null) {
+            return false;
+        }
+        int preItemCount = data.getItemCount();
 
         // query database
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.query(true, TableType.PATIENT.name(), null,
-                                 "ID = " + Integer.toString(id),
-                                 null, null, null, null, null);
+        String where = "IP_ADDR = '" + ip_addr + "' AND SENSOR_TYPE = '" + sensor_type + "'";
+        Cursor cursor = db.query(true,                                  // Distinct
+                                 TableType.VITAL.name(),                // Table
+                                 new String[]{"TIME", "VALUE"},         // Columns
+                                 where,                                 // Selection
+                                 null,                                  // Selection Args
+                                 null,                                  // Group By
+                                 null,                                  // Having
+                                 "TIME",                                // Order By
+                                 null);                                 // Limit
         cursor.moveToFirst();
-
-        if (!cursor.isAfterLast()) {
-
-            str.append(Integer.toString(cursor.getInt(0)));
-            str.append(", ");
-            for (int i = 1; i < 4; i++) {
-                str.append(cursor.getString(i));
-                str.append(", ");
-            }
-
-            str.append(Integer.toString(cursor.getInt(4)));
-            str.append(", ");
-
-            str.append(cursor.getString(5));
-            str.append(", ");
-
-            str.append(Integer.toString(cursor.getInt(6)));
-
+        while (cursor.isAfterLast() == false) {
+            data.add((double) cursor.getInt(cursor.getColumnIndex("TIME")),
+                     cursor.getDouble(cursor.getColumnIndex("VALUE")));
+            cursor.moveToNext();
         }
         cursor.close();
         db.close();
 
-        return str.toString();
+        return (data.getItemCount() != preItemCount);
     }
+
 
     /**
      * Forwards the contents of a database to a writer instance in CSV format.
@@ -254,19 +291,21 @@ public class DatabaseAdapter {
     }
 
     public synchronized boolean clear(TableType type) {
+        boolean res = true;
         SQLiteDatabase db = helper.getWritableDatabase();
         switch (type) {
             case PATIENT:
                 db.execSQL("DELETE FROM " + TableType.PATIENT.name());
-                Log.d(Common.LOG_TAG,
-                      TableType.PATIENT.name() + " table clear finished - all rows removed");
-                db.close();
-                return true;
+                Log.d(Common.LOG_TAG, TableType.PATIENT.name() + " table clear finished - all rows removed");
+            case VITAL:
+                db.execSQL("DELETE FROM " + TableType.VITAL.name());
+                Log.d(Common.LOG_TAG, TableType.VITAL.name() + " table clear finished - all rows removed");
             default:
                 Log.e(Common.LOG_TAG, "Table type not supported for clear module.");
-                db.close();
-                return false;
+                res = false;
         }
+        db.close();
+        return res;
     }
 
     /**
@@ -276,14 +315,26 @@ public class DatabaseAdapter {
      */
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
+        SQLiteDatabase database;
+
         public DatabaseHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            Log.d(Common.LOG_TAG, "Constructing DB Helper");
+            database = getWritableDatabase();
+
+//            Log.d(Common.LOG_TAG, "Creating SQlite " + TableType.PATIENT.name() + " table");
+//            database.execSQL(PATIENT_TABLE_CREATE);
+//            Log.d(Common.LOG_TAG, "Creating SQlite " + TableType.VITAL.name() + " table");
+//            database.execSQL(VITAL_TABLE_CREATE);
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
+            database = db;
             Log.d(Common.LOG_TAG, "Creating SQlite " + TableType.PATIENT.name() + " table");
             db.execSQL(PATIENT_TABLE_CREATE);
+            Log.d(Common.LOG_TAG, "Creating SQlite " + TableType.VITAL.name() + " table");
+            db.execSQL(VITAL_TABLE_CREATE);
         }
 
         @Override
@@ -292,6 +343,7 @@ public class DatabaseAdapter {
                                   + oldVersion + " to " + newVersion
                                   + ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS " + TableType.PATIENT.name());
+            db.execSQL("DROP TABLE IF EXISTS " + TableType.VITAL.name());
             onCreate(db);
         }
     }
