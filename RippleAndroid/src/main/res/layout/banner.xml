@@ -9,7 +9,7 @@
             android:id="@+id/bannerTableLayout"
             android:layout_width="fill_parent"
             android:layout_height="100dp"
-            android:background="#c7c4ff">
+            android:background="#000000">
         <TableRow
             android:id="@+id/bannerTableRow"
             />
