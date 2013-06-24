@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.PatientView;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
+import mil.afrl.discoverylab.sate13.rippleandroid.RandomPatient;
 import mil.afrl.discoverylab.sate13.rippleandroid.object.Patient;
 
 /**
@@ -35,10 +36,9 @@ public class Banner extends Fragment {
         mPatients = new ArrayList<Patient>();
 
         TableRow tableRow = (TableRow)view.findViewById(R.id.bannerTableRow);
-
         //This is only here for debugging purposes till we start generating patients.
         for(int i = 0; i < 20; i++){
-            mPatients.add(new Patient());
+            mPatients.add(RandomPatient.getRandomPatient());
 
             //Implements a custom view, the custom view is passed the patient object
             PatientView v = new PatientView(mContext, mPatients.get(i), i);
