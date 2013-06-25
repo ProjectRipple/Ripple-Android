@@ -17,7 +17,7 @@ import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 /**
  * Created by Matt on 6/19/13.
  * <p/>
- * Database Adapter class for accessing an SQLLite database located in the application's
+ * Database Adapter class for accessing an SQLLite db located in the application's
  * private storage. Partially taken from the CarMA project source code.
  * <p/>
  * Flach, T., Mishra, N., Pedrosa, L., Riesz, C., & Govindan, R. (2011, November).
@@ -46,7 +46,7 @@ public class DatabaseAdapter {
     }
 
     /**
-     * Name of the database containing all tables associated with this project
+     * Name of the db containing all tables associated with this project
      */
     private static final String DATABASE_NAME = "RIPPLE";
 
@@ -83,7 +83,7 @@ public class DatabaseAdapter {
     private final Context context;
 
     /**
-     * Helper instance for accessing the SQLlite database
+     * Helper instance for accessing the SQLlite db
      */
     private DatabaseHelper helper;
 
@@ -200,7 +200,7 @@ public class DatabaseAdapter {
         }
         int preItemCount = data.getItemCount();
 
-        // query database
+        // query db
         SQLiteDatabase db = helper.getReadableDatabase();
         String where = "IP_ADDR = '" + ip_addr + "' AND SENSOR_TYPE = '" + sensor_type + "'";
         Cursor cursor = db.query(true,                                  // Distinct
@@ -226,7 +226,7 @@ public class DatabaseAdapter {
 
 
     /**
-     * Forwards the contents of a database to a writer instance in CSV format.
+     * Forwards the contents of a db to a writer instance in CSV format.
      * The actual contents forwarded depend on the table type.
      *
      * @param type
@@ -252,6 +252,25 @@ public class DatabaseAdapter {
             Log.e(Common.LOG_TAG, "Cannot export table: " + e.getMessage());
             return false;
         }
+    }
+
+    public synchronized boolean isTableEmpty(String table) {
+        boolean res;
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.query(true,                                  // Distinct
+                                 table,                                 // Table
+                                 null,                                  // Columns
+                                 null,                                  // Selection
+                                 null,                                  // Selection Args
+                                 null,                                  // Group By
+                                 null,                                  // Having
+                                 null,                                  // Order By
+                                 "1");                                  // Limit
+        cursor.moveToFirst();
+        res = cursor.isAfterLast();
+        cursor.close();
+        db.close();
+        return res;
     }
 
     /**
@@ -309,38 +328,77 @@ public class DatabaseAdapter {
     }
 
     /**
-     * Helper class for creating and accessing the database. If database is
+     * Helper class forHelper class forHelper class for
+     * Helper class for creating and accessing the db. If db is
      * accessed for the first time the schema will be initialized by creating
      * the required tables.
      */
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
-        SQLiteDatabase database;
+        Context context;
 
-        public DatabaseHelper(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        public DatabaseHelper(Context c) {
+            super(c, DATABASE_NAME, null, DATABASE_VERSION);
             Log.d(Common.LOG_TAG, "Constructing DB Helper");
-            database = getWritableDatabase();
+            this.context = c;
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            database = db;
+            createTable(TableType.PATIENT.name(), PATIENT_TABLE_CREATE, db);
+            createTable(TableType.VITAL.name(), VITAL_TABLE_CREATE, db);
+        }
 
-            Log.d(Common.LOG_TAG, "Creating SQlite " + TableType.PATIENT.name() + " table");
-            db.execSQL(PATIENT_TABLE_CREATE);
-            Log.d(Common.LOG_TAG, "Creating SQlite " + TableType.VITAL.name() + " table");
-            db.execSQL(VITAL_TABLE_CREATE);
+        public boolean createTable(String name, String query, SQLiteDatabase db) {
+            boolean res = false;
+            if (db != null) {
+                if (isTableExists(name, db)) {
+                    Log.d(Common.LOG_TAG, "Table: " + name + " already exists.");
+                }
+                Log.d(Common.LOG_TAG, "Creating table: " + name + ".");
+                db.execSQL(query);
+                res = true;
+            }
+            return res;
+        }
+
+        /**
+         * Test if a table exists in a db
+         * Taken from here:
+         * http://stackoverflow.com/a/7863401
+         *
+         * @param tableName
+         * @return
+         */
+        public boolean isTableExists(String tableName, SQLiteDatabase db) {
+            Cursor cursor = db.rawQuery(
+                    "select DISTINCT tbl_name from sqlite_master where tbl_name = '"
+                    + tableName + "'", null);
+
+            if (cursor != null) {
+                if (cursor.getCount() > 0) {
+                    cursor.close();
+                    return true;
+                }
+                cursor.close();
+            }
+            return false;
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            Log.w(Common.LOG_TAG, "Upgrading database from version "
+            Log.w(Common.LOG_TAG, "Upgrading db from version "
                                   + oldVersion + " to " + newVersion
                                   + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + TableType.PATIENT.name());
-            db.execSQL("DROP TABLE IF EXISTS " + TableType.VITAL.name());
+            dropTable(TableType.PATIENT.name(), db);
+            dropTable(TableType.VITAL.name(), db);
             onCreate(db);
+        }
+
+        public boolean dropTable(String name, SQLiteDatabase db) {
+            Log.d(Common.LOG_TAG, "Dropping table: " + name);
+            db.execSQL("DROP TABLE IF EXISTS " + name);
+            return true;
         }
     }
 
