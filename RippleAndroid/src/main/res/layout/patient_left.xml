@@ -1,25 +1,289 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
-              android:layout_width="wrap_content"
-              android:layout_height="match_parent"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
               android:layout_weight="0.5"
               android:background="#FFFFFF">
 
-    <ImageView
-            android:id="@+id/tagview"
-            android:src="@drawable/tag"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            />
-
     <LinearLayout
-            android:id="@+id/chart"
+            android:id="@+id/patient_layout"
             android:orientation="vertical"
             android:layout_width="0px"
             android:layout_height="match_parent"
-            android:layout_weight="2"/>
+            android:layout_weight="1">
+
+        <TextView
+                style="@style/headingfontblack"
+                android:id="@+id/patient_tv"
+                android:text="Patient"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+        <ImageView
+                android:id="@+id/tagview"
+                android:src="@drawable/tag"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+    <View
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_blue_dark"/>
+
+    <LinearLayout
+            android:id="@+id/vital_info"
+            android:orientation="vertical"
+            android:layout_width="0px"
+            android:layout_height="match_parent"
+            android:layout_weight="2">
+
+        <TextView
+                style="@style/headingfontblack"
+                android:id="@+id/scene_tv"
+                android:text="Scene"
+                android:layout_gravity="center_horizontal"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+        <TextView
+                style="@style/bodyfontblack"
+                android:id="@+id/details_tv"
+                android:text="Details"
+                android:textStyle="bold|italic"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+        <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/horizontalScrollView">
+
+
+            <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+
+                <TextView
+                        style="@style/bodyfontblack"
+                        android:id="@+id/name_tv"
+                        android:text="@string/name"
+                        android:layout_row="0"
+                        android:layout_column="0"
+                        />
+
+                <TextView
+                        style="@style/bodyfontgray"
+                        android:id="@+id/name_value_tv"
+                        android:text="Matthew McCartney"
+                        android:layout_row="0"
+                        android:layout_column="1"/>
+
+                <TextView
+                        style="@style/bodyfontblack"
+                        android:id="@+id/age_tv"
+                        android:text="@string/age"
+                        android:layout_row="0"
+                        android:layout_column="2"/>
+
+                <TextView
+                        style="@style/bodyfontgray"
+                        android:id="@+id/age_value_tv"
+                        android:text="N/A"
+                        android:layout_row="0"
+                        android:layout_column="3"/>
+
+                <TextView
+                        style="@style/bodyfontblack"
+                        android:id="@+id/nbc_contamination_tv"
+                        android:text="@string/nbc_contamination"
+                        android:layout_row="1"
+                        android:layout_column="0"/>
+
+                <TextView
+                        style="@style/bodyfontgray"
+                        android:id="@+id/nbc_contamination_value_tv"
+                        android:text="N/A"
+                        android:layout_row="1"
+                        android:layout_column="1"/>
+
+                <TextView
+                        style="@style/bodyfontblack"
+                        android:id="@+id/Sex_tv"
+                        android:text="@string/sex"
+                        android:layout_row="1"
+                        android:layout_column="2"/>
+
+                <TextView
+                        style="@style/bodyfontgray"
+                        android:id="@+id/sex_value_tv"
+                        android:text="N/A"
+                        android:layout_row="1"
+                        android:layout_column="3"/>
+
+            </GridLayout>
+
+        </HorizontalScrollView>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+        <TextView
+                style="@style/bodyfontblack"
+                android:id="@+id/current_tv"
+                android:text="Current"
+                android:textStyle="bold|italic"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+        <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/horizontalScrollView">
+
+
+            <GridLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+
+                <TextView
+                        style="@style/bodyfontblack"
+                        android:id="@+id/temp_tv"
+                        android:text="@string/temp"
+                        android:layout_row="0"
+                        android:layout_column="0"
+                        />
+
+                <TextView
+                        style="@style/bodyfontgray"
+                        android:id="@+id/temp_value_tv"
+                        android:text="N/A"
+                        android:layout_row="0"
+                        android:layout_column="1"/>
+
+                <TextView
+                        style="@style/bodyfontblack"
+                        android:id="@+id/pulse_tv"
+                        android:text="@string/pulse"
+                        android:layout_row="0"
+                        android:layout_column="2"
+                        />
+
+                <TextView
+                        style="@style/bodyfontgray"
+                        android:id="@+id/pulse_value_tv"
+                        android:text="N/A"
+                        android:layout_row="0"
+                        android:layout_column="3"/>
+
+                <TextView
+                        style="@style/bodyfontblack"
+                        android:id="@+id/o2_tv"
+                        android:text="@string/o2"
+                        android:layout_row="0"
+                        android:layout_column="4"
+                        />
+
+                <TextView
+                        style="@style/bodyfontgray"
+                        android:id="@+id/o2_value_tv"
+                        android:text="N/A"
+                        android:layout_row="0"
+                        android:layout_column="5"/>
+
+                <TextView
+                        style="@style/bodyfontblack"
+                        android:id="@+id/bp_tv"
+                        android:text="@string/bp"
+                        android:layout_row="1"
+                        android:layout_column="0"
+                        />
+
+                <TextView
+                        style="@style/bodyfontgray"
+                        android:id="@+id/bp_value_tv"
+                        android:text="N/A"
+                        android:layout_row="1"
+                        android:layout_column="1"/>
+
+                <TextView
+                        style="@style/bodyfontblack"
+                        android:id="@+id/resp_tv"
+                        android:text="@string/resp"
+                        android:layout_row="1"
+                        android:layout_column="2"
+                        />
+
+                <TextView
+                        style="@style/bodyfontgray"
+                        android:id="@+id/resp_value_tv"
+                        android:text="N/A"
+                        android:layout_row="1"
+                        android:layout_column="3"/>
+
+                <TextView
+                        style="@style/bodyfontblack"
+                        android:id="@+id/pain_tv"
+                        android:text="@string/pain"
+                        android:layout_row="1"
+                        android:layout_column="4"
+                        />
+
+                <TextView
+                        style="@style/bodyfontgray"
+                        android:id="@+id/pain_value_tv"
+                        android:text="N/A"
+                        android:layout_row="1"
+                        android:layout_column="5"/>
+
+            </GridLayout>
+
+        </HorizontalScrollView>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+        <TextView
+                style="@style/bodyfontblack"
+                android:id="@+id/history_tv"
+                android:text="History"
+                android:textStyle="bold|italic"/>
+
+        <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark"/>
+
+        <LinearLayout
+                android:id="@+id/chart"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="1"
+                android:background="#FFFFFF">
+        </LinearLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name" >RippleAndroid
+    <string name="app_name">RippleAndroid
     </string>
-    <string name="action_settings" >Settings
+    <string name="action_settings">Settings
     </string>
-    <string name="hello_world" >Hello world!
+    <string name="hello_world">Hello world!
     </string>
+
+    <string name="underline">This is an<u>underline</u>.
+    </string>
+
+    <string name="name"><u>Name:</u></string>
+    <string name="age"><u>Age:</u></string>
+    <string name="sex"><u>Sex:</u></string>
+    <string name="nbc_contamination"><u>NBC-Contamination:</u></string>
+
+    <string name="temp"><u>Temp:</u></string>
+    <string name="pulse"><u>Pulse:</u></string>
+    <string name="bp"><u>BP:</u></string>
+    <string name="o2"><u>O<sub>2</sub>:</u></string>
+    <string name="resp"><u>Resp:</u></string>
+    <string name="pain"><u>Pain:</u></string>
+
 
 </resources>

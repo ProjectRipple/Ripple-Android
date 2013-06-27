@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
-import org.achartengine.chart.PointStyle;
 import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
@@ -85,15 +84,22 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
 
         // set some properties on the main renderer
         mRenderer.setApplyBackgroundColor(true);
-        mRenderer.setBackgroundColor(Color.argb(100, 50, 50, 50));
-        mRenderer.setAxisTitleTextSize(16);
-        mRenderer.setChartTitleTextSize(16);
-        mRenderer.setLabelsTextSize(16);
-        mRenderer.setLegendTextSize(16);
-        mRenderer.setMargins(new int[]{32, 32, 32, 32});
+        mRenderer.setBackgroundColor(Color.argb(255, 238, 237, 240));
+        mRenderer.setLabelsColor(Color.BLACK);
+        mRenderer.setMarginsColor(Color.WHITE);
+        //mRenderer.setAxisTitleTextSize(16);
+        //mRenderer.setChartTitleTextSize(16);
+        //mRenderer.setLabelsTextSize(16);
+        //mRenderer.setLegendTextSize(16);
+        //mRenderer.setMargins(new int[]{32, 32, 32, 32});
+        mRenderer.setYLabelsPadding((float)10);
         mRenderer.setZoomButtonsVisible(false);
-        mRenderer.setPointSize(4);
         mRenderer.setShowGrid(true);
+        mRenderer.setGridColor(Color.GRAY);
+        mRenderer.setAxesColor(Color.BLACK);
+        mRenderer.setXLabelsColor(Color.BLACK);
+        mRenderer.setYLabelsColor(0, Color.BLACK);
+
 
         ImageView tagview = (ImageView) view.findViewById(R.id.tagview);
         assert tagview != null;
@@ -123,19 +129,22 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
     }
 
     private void setupSeries() {
-        String seriesTitle = "ECG_ShimmerData5";
+        String seriesTitle = "";
+
         // create a new series of data
         XYSeries series = new XYSeries(seriesTitle);
         mDataset.addSeries(series);
         mCurrentSeries = series;
+
         // create a new renderer for the new series
         XYSeriesRenderer renderer = new XYSeriesRenderer();
-        mRenderer.addSeriesRenderer(renderer);
         // set some renderer properties
-        renderer.setPointStyle(PointStyle.CIRCLE);
-        renderer.setFillPoints(false);
+        renderer.setShowLegendItem(false);
+        renderer.setColor(Color.RED);
         renderer.setDisplayChartValues(false);
-        renderer.setDisplayChartValuesDistance(16);
+        //renderer.setDisplayChartValuesDistance(16);
+
+        mRenderer.addSeriesRenderer(renderer);
         mCurrentRenderer = renderer;
         mChartView.repaint();
     }
