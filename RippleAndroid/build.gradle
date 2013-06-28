@@ -13,7 +13,7 @@ dependencies {
 
     compile files('libs/android-support-v4.jar')
     compile files('libs/achartengine-1.1.0.jar')
-    compile files('../google-play-services_lib/libs/google-play-services.jar')
+    //compile files('libs/google-play-services.jar')
 }
 
 android {
