@@ -9,11 +9,10 @@ buildscript {
 apply plugin: 'android'
 
 dependencies {
-    compile project(':google-play-services_lib')
-
     compile files('libs/android-support-v4.jar')
     compile files('libs/achartengine-1.1.0.jar')
-    //compile files('libs/google-play-services.jar')
+    compile project(':google-play-services_lib')
+    compile project(':DataDroid')
 }
 
 android {
@@ -22,6 +21,6 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 16
+        targetSdkVersion 17
     }
 }

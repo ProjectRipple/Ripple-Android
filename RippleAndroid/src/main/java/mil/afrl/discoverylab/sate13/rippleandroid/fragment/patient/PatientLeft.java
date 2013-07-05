@@ -13,6 +13,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.foxykeep.datadroid.requestmanager.Request;
+import com.foxykeep.datadroid.requestmanager.RequestManager;
+
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
 import org.achartengine.model.XYMultipleSeriesDataset;
@@ -20,13 +23,23 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import java.util.ArrayList;
+
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
-import mil.afrl.discoverylab.sate13.rippleandroid.adapter.DatabaseAdapter;
+import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vitals;
+import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
+import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestManager;
 
 /**
  * Created by Brandon on 6/17/13.
  */
-public class PatientLeft extends Fragment implements View.OnClickListener {
+public class PatientLeft extends Fragment implements View.OnClickListener, RequestManager.RequestListener {
+
+    private static final String SAVED_STATE_REQUEST_LIST = "savedStateRequestList";
+    protected RippleRequestManager mRequestManager;
+    protected ArrayList<Request> mRequestList;
+
+    private Button mNewSeries;
 
     //private ActivityClickInterface aci;
     private boolean addedSeries = false;
@@ -34,7 +47,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
     /**
      * The main dataset that includes all the series that go into a chart.
      */
-    private XYMultipleSeriesDataset  mDataset  = new XYMultipleSeriesDataset();
+    private XYMultipleSeriesDataset mDataset = new XYMultipleSeriesDataset();
     /**
      * The main renderer that includes all the renderers customizing a chart.
      */
@@ -42,7 +55,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
     /**
      * The most recently added series.
      */
-    private XYSeries         mCurrentSeries;
+    private XYSeries mCurrentSeries;
     /**
      * The most recently created renderer, customizing the current series.
      */
@@ -50,7 +63,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
     /**
      * The chart view that displays the data.
      */
-    private GraphicalView    mChartView;
+    private GraphicalView mChartView;
 
     private View view;
 
@@ -62,6 +75,8 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
         outState.putSerializable("renderer", mRenderer);
         outState.putSerializable("current_series", mCurrentSeries);
         outState.putSerializable("current_renderer", mCurrentRenderer);
+
+        outState.putParcelableArrayList(SAVED_STATE_REQUEST_LIST, mRequestList);
     }
 
     @Override
@@ -73,6 +88,13 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
             mRenderer = (XYMultipleSeriesRenderer) savedState.getSerializable("renderer");
             mCurrentSeries = (XYSeries) savedState.getSerializable("current_series");
             mCurrentRenderer = (XYSeriesRenderer) savedState.getSerializable("current_renderer");
+
+            mRequestManager = RippleRequestManager.from(getActivity());
+            if (savedState != null) {
+                mRequestList = savedState.getParcelableArrayList(SAVED_STATE_REQUEST_LIST);
+            } else {
+                mRequestList = new ArrayList<Request>();
+            }
         }
     }
 
@@ -92,7 +114,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
         //mRenderer.setLabelsTextSize(16);
         //mRenderer.setLegendTextSize(16);
         //mRenderer.setMargins(new int[]{32, 32, 32, 32});
-        mRenderer.setYLabelsPadding((float)10);
+        mRenderer.setYLabelsPadding((float) 10);
         mRenderer.setZoomButtonsVisible(false);
         mRenderer.setShowGrid(true);
         mRenderer.setGridColor(Color.GRAY);
@@ -125,6 +147,23 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
             }
         });
 
+        mRequestManager = RippleRequestManager.from(getActivity());
+        if (savedInstanceState != null) {
+            mRequestList = savedInstanceState.getParcelableArrayList(SAVED_STATE_REQUEST_LIST);
+        } else {
+            mRequestList = new ArrayList<Request>();
+        }
+
+        // the button that handles the new series of data creation
+        mNewSeries = (Button) view.findViewById(R.id.new_series);
+        mNewSeries.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                setupSeries();
+                mChartView.repaint();
+                callVitalsListWS();
+            }
+        });
+
         return view;
     }
 
@@ -149,13 +188,6 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
         mChartView.repaint();
     }
 
-    private void addDataPoint(double x, double y) {
-        // add a new data point to the current series
-        mCurrentSeries.add(x, y);
-        // repaint the chart such as the newly added point to be visible
-        mChartView.repaint();
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -164,18 +196,76 @@ public class PatientLeft extends Fragment implements View.OnClickListener {
             mChartView = ChartFactory.getLineChartView(this.getActivity(), mDataset, mRenderer);
             mRenderer.setClickEnabled(false);
             layout.addView(mChartView,
-                           new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                                                         LinearLayout.LayoutParams.MATCH_PARENT));
+                    new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT));
 
-            if (!addedSeries) {
+/*            if (!addedSeries) {
                 setupSeries();
-                DatabaseAdapter.getInstance().getVitalXY("localhost", "ECG", mCurrentSeries);
+                callVitalsListWS();
                 addedSeries = true;
-            }
-            mChartView.repaint();
-        } else {
-            mChartView.repaint();
+            }*/
         }
+        mChartView.repaint();
+
+        for (int i = 0; i < mRequestList.size(); i++) {
+            Request request = mRequestList.get(i);
+            if (mRequestManager.isRequestInProgress(request)) {
+                mRequestManager.addRequestListener(this, request);
+            } else {
+                mRequestManager.callListenerWithCachedData(this, request);
+                i--;
+                mRequestList.remove(request);
+            }
+        }
+    }
+
+    private void callVitalsListWS() {
+        Request request = RippleRequestFactory.getVitalsListRequest();
+        mRequestManager.execute(request, this);
+        mRequestList.add(request);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (!mRequestList.isEmpty()) {
+            mRequestManager.removeRequestListener(this);
+        }
+    }
+
+    @Override
+    public void onRequestFinished(Request request, Bundle resultData) {
+        if (mRequestList.contains(request)) {
+            mRequestList.remove(request);
+
+            ArrayList<Vitals> vitalsList = resultData.getParcelableArrayList(
+                    RippleRequestFactory.BUNDLE_EXTRA_VITALS_LIST);
+
+/*            for (Vitals vital : vitalsList) {
+                mCurrentSeries.add((double) vital.value, (double) vital.timestamp);
+            }*/
+            mChartView.repaint();
+
+        }
+    }
+
+    @Override
+    public void onRequestConnectionError(Request request, int statusCode) {
+        if (mRequestList.contains(request)) {
+            mRequestList.remove(request);
+        }
+    }
+
+    @Override
+    public void onRequestDataError(Request request) {
+        if (mRequestList.contains(request)) {
+            mRequestList.remove(request);
+        }
+    }
+
+    @Override
+    public void onRequestCustomError(Request request, Bundle resultData) {
+        // Never called.
     }
 
     @Override
