@@ -8,7 +8,7 @@
             android:minSdkVersion="11"
             android:targetSdkVersion="17"/>
 
-    <uses-permission android:name=".permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="android.permission.MAPS_RECEIVE"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>

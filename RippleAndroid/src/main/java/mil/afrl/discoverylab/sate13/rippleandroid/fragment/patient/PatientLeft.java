@@ -124,6 +124,8 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         mRenderer.setXLabelsColor(Color.BLACK);
         mRenderer.setYLabelsColor(0, Color.BLACK);
 
+        setupSeries();
+
 
         ImageView tagview = (ImageView) view.findViewById(R.id.tagview);
         assert tagview != null;
@@ -160,8 +162,6 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         mNewSeries = (Button) view.findViewById(R.id.new_series);
         mNewSeries.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                setupSeries();
-                mChartView.repaint();
                 callVitalsListWS();
             }
         });
@@ -187,7 +187,6 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
 
         mRenderer.addSeriesRenderer(renderer);
         mCurrentRenderer = renderer;
-        mChartView.repaint();
     }
 
     @Override
@@ -200,12 +199,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             layout.addView(mChartView,
                     new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                             LinearLayout.LayoutParams.MATCH_PARENT));
-
-/*            if (!addedSeries) {
-                setupSeries();
-                callVitalsListWS();
-                addedSeries = true;
-            }*/
+            setupSeries();
         }
         mChartView.repaint();
 
@@ -236,20 +230,31 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     }
 
     @Override
-    public void onRequestFinished(Request request, Bundle resultData) {
-        if (mRequestList.contains(request)) {
-            mRequestList.remove(request);
+    public void onRequestFinished(final Request request, final Bundle resultData) {
 
-            ArrayList<Vitals> vitalsList = resultData.getParcelableArrayList(RippleRequestFactory.BUNDLE_EXTRA_VITALS_LIST);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-            for (Vitals vital : vitalsList) {
-                mCurrentSeries.add(((double) vital.timestamp) / 1000.0, ((double) vital.value) / 10000000.0);
-                //Log.i(Common.LOG_TAG, "Added point: (" + (vital.timestamp / 1000.0) + ", " + (vital.value / 10000000.0) + ")");
+                if (mRequestList.contains(request)) {
+                    mRequestList.remove(request);
+
+                    ArrayList<Vitals> vitalsList = resultData.getParcelableArrayList(RippleRequestFactory.BUNDLE_EXTRA_VITALS_LIST);
+
+                    int cnt = 0;
+                    for (Vitals vital : vitalsList) {
+                        mCurrentSeries.add(
+                                ((double) vital.timestamp) / 1000.0,
+                                ((double) vital.value) / 10000000.0);
+                        //Log.i(Common.LOG_TAG, "Added point: (" + (vital.timestamp / 1000.0) + ", " + (vital.value / 10000000.0) + ")");
+                        mChartView.repaint();
+                        cnt++;
+                        Thread.currentThread().yield();
+                    }
+                    Log.i(Common.LOG_TAG, "Added " + cnt + " data points");
+                }
             }
-
-            mChartView.repaint();
-            Log.i(Common.LOG_TAG, "Added data points");
-        }
+        }).start();
     }
 
     @Override
