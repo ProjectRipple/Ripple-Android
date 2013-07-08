@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 
 import java.util.ArrayList;
 
+import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vitals;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
@@ -238,14 +240,15 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         if (mRequestList.contains(request)) {
             mRequestList.remove(request);
 
-            ArrayList<Vitals> vitalsList = resultData.getParcelableArrayList(
-                    RippleRequestFactory.BUNDLE_EXTRA_VITALS_LIST);
+            ArrayList<Vitals> vitalsList = resultData.getParcelableArrayList(RippleRequestFactory.BUNDLE_EXTRA_VITALS_LIST);
 
-/*            for (Vitals vital : vitalsList) {
-                mCurrentSeries.add((double) vital.value, (double) vital.timestamp);
-            }*/
+            for (Vitals vital : vitalsList) {
+                mCurrentSeries.add(((double) vital.timestamp) / 1000.0, ((double) vital.value) / 10000000.0);
+                //Log.i(Common.LOG_TAG, "Added point: (" + (vital.timestamp / 1000.0) + ", " + (vital.value / 10000000.0) + ")");
+            }
+
             mChartView.repaint();
-
+            Log.i(Common.LOG_TAG, "Added data points");
         }
     }
 
