@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.foxykeep.datadroid.requestmanager.Request;
 import com.foxykeep.datadroid.requestmanager.RequestManager;
@@ -68,6 +69,8 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     private GraphicalView mChartView;
 
     private View view;
+    private int currentPatient;
+    private TextView patientName;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -165,6 +168,8 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
                 callVitalsListWS();
             }
         });
+
+        this.patientName = (TextView) view.findViewById(R.id.name_value_tv);
 
         return view;
     }
@@ -284,4 +289,12 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     @Override
     public void onClick(View view) {
     }
+
+    public void setPatient(int id)
+    {
+        this.currentPatient = id;
+        // TODO: may need settext on UI thread
+        this.patientName.setText("Dummy Patient(" + this.currentPatient + ")");
+    }
+
 }

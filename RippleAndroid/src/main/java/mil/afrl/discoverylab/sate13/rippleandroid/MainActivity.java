@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -29,7 +30,7 @@ import mil.afrl.discoverylab.sate13.rippleandroid.fragment.patient.PatientLeft;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.scene.SceneLeft;
 
 
-public class MainActivity extends Activity implements ActivityClickInterface, LocationSource.OnLocationChangedListener {
+public class MainActivity extends Activity implements ActivityClickInterface, LocationSource.OnLocationChangedListener, View.OnClickListener {
 
     /*Inter-Fragment MGMT*/
     private boolean isPatient = true;
@@ -130,5 +131,15 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         // Showing the current location in Google Map
         map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         map.animateCamera(CameraUpdateFactory.zoomTo(15));
+    }
+
+    @Override
+    public void onClick(View view) {
+        if(view instanceof PatientView)
+        {
+            PatientView pView = (PatientView)view;
+            Log.d(Common.LOG_TAG, "Patient id selected: " + pView.getPid());
+            this.patLeft.setPatient(pView.getPid());
+        }
     }
 }

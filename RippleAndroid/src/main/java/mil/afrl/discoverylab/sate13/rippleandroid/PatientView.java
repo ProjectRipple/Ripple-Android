@@ -38,6 +38,13 @@ public class PatientView extends View {
         init();
     }
 
+    public int getPid()
+    {
+        //TODO: return actual id
+        return this.mRowOrder;
+    }
+
+
     private void init(){
         mPaintBG = new Paint();
         mPaintText = new Paint();
