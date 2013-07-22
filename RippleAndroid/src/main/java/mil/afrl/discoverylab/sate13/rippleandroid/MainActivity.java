@@ -49,9 +49,9 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         @Override
         public void handleMessage(Message msg) {
 
-            if (msg.what == Common.NW_MSG_TYPES.TCP_STREAM.getVal()) {
+            if (msg.what == Common.NW_MSG_TYPES.UDP_BANNER_VITAL.ordinal()) {
 
-            } else if (msg.what == Common.NW_MSG_TYPES.UDP_BANNER.getVal()) {
+            } else if (msg.what == Common.NW_MSG_TYPES.TCP_STREAM_VITAL.ordinal()) {
                 //Banner.update((String) msg.obj);
             } else {
                 Log.e(Common.LOG_TAG, "Unknown Network Message type: " + msg.what);

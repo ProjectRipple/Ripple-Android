@@ -3,6 +3,9 @@ package mil.afrl.discoverylab.sate13.rippleandroid.adapter.network;
 import android.os.Handler;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,6 +29,7 @@ public class TcpClient {
     private Socket socket = null;
     private Thread listenThread = null;
     private List<Handler> listeners = new ArrayList<Handler>();
+    private static Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
     //private Thread messageHandlerThread = null;
     //private int userNum = -1;
     //private List<TcpMessageListener> listeners = new ArrayList<TcpMessageListener>();
