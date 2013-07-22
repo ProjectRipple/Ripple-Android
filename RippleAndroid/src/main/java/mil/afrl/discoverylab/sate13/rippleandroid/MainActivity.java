@@ -7,9 +7,11 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.Menu;
 import android.view.Window;
 import android.view.WindowManager;
@@ -20,6 +22,8 @@ import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.TcpClient;
+import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.UdpClient;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.Banner;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.patient.PatientLeft;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.scene.SceneLeft;
@@ -27,28 +31,56 @@ import mil.afrl.discoverylab.sate13.rippleandroid.fragment.scene.SceneLeft;
 
 public class MainActivity extends Activity implements ActivityClickInterface, LocationSource.OnLocationChangedListener {
 
+    /*Inter-Fragment MGMT*/
     private boolean isPatient = true;
+    private Banner banner;
+    private PatientLeft patLeft;
 
     /*Mapping Vars*/
     private GoogleMap map;
     private LocationManager lm;
+
+    /*Network Listeners*/
+    private TcpClient TCPC = new TcpClient();
+    private UdpClient UDPC = new UdpClient();
+
+    /*Network Clients Message Handler*/
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+
+            if (msg.what == Common.NW_MSG_TYPES.TCP_STREAM.getVal()) {
+
+            } else if (msg.what == Common.NW_MSG_TYPES.UDP_BANNER.getVal()) {
+                //Banner.update((String) msg.obj);
+            } else {
+                Log.e(Common.LOG_TAG, "Unknown Network Message type: " + msg.what);
+            }
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                             WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        Banner banner = new Banner();
+        banner = new Banner();
         transaction.add(R.id.top_frag, banner);
-
         transaction.commit();
 
+        patLeft = (PatientLeft) fragmentManager.findFragmentById(R.id.bottomleft);
+
         initMap();
+
+        /*Start the Network Listener Threads on a well known Server address & port pair*/
+        //TCPC.connect(Common.SERVER_HOSTNAME, Common.SERVER_TCP_PORT);
+        //UDPC.connect(Common.SERVER_HOSTNAME, Common.SERVER_UDP_PORT);
     }
 
     private void initMap() {
@@ -61,7 +93,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         String provider = lm.getBestProvider(criteria, true);
         Location location = lm.getLastKnownLocation(provider);
 
-        if(location!=null){
+        if (location != null) {
             onLocationChanged(location);
         }
     }
@@ -81,7 +113,6 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         Fragment fragment = (isPatient) ? new SceneLeft() : new PatientLeft();
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-
         transaction.add(R.id.bottomleft, fragment);
         transaction.commit();
 

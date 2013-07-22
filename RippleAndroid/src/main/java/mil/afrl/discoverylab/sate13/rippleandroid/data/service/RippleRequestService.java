@@ -28,7 +28,7 @@ public final class RippleRequestService extends RequestService {
         switch (requestType) {
             case RippleRequestFactory.REQUEST_TYPE_PATIENT_LIST:
                 return new PatientListOperation();
-            case RippleRequestFactory.REQUEST_TYPE_VITALS_LIST:
+            case RippleRequestFactory.REQUEST_TYPE_VITAL_LIST:
                 return new VitalsListOperation();
         }
         return null;

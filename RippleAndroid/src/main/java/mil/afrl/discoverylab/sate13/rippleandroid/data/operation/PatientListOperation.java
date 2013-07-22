@@ -37,7 +37,7 @@ public final class PatientListOperation implements Operation {
         PatientList = PatientListJsonFactory.parseResult(result.body);
 
         // Clear the table
-        context.getContentResolver().delete(RippleContent.DbPatient.CONTENT_URI, null, null);
+        context.getContentResolver().delete(RippleContent.db_patient.CONTENT_URI, null, null);
 
         // Adds the Patients in the database
         int PatientListSize = PatientList.size();
@@ -45,7 +45,7 @@ public final class PatientListOperation implements Operation {
             ArrayList<ContentProviderOperation> operationList = new ArrayList<ContentProviderOperation>();
 
             for (int i = 0; i < PatientListSize; i++) {
-                operationList.add(ContentProviderOperation.newInsert(RippleContent.DbPatient.CONTENT_URI)
+                operationList.add(ContentProviderOperation.newInsert(RippleContent.db_patient.CONTENT_URI)
                         .withValues(PatientList.get(i).toContentValues()).build());
             }
 

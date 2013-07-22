@@ -12,21 +12,21 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.config.JSONTag;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vitals;
+import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
 
 /**
  * Created by burt on 7/3/13.
  */
-public final class VitalsListJsonFactory {
-    private static final String TAG = VitalsListJsonFactory.class.getSimpleName();
+public final class VitalListJsonFactory {
+    private static final String TAG = VitalListJsonFactory.class.getSimpleName();
 
-    private VitalsListJsonFactory() {
+    private VitalListJsonFactory() {
         // No public constructor
     }
 
     public static Bundle parseResult(String wsResponse) throws DataException {
-        ArrayList<Vitals> VitalsList = new ArrayList<Vitals>();
+        ArrayList<Vital> vitalList = new ArrayList<Vital>();
 
         try {
             JSONObject parser = new JSONObject(wsResponse);
@@ -35,16 +35,17 @@ public final class VitalsListJsonFactory {
             int size = jsonVITALSArray.length();
             for (int i = 0; i < size; i++) {
                 JSONObject jsonVITALS = jsonVITALSArray.getJSONObject(i);
-                Vitals vitals = new Vitals();
+                Vital vital = new Vital();
 
-                vitals.vid = jsonVITALS.getInt(JSONTag.VITALS_VID);
-                vitals.ip_addr = jsonVITALS.getInt(JSONTag.VITALS_IP_ADDR);
-                vitals.timestamp = jsonVITALS.getInt(JSONTag.VITALS_TIMESTAMP);
-                vitals.sensor_type = jsonVITALS.getInt(JSONTag.VITALS_SENSOR_TYPE);
-                vitals.value_type = jsonVITALS.getInt(JSONTag.VITALS_VALUE_TYPE);
-                vitals.value = jsonVITALS.getInt(JSONTag.VITALS_VALUE);
+                vital.vid = jsonVITALS.getInt(JSONTag.VITALS_VID);
+                vital.pid = jsonVITALS.getInt(JSONTag.VITALS_PID);
+                vital.server_timestamp = jsonVITALS.getString(JSONTag.VITALS_SERVER_TIMESTAMP);
+                vital.sensor_timestamp = jsonVITALS.getInt(JSONTag.VITALS_SENSOR_TIMESTAMP);
+                vital.sensor_type = jsonVITALS.getInt(JSONTag.VITALS_SENSOR_TYPE);
+                vital.value_type = jsonVITALS.getInt(JSONTag.VITALS_VALUE_TYPE);
+                vital.value = jsonVITALS.getInt(JSONTag.VITALS_VALUE);
 
-                VitalsList.add(vitals);
+                vitalList.add(vital);
             }
         } catch (JSONException e) {
             Log.e(TAG, "JSONException", e);
@@ -52,7 +53,7 @@ public final class VitalsListJsonFactory {
         }
 
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(RippleRequestFactory.BUNDLE_EXTRA_VITALS_LIST, VitalsList);
+        bundle.putParcelableArrayList(RippleRequestFactory.BUNDLE_EXTRA_VITAL_LIST, vitalList);
         return bundle;
     }
 

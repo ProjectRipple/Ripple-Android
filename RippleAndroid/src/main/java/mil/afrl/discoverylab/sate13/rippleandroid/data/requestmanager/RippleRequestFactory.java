@@ -13,10 +13,10 @@ public final class RippleRequestFactory {
 
     // Request types
     public static final int REQUEST_TYPE_PATIENT_LIST = 0;
-    public static final int REQUEST_TYPE_VITALS_LIST = 1;
+    public static final int REQUEST_TYPE_VITAL_LIST = 1;
 
     // Response data
-    public static final String BUNDLE_EXTRA_VITALS_LIST = Common.PACKAGE_NAMESPACE + ".extra.vitalsList";
+    public static final String BUNDLE_EXTRA_VITAL_LIST = Common.PACKAGE_NAMESPACE + ".extra.vitalList";
     public static final String BUNDLE_EXTRA_ERROR_MESSAGE = Common.PACKAGE_NAMESPACE + ".extra.errorMessage";
 
     private RippleRequestFactory() {
@@ -37,8 +37,8 @@ public final class RippleRequestFactory {
      *
      * @return The request.
      */
-    public static Request getVitalsListRequest() {
-        return new Request(REQUEST_TYPE_VITALS_LIST);
+    public static Request getVitalListRequest() {
+        return new Request(REQUEST_TYPE_VITAL_LIST);
     }
 
 }

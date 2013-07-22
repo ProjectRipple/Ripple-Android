@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vitals;
+import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestManager;
 
@@ -216,7 +216,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     }
 
     private void callVitalsListWS() {
-        Request request = RippleRequestFactory.getVitalsListRequest();
+        Request request = RippleRequestFactory.getVitalListRequest();
         mRequestManager.execute(request, this);
         mRequestList.add(request);
     }
@@ -239,12 +239,12 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
                 if (mRequestList.contains(request)) {
                     mRequestList.remove(request);
 
-                    ArrayList<Vitals> vitalsList = resultData.getParcelableArrayList(RippleRequestFactory.BUNDLE_EXTRA_VITALS_LIST);
+                    ArrayList<Vital> vitalList = resultData.getParcelableArrayList(RippleRequestFactory.BUNDLE_EXTRA_VITAL_LIST);
 
                     int cnt = 0;
-                    for (Vitals vital : vitalsList) {
+                    for (Vital vital : vitalList) {
                         mCurrentSeries.add(
-                                ((double) vital.timestamp) / 1000.0,
+                                ((double) vital.sensor_timestamp) / 1000.0,
                                 ((double) vital.value) / 10000000.0);
                         //Log.i(Common.LOG_TAG, "Added point: (" + (vital.timestamp / 1000.0) + ", " + (vital.value / 10000000.0) + ")");
                         mChartView.repaint();

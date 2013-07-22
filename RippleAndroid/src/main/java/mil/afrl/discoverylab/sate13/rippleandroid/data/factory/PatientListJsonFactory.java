@@ -36,12 +36,13 @@ public final class PatientListJsonFactory {
                 Patient Patient = new Patient();
 
                 Patient.pid = jsonPatient.getInt(JSONTag.PATIENT_PID);
+                Patient.ip_addr = jsonPatient.getString(JSONTag.PATIENT_IP_ADDR);
                 Patient.first_name = jsonPatient.getString(JSONTag.PATIENT_FIRST_NAME);
                 Patient.last_name = jsonPatient.getString(JSONTag.PATIENT_LAST_NAME);
-                Patient.ssn = jsonPatient.getInt(JSONTag.PATIENT_SSN);
-                Patient.birthday = jsonPatient.getString(JSONTag.PATIENT_BIRTHDAY);
-                Patient.sex = jsonPatient.getBoolean(JSONTag.PATIENT_SEX);
-                Patient.nbc_contamination = jsonPatient.getBoolean(JSONTag.PATIENT_NBC_CONTAMINATION);
+                Patient.ssn = jsonPatient.getString(JSONTag.PATIENT_SSN);
+                Patient.dob = jsonPatient.getString(JSONTag.PATIENT_DOB);
+                Patient.sex = jsonPatient.getString(JSONTag.PATIENT_SEX);
+                Patient.nbc_contamination = jsonPatient.getString(JSONTag.PATIENT_NBC_CONTAMINATION);
                 Patient.type = jsonPatient.getString(JSONTag.PATIENT_TYPE);
 
                 PatientList.add(Patient);
