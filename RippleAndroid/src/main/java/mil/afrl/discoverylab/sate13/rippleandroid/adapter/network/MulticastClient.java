@@ -139,20 +139,22 @@ public class MulticastClient {
     private class ListenThread implements Runnable
     {
 
-
-        private byte[] dataBuffer;
-
+        // constants
         private static final int BUF_SIZE = 1024;
         private static final int MCAST_MSG_WHAT = 24;
+        // buffer for receiving data
+        private byte[] dataBuffer;
+        // packet for receiving data
         private DatagramPacket receivePacket;
 
         @Override
         public void run() {
 
+            // create buffer and packet objects for receiving
             this.dataBuffer = new byte[BUF_SIZE];
-
             this.receivePacket = new DatagramPacket(this.dataBuffer, this.dataBuffer.length);
 
+            // listen flag is good and close was not called
             while(listening && socket != null)
             {
                 try
@@ -165,6 +167,7 @@ public class MulticastClient {
                     // wait for message
                     socket.receive(this.receivePacket);
 
+                    // Send input to all listening handlers
                     synchronized (listeners)
                     {
                         for(Handler h : listeners)
