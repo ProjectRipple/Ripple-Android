@@ -2,10 +2,6 @@ package mil.afrl.discoverylab.sate13.rippleandroid;
 
 import android.app.Application;
 import android.content.res.Configuration;
-import android.util.Log;
-
-import mil.afrl.discoverylab.sate13.rippleandroid.Parse.CSVParser;
-import mil.afrl.discoverylab.sate13.rippleandroid.adapter.DatabaseAdapter;
 
 /**
  * RippleApplication object initializes the DatabaseAdapter singleton and stores global variables
@@ -23,11 +19,11 @@ public class RippleApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        DatabaseAdapter.getInstance(this.getApplicationContext());
+        /*DatabaseAdapter.getInstance(this.getApplicationContext());
         if (DatabaseAdapter.getInstance().isTableEmpty(DatabaseAdapter.TableType.VITAL.name())) {
             Log.d(Common.LOG_TAG, "Vitals table is empty, parsing CSV file and inserting data.");
             CSVParser.initializeCSVParser(this.getApplicationContext());
-        }
+        }*/
     }
 
     @Override
