@@ -18,7 +18,7 @@ public final class Common {
     public static final String PACKAGE_NAMESPACE = "mil.afrl.discoverylab.sate13.rippleandroid";
     public static final int ECG_CSV = R.raw.model;
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    public static final SimpleDateFormat datetimeFormat = new SimpleDateFormat(DATE_TIME_FORMAT);
+    public static final SimpleDateFormat SIMPLE_DATETIME_FORMAT = new SimpleDateFormat(DATE_TIME_FORMAT);
 
     public enum NW_MSG_TYPES {
         UDP_BANNER_VITAL(true, "vitals"), TCP_STREAM_VITAL(false, "vitals"), UNKNOWN(false, "");

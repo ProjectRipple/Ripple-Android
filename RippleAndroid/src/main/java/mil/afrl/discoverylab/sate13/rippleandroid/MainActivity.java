@@ -22,8 +22,6 @@ import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.TcpClient;
-import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.UdpClient;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.Banner;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.patient.PatientLeft;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.scene.SceneLeft;
@@ -39,10 +37,6 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
     /*Mapping Vars*/
     private GoogleMap map;
     private LocationManager lm;
-
-    /*Network Listeners*/
-    private TcpClient TCPC = new TcpClient();
-    private UdpClient UDPC = new UdpClient();
 
     /*Network Clients Message Handler*/
     private Handler handler = new Handler() {
@@ -77,10 +71,6 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         patLeft = (PatientLeft) fragmentManager.findFragmentById(R.id.bottomleft);
 
         initMap();
-
-        /*Start the Network Listener Threads on a well known Server address & port pair*/
-        //TCPC.connect(Common.SERVER_HOSTNAME, Common.SERVER_TCP_PORT);
-        //UDPC.connect(Common.SERVER_HOSTNAME, Common.SERVER_UDP_PORT);
     }
 
     private void initMap() {
