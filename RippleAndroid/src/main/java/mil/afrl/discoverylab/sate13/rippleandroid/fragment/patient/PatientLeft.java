@@ -6,6 +6,8 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,8 @@ import android.widget.TextView;
 
 import com.foxykeep.datadroid.requestmanager.Request;
 import com.foxykeep.datadroid.requestmanager.RequestManager;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -29,6 +33,8 @@ import java.util.ArrayList;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
+import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.TcpClient;
+import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Patient;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestManager;
@@ -72,6 +78,23 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     private int currentPatient;
     private TextView patientName;
 
+    Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
+
+    /*Network Listeners*/
+    private TcpClient TCPC = new TcpClient();
+
+    /*Network Clients Message Handler*/
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            try {
+                gson.fromJson((String) msg.obj, Patient.class);
+            } catch (Exception e) {
+                Log.e(Common.LOG_TAG, e.getMessage());
+            }
+        }
+    };
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -80,7 +103,6 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         outState.putSerializable("renderer", mRenderer);
         outState.putSerializable("current_series", mCurrentSeries);
         outState.putSerializable("current_renderer", mCurrentRenderer);
-
         outState.putParcelableArrayList(SAVED_STATE_REQUEST_LIST, mRequestList);
     }
 
