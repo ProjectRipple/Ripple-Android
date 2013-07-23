@@ -27,6 +27,20 @@ public final class Common {
 
     public static final SimpleDateFormat SIMPLE_DATETIME_FORMAT = new SimpleDateFormat(DATE_TIME_FORMAT);
 
+    // Vital constants
+    public enum VITAL_TYPES {
+        VITAL_PULSE(0), VITAL_ECG(1), VITAL_TEMPERATURE(2), VITAL_BLOOD_OX(3);
+        private final int id;
+
+        VITAL_TYPES(int id) {
+            this.id = id;
+        }
+
+        public int getValue() {
+            return id;
+        }
+    };
+
     public enum NW_MSG_TYPES {
         UDP_BANNER_VITAL(true, "vitals"), TCP_STREAM_VITAL(false, "vitals"), UNKNOWN(false, "");
 

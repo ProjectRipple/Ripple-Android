@@ -15,8 +15,11 @@ public class Patient {
     private int rpm;
     private int o2;
     private int pid;
-    private String fName, lName, ssn, sex, type, ipaddr;
+
+    private int temperature;
+
     private Boolean nbcContam;
+    private String fName, lName, ssn, sex, type, ipaddr;
 
     public Patient(){
         this.nbcContam = false;
@@ -28,6 +31,13 @@ public class Patient {
 
     public void setPid(int pid) {
         this.pid = pid;
+    }
+    public int getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(int temperature) {
+        this.temperature = temperature;
     }
 
     public Boolean getNbcContam() {
