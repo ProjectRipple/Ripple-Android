@@ -222,4 +222,12 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     public void setPatient(int pid) {
         this.curPatient = pid;
     }
+
+    public void setPatient(int id)
+    {
+        this.currentPatient = id;
+        // TODO: may need settext on UI thread
+        this.patientName.setText("Dummy Patient(" + this.currentPatient + ")");
+    }
+
 }

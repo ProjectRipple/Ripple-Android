@@ -70,7 +70,7 @@ public class MulticastClient {
             if(this.socket == null)
             {
                 // Create new socket
-                this.socket = new MulticastSocket();
+                this.socket = new MulticastSocket(port);
             }
 
             this.socket.joinGroup(new InetSocketAddress(group, port), NetworkInterface.getByName(NI_NAME));
@@ -141,7 +141,6 @@ public class MulticastClient {
 
         // constants
         private static final int BUF_SIZE = 1024;
-        private static final int MCAST_MSG_WHAT = 24;
         // buffer for receiving data
         private byte[] dataBuffer;
         // packet for receiving data
@@ -172,7 +171,7 @@ public class MulticastClient {
                     {
                         for(Handler h : listeners)
                         {
-                            h.obtainMessage(MCAST_MSG_WHAT, new String(this.receivePacket.getData(), 0, this.receivePacket.getData().length)).sendToTarget();
+                            h.obtainMessage(Common.RIPPLE_MSG_MCAST, new String(this.receivePacket.getData(), 0, this.receivePacket.getLength())).sendToTarget();
                         }
                     }
 
