@@ -3,6 +3,9 @@ package mil.afrl.discoverylab.sate13.rippleandroid.adapter.network;
 import android.os.Handler;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -28,6 +31,7 @@ public class UdpClient {
     private DatagramSocket socket = null;
     private Thread listenTread = null;
     private List<Handler> listeners = new ArrayList<Handler>();
+    private static Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
     //private Thread messageHandlerThread = null;
     //private Queue<String> messageQueue = new LinkedList<String>();
     //private static int queueLimit = 500;
@@ -134,12 +138,22 @@ public class UdpClient {
                         /*synchronized(messageQueue) {
                             messageQueue.offer(input);
                         }*/
-                        synchronized (listeners) {
-                            if (input != null) {
-                                for (Handler l : listeners) {
-                                    //l.onMessage(UdpClient.this, input);
-                                    l.sendMessage(l.obtainMessage(0, input));
+                        if (input != null) {
+                            try {
+
+
+                                String rootTag = input.substring(input.indexOf("{") + 1,
+                                        input.indexOf(":") - 1);
+
+
+                                synchronized (listeners) {
+                                    for (Handler l : listeners) {
+                                        //l.onMessage(UdpClient.this, input);
+                                        l.sendMessage(l.obtainMessage(0, input));
+                                    }
                                 }
+                            } catch (Exception e) {
+                                Log.e(Common.LOG_TAG, "Invalid JSON: " + input);
                             }
                         }
 
@@ -202,7 +216,7 @@ public class UdpClient {
             byte[] buf = msg.getBytes();
 
 			/*
-			 * Create UDP-packet with data & destination(url+port)
+             * Create UDP-packet with data & destination(url+port)
 			 */
             // DatagramPacket packet = new DatagramPacket(buf, buf.length,
             // this.serverAddr, this.port);

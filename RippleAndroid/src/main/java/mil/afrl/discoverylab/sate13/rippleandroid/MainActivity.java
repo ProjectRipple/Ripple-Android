@@ -23,8 +23,6 @@ import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.TcpClient;
-import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.UdpClient;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.Banner;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.patient.PatientLeft;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.scene.SceneLeft;
@@ -41,18 +39,14 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
     private GoogleMap map;
     private LocationManager lm;
 
-    /*Network Listeners*/
-    private TcpClient TCPC = new TcpClient();
-    private UdpClient UDPC = new UdpClient();
-
     /*Network Clients Message Handler*/
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
 
-            if (msg.what == Common.NW_MSG_TYPES.TCP_STREAM.getVal()) {
+            if (msg.what == Common.NW_MSG_TYPES.UDP_BANNER_VITAL.ordinal()) {
 
-            } else if (msg.what == Common.NW_MSG_TYPES.UDP_BANNER.getVal()) {
+            } else if (msg.what == Common.NW_MSG_TYPES.TCP_STREAM_VITAL.ordinal()) {
                 //Banner.update((String) msg.obj);
             } else {
                 Log.e(Common.LOG_TAG, "Unknown Network Message type: " + msg.what);
@@ -78,10 +72,6 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         patLeft = (PatientLeft) fragmentManager.findFragmentById(R.id.bottomleft);
 
         initMap();
-
-        /*Start the Network Listener Threads on a well known Server address & port pair*/
-        //TCPC.connect(Common.SERVER_HOSTNAME, Common.SERVER_TCP_PORT);
-        //UDPC.connect(Common.SERVER_HOSTNAME, Common.SERVER_UDP_PORT);
     }
 
     private void initMap() {
