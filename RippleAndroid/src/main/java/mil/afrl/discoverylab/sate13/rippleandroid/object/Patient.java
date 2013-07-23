@@ -9,12 +9,25 @@ import android.graphics.Color;
  */
 public class Patient {
 
-    private int age, color, bpm, rpm, o2;
+    private int age;
+    private int color;
+    private int bpm;
+    private int rpm;
+    private int o2;
+    private int pid;
     private String fName, lName, ssn, sex, type, ipaddr;
     private Boolean nbcContam;
 
     public Patient(){
         this.nbcContam = false;
+    }
+
+    public int getPid() {
+        return pid;
+    }
+
+    public void setPid(int pid) {
+        this.pid = pid;
     }
 
     public Boolean getNbcContam() {

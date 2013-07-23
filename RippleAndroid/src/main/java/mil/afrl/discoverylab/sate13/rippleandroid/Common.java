@@ -19,6 +19,13 @@ public final class Common {
     public static final int    ECG_CSV       = R.raw.model;
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final SimpleDateFormat datetimeFormat = new SimpleDateFormat(DATE_TIME_FORMAT);
+    // multicast constants
+    public static final String MCAST_GROUP = "ff02::1";
+    public static final int MCAST_PORT = 1222;
+    public static final String MCAST_INTERFACE = "wlan0";
+    // message constants
+    public static final int RIPPLE_MSG_MCAST = 22;
+
 
     public enum NW_MSG_TYPES {
         UDP_BANNER(0), TCP_STREAM(1);
