@@ -45,6 +45,9 @@ public class Banner extends Fragment {
             v.setMinimumHeight(100);
             v.setMinimumWidth(200);
             tableRow.addView(v);
+            if(mContext instanceof View.OnClickListener){
+                v.setOnClickListener((View.OnClickListener)this.mContext);
+            }
         }
 //        tableLayout.addView(tableRow, new TableLayout.LayoutParams());
         return view;

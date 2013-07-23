@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.foxykeep.datadroid.requestmanager.Request;
 import com.foxykeep.datadroid.requestmanager.RequestManager;
@@ -75,6 +76,8 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     private GraphicalView mChartView;
 
     private View view;
+    private int currentPatient;
+    private TextView patientName;
 
     Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
 
@@ -192,6 +195,8 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         /*Start the Network Listener Threads on a well known Server address & port pair*/
         TCPC.connect(WSConfig.ROOT_URL, WSConfig.SERVER_TCP_PORT);
         TCPC.addTcpListener(handler);
+
+        this.patientName = (TextView) view.findViewById(R.id.name_value_tv);
 
         return view;
     }
