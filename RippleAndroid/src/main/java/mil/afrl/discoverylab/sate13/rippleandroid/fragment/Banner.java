@@ -23,6 +23,7 @@ import com.google.gson.JsonObject;
 import java.net.Inet6Address;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -45,6 +46,8 @@ import static mil.afrl.discoverylab.sate13.rippleandroid.Common.VITAL_TYPES.VITA
 public class Banner extends Fragment {
 
     private static final int TIMER_PERIOD_MS = 5000;
+    private static final String PATIENT_LIST = "patient_list";
+    private static final String SAVE_STATE = "save_state";
 
     // TODO: save patient list after rotation
     private List<Patient> mPatients;
@@ -76,22 +79,23 @@ public class Banner extends Fragment {
 
                     boolean patientFound = false;
                     Patient curPatient = null;
-                    for (Patient p : mPatients) {
-                        if (p.getPid() == patientId) {
-                            patientFound = true;
-                            curPatient = p;
-                            break;
+                    synchronized (mPatients) {
+                        for (Patient p : mPatients) {
+                            if (p.getPid() == patientId) {
+                                patientFound = true;
+                                curPatient = p;
+                                break;
+                            }
+                        }
+                        if (!patientFound) {
+                            // Add patient
+                            curPatient = new Patient();
+                            curPatient.setPid(patientId);
+                            mPatients.add(curPatient);
+                            curPatient.setColor(Color.CYAN);
+                            createPatientView(curPatient);
                         }
                     }
-                    if (!patientFound) {
-                        // Add patient
-                        curPatient = new Patient();
-                        curPatient.setPid(patientId);
-                        mPatients.add(curPatient);
-                        curPatient.setColor(Color.CYAN);
-                        createPatientView(curPatient);
-                    }
-
                     if (curPatient != null) {
                         for (JsonElement j : vitals) {
 
@@ -123,10 +127,16 @@ public class Banner extends Fragment {
         }
     };
     private Timer autoUpdateTimer;
+    private Bundle savedState;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup viewgroup, Bundle bundle) {
-        super.onCreate(bundle);
+    public View onCreateView(LayoutInflater inflater, ViewGroup viewgroup, Bundle savedInstanceState) {
+        if(viewgroup == null)
+        {
+            // Fragment being re-created from a Bundle & won't be shown
+            return null;
+        }
+        super.onCreateView(inflater, viewgroup, savedInstanceState);
         setRetainInstance(true);
 
         View view = inflater.inflate(R.layout.banner, viewgroup, false);
@@ -147,14 +157,32 @@ public class Banner extends Fragment {
             }
         }, 0, TIMER_PERIOD_MS);
 
-        if(this.mPatients == null){
+        /* If the Fragment was destroyed inbetween (screen rotation), we need to recover the savedState first */
+        /* However, if it was not, it stays in the instance from the last onDestroyView() and we don't want to overwrite it */
+        if (savedInstanceState != null && savedState == null) {
+            Log.d(Common.LOG_TAG, "Banner: restoring state from saved instance");
+            savedState = savedInstanceState.getBundle(SAVE_STATE);
+        }
+
+        if (savedState != null && savedState.containsKey(PATIENT_LIST)) {
+            Log.d(Common.LOG_TAG, "Banner: restoring from saved state");
+
+            this.mPatients = new ArrayList<Patient>(Arrays.asList((Patient[]) savedState.getParcelableArray(PATIENT_LIST)));
+            Log.d(Common.LOG_TAG, this.mPatients.size()+"");
+
+        }
+        savedState = null;
+
+
+        if (this.mPatients == null) {
             Log.d(Common.LOG_TAG, "Creating new patient list");
             mPatients = new ArrayList<Patient>();
         } else {
-            for(Patient p : this.mPatients){
+            for (Patient p : this.mPatients) {
                 this.createPatientView(p);
             }
         }
+        Log.d(Common.LOG_TAG, this.mPatients.size()+"");
 
 //        TableRow tableRow = (TableRow) view.findViewById(R.id.bannerTableRow);
 //        //This is only here for debugging purposes till we start generating patients.
@@ -172,6 +200,14 @@ public class Banner extends Fragment {
 //        }
 //        tableLayout.addView(tableRow, new TableLayout.LayoutParams());
 
+
+        return view;
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         if (this.multicastClient == null) {
             this.multicastClient = new MulticastClient();
         }
@@ -181,25 +217,11 @@ public class Banner extends Fragment {
         } catch (UnknownHostException e) {
             Log.e(Common.LOG_TAG, "Unknown Host " + Common.MCAST_GROUP, e);
         }
-
-        return view;
     }
 
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//
-//        outState.put
-//    }
-
-//    private Bundle saveState(){
-//        Bundle state = new Bundle();
-//
-//    }
-
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onStop() {
+        super.onStop();
         if (this.multicastClient != null) {
             this.multicastClient.removeHandler(this.mHandler);
             try {
@@ -208,12 +230,45 @@ public class Banner extends Fragment {
                 Log.e(Common.LOG_TAG, "Unknown Host " + Common.MCAST_GROUP, e);
             }
         }
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.d(Common.LOG_TAG, "Banner: saving instance");
+
+        outState.putBundle(SAVE_STATE, this.savedState != null ? this.savedState : saveState());
+    }
+
+    private Bundle saveState() {
+        Log.d(Common.LOG_TAG, "Banner: saving state");
+        Bundle state = new Bundle();
+        synchronized (this.mPatients) {
+            state.putParcelableArray(PATIENT_LIST, this.mPatients.toArray(new Patient[this.mPatients.size()]));
+        }
+        return state;
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+//        if (this.multicastClient != null) {
+//            this.multicastClient.removeHandler(this.mHandler);
+//            try {
+//                this.multicastClient.leaveGroup(Inet6Address.getByName(Common.MCAST_GROUP), Common.MCAST_PORT);
+//            } catch (UnknownHostException e) {
+//                Log.e(Common.LOG_TAG, "Unknown Host " + Common.MCAST_GROUP, e);
+//            }
+//        }
         // Stop timer
-        if(this.autoUpdateTimer != null)
-        {
+        if (this.autoUpdateTimer != null) {
             this.autoUpdateTimer.cancel();
             this.autoUpdateTimer = null;
         }
+
+        this.savedState = this.saveState();
 
     }
 

@@ -64,10 +64,17 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
+        if(savedInstanceState == null)
+        {
+            Log.d(Common.LOG_TAG, "MainActivity: Adding Banner fragment");
+            banner = new Banner();
+            transaction.add(R.id.top_frag, banner);
+            transaction.commit();
+        } else {
+            banner = (Banner)fragmentManager.findFragmentById(R.id.top_frag);
+        }
 
-        banner = new Banner();
-        transaction.add(R.id.top_frag, banner);
-        transaction.commit();
+        Log.d(Common.LOG_TAG, "MainActivity: banner is null? " + (banner == null));
 
         patLeft = (PatientLeft) fragmentManager.findFragmentById(R.id.bottomleft);
 
