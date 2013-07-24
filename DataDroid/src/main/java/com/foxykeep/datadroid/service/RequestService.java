@@ -8,17 +8,18 @@
 
 package com.foxykeep.datadroid.service;
 
+import android.content.Context;
+import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
+import android.os.Bundle;
+import android.os.ResultReceiver;
+
 import com.foxykeep.datadroid.exception.ConnectionException;
 import com.foxykeep.datadroid.exception.CustomRequestException;
 import com.foxykeep.datadroid.exception.DataException;
 import com.foxykeep.datadroid.requestmanager.Request;
 import com.foxykeep.datadroid.requestmanager.RequestManager;
 import com.foxykeep.datadroid.util.DataDroidLog;
-
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.ResultReceiver;
 
 /**
  * This class is the superclass of all the worker services you'll create.
@@ -134,7 +135,7 @@ public abstract class RequestService extends MultiThreadedIntentService {
     }
 
     @Override
-    protected final void onHandleIntent(Intent intent) {
+    protected final void onHandleIntent(Intent intent) throws SQLiteConstraintException {
         Request request = intent.getParcelableExtra(INTENT_EXTRA_REQUEST);
         request.setClassLoader(getClassLoader());
 
