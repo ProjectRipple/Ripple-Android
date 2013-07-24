@@ -49,7 +49,6 @@ public class Banner extends Fragment {
     private static final String PATIENT_LIST = "patient_list";
     private static final String SAVE_STATE = "save_state";
 
-    // TODO: save patient list after rotation
     private List<Patient> mPatients;
     private Context mContext;
     private MulticastClient multicastClient;
