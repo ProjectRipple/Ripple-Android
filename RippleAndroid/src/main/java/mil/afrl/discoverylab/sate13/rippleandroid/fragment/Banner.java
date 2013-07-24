@@ -24,6 +24,8 @@ import java.net.Inet6Address;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.PatientView;
@@ -42,8 +44,10 @@ import static mil.afrl.discoverylab.sate13.rippleandroid.Common.VITAL_TYPES.VITA
  */
 public class Banner extends Fragment {
 
+    private static final int TIMER_PERIOD_MS = 5000;
+
     // TODO: save patient list after rotation
-    List<Patient> mPatients;
+    private List<Patient> mPatients;
     private Context mContext;
     private MulticastClient multicastClient;
 
@@ -106,18 +110,19 @@ public class Banner extends Fragment {
                     }
                     // TODO: limit redraws?
                     // get view to redraw
-                    for(int i = 0; i < tableRow.getVirtualChildCount(); i++){
-                        PatientView p = (PatientView) tableRow.getVirtualChildAt(i);
-                        if(p.getPid() == patientId)
-                        {
-                            p.postInvalidate();
-                        }
-                    }
+//                    for(int i = 0; i < tableRow.getVirtualChildCount(); i++){
+//                        PatientView p = (PatientView) tableRow.getVirtualChildAt(i);
+//                        if(p.getPid() == patientId)
+//                        {
+//                            p.postInvalidate();
+//                        }
+//                    }
 
                     break;
             }
         }
     };
+    private Timer autoUpdateTimer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewgroup, Bundle bundle) {
@@ -127,6 +132,20 @@ public class Banner extends Fragment {
         View view = inflater.inflate(R.layout.banner, viewgroup, false);
 //        TableLayout tableLayout = (TableLayout) view.findViewById(R.id.bannerTableLayout);
         this.tableRow = (TableRow) view.findViewById(R.id.bannerTableRow);
+
+        // set timer for every 5 seconds
+        this.autoUpdateTimer = new Timer();
+        this.autoUpdateTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                // Update views
+                for (int i = 0; i < tableRow.getVirtualChildCount(); i++) {
+                    PatientView p = (PatientView) tableRow.getVirtualChildAt(i);
+                    p.postInvalidate();
+
+                }
+            }
+        }, 0, TIMER_PERIOD_MS);
 
         if(this.mPatients == null){
             Log.d(Common.LOG_TAG, "Creating new patient list");
@@ -166,6 +185,18 @@ public class Banner extends Fragment {
         return view;
     }
 
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        super.onSaveInstanceState(outState);
+//
+//        outState.put
+//    }
+
+//    private Bundle saveState(){
+//        Bundle state = new Bundle();
+//
+//    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -176,6 +207,12 @@ public class Banner extends Fragment {
             } catch (UnknownHostException e) {
                 Log.e(Common.LOG_TAG, "Unknown Host " + Common.MCAST_GROUP, e);
             }
+        }
+        // Stop timer
+        if(this.autoUpdateTimer != null)
+        {
+            this.autoUpdateTimer.cancel();
+            this.autoUpdateTimer = null;
         }
 
     }
