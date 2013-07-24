@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.util.Log;
 import android.view.View;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.object.Patient;
@@ -41,7 +42,7 @@ public class PatientView extends View {
     public int getPid()
     {
         //TODO: return actual id
-        return this.mRowOrder;
+        return this.mPatient.getPid();
     }
 
 
@@ -82,7 +83,7 @@ public class PatientView extends View {
     @Override
     protected void onDraw(Canvas canvas){
         super.onDraw(canvas);
-
+//        Log.d(Common.LOG_TAG, "Patient view draw");
         statHeight = (getHeight()-10)/3;
         statWidth = (int) (getWidth()*.6);
 
