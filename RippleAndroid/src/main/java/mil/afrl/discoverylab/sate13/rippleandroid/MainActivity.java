@@ -66,15 +66,15 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if(savedInstanceState == null)
         {
-            Log.d(Common.LOG_TAG, "MainActivity: Adding Banner fragment");
+            // First run of activity, need to add banner
             banner = new Banner();
             transaction.add(R.id.top_frag, banner);
             transaction.commit();
         } else {
+            // Banner already exists from first run, just need to grab it.
             banner = (Banner)fragmentManager.findFragmentById(R.id.top_frag);
         }
 
-        Log.d(Common.LOG_TAG, "MainActivity: banner is null? " + (banner == null));
 
         patLeft = (PatientLeft) fragmentManager.findFragmentById(R.id.bottomleft);
 

@@ -68,9 +68,8 @@ public class Banner extends Fragment {
                         // No patients to update
                         return;
                     }
-                    Log.d(Common.LOG_TAG, "Banner Handler" + msg.obj);
-                    // TODO: parse message text
-                    // TODO: request patient info if ID not found(in background of course)
+//                    Log.d(Common.LOG_TAG, "Banner Handler" + msg.obj);
+
 
                     JsonObject json = gson.fromJson(msg.obj.toString(), JsonObject.class);
                     int patientId = json.getAsJsonPrimitive("pid").getAsInt();
@@ -112,15 +111,7 @@ public class Banner extends Fragment {
                             }
                         }
                     }
-                    // TODO: limit redraws?
-                    // get view to redraw
-//                    for(int i = 0; i < tableRow.getVirtualChildCount(); i++){
-//                        PatientView p = (PatientView) tableRow.getVirtualChildAt(i);
-//                        if(p.getPid() == patientId)
-//                        {
-//                            p.postInvalidate();
-//                        }
-//                    }
+
 
                     break;
             }
@@ -140,7 +131,7 @@ public class Banner extends Fragment {
         setRetainInstance(true);
 
         View view = inflater.inflate(R.layout.banner, viewgroup, false);
-//        TableLayout tableLayout = (TableLayout) view.findViewById(R.id.bannerTableLayout);
+
         this.tableRow = (TableRow) view.findViewById(R.id.bannerTableRow);
 
         // set timer for every 5 seconds
@@ -160,46 +151,29 @@ public class Banner extends Fragment {
         /* If the Fragment was destroyed inbetween (screen rotation), we need to recover the savedState first */
         /* However, if it was not, it stays in the instance from the last onDestroyView() and we don't want to overwrite it */
         if (savedInstanceState != null && savedState == null) {
-            Log.d(Common.LOG_TAG, "Banner: restoring state from saved instance");
+//            Log.d(Common.LOG_TAG, "Banner: restoring state from saved instance");
             savedState = savedInstanceState.getBundle(SAVE_STATE);
         }
 
         if (savedState != null && savedState.containsKey(PATIENT_LIST)) {
-            Log.d(Common.LOG_TAG, "Banner: restoring from saved state");
+//            Log.d(Common.LOG_TAG, "Banner: restoring from saved state");
 
             this.mPatients = new ArrayList<Patient>(Arrays.asList((Patient[]) savedState.getParcelableArray(PATIENT_LIST)));
-            Log.d(Common.LOG_TAG, this.mPatients.size()+"");
 
         }
         savedState = null;
 
 
         if (this.mPatients == null) {
-            Log.d(Common.LOG_TAG, "Creating new patient list");
+//            Log.d(Common.LOG_TAG, "Creating new patient list");
             mPatients = new ArrayList<Patient>();
         } else {
+            // recreate views for patients
             for (Patient p : this.mPatients) {
                 this.createPatientView(p);
             }
         }
         Log.d(Common.LOG_TAG, this.mPatients.size()+"");
-
-//        TableRow tableRow = (TableRow) view.findViewById(R.id.bannerTableRow);
-//        //This is only here for debugging purposes till we start generating patients.
-//        for (int i = 0; i < 20; i++) {
-//            mPatients.add(RandomPatient.getRandomPatient());
-//            mPatients.get(mPatients.size() - 1).setPid(i);
-//            //Implements a custom view, the custom view is passed the patient object
-//            PatientView v = new PatientView(mContext, mPatients.get(i), i);
-//            v.setMinimumHeight(100);
-//            v.setMinimumWidth(200);
-//            tableRow.addView(v);
-//            if (mContext instanceof View.OnClickListener) {
-//                v.setOnClickListener((View.OnClickListener) this.mContext);
-//            }
-//        }
-//        tableLayout.addView(tableRow, new TableLayout.LayoutParams());
-
 
         return view;
 
@@ -236,13 +210,13 @@ public class Banner extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.d(Common.LOG_TAG, "Banner: saving instance");
+//        Log.d(Common.LOG_TAG, "Banner: saving instance");
 
         outState.putBundle(SAVE_STATE, this.savedState != null ? this.savedState : saveState());
     }
 
     private Bundle saveState() {
-        Log.d(Common.LOG_TAG, "Banner: saving state");
+//        Log.d(Common.LOG_TAG, "Banner: saving state");
         Bundle state = new Bundle();
         synchronized (this.mPatients) {
             state.putParcelableArray(PATIENT_LIST, this.mPatients.toArray(new Patient[this.mPatients.size()]));
@@ -254,14 +228,6 @@ public class Banner extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-//        if (this.multicastClient != null) {
-//            this.multicastClient.removeHandler(this.mHandler);
-//            try {
-//                this.multicastClient.leaveGroup(Inet6Address.getByName(Common.MCAST_GROUP), Common.MCAST_PORT);
-//            } catch (UnknownHostException e) {
-//                Log.e(Common.LOG_TAG, "Unknown Host " + Common.MCAST_GROUP, e);
-//            }
-//        }
         // Stop timer
         if (this.autoUpdateTimer != null) {
             this.autoUpdateTimer.cancel();
@@ -270,6 +236,18 @@ public class Banner extends Fragment {
 
         this.savedState = this.saveState();
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        // Stop client
+        if(this.multicastClient != null)
+        {
+            this.multicastClient.removeHandler(this.mHandler);
+            this.multicastClient.disconnect();
+            this.multicastClient = null;
+        }
     }
 
     @Override
