@@ -199,7 +199,7 @@ public final class RippleProvider extends ContentProvider {
             case DB_VITAL:
             case DB_INTERVENTION:
             case DB_TRAUMA:
-                id = db.insert(uriType.getTableName(), "foo", values);
+                id = db.insertWithOnConflict(uriType.getTableName(), "foo", values, SQLiteDatabase.CONFLICT_REPLACE);
                 resultUri = id == -1 ? null : ContentUris.withAppendedId(uri, id);
                 break;
             default:

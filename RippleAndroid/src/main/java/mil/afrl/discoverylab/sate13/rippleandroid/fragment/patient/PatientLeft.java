@@ -16,15 +16,13 @@ import android.widget.TextView;
 
 import com.foxykeep.datadroid.requestmanager.Request;
 import com.foxykeep.datadroid.requestmanager.RequestManager;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.ui.MapHelper;
+import mil.afrl.discoverylab.sate13.rippleandroid.config.WSConfig;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestManager;
@@ -39,10 +37,9 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
 
     private static final Long POLL_DELAY = 250L; // in milliseconds
     private static final String SAVED_STATE_REQUEST_LIST = "savedStateRequestList";
-    private static Date date = new Date();
-    private static Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
+    //private static Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
     private boolean addedSeries = false;
-    private int curPatient;
+    private int curPatient = 1;
     private int curVital;
     private Long prevTime;
     protected RippleRequestManager mRequestManager;
@@ -51,10 +48,9 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     private TextView patientName;
     private MapHelper mh;
 
-    private void callVitalsListWS() {
-        prevTime = date.getTime();
-        //TODO: pass the cur pid and vid to the request
-        Request request = RippleRequestFactory.getVitalListRequest();
+    private void callVitalsListWS(int pid, int vidi, int limit) {
+        prevTime = System.currentTimeMillis();
+        Request request = RippleRequestFactory.getVitalListRequest(pid, vidi, limit);
         mRequestManager.execute(request, this);
         mRequestList.add(request);
     }
@@ -62,10 +58,9 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     /**
      * TODO: Query the content provider for a list of available patients,
      * otherwise wait for a notification from the Banner
-     *
+     * <p/>
      * TODO: on addition of a new patient query the content provider for existing vitals
      * and update the curVital
-     *
      *
      * @param inflater
      * @param container
@@ -114,6 +109,8 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         } else {
             mRequestList = new ArrayList<Request>();
         }
+
+        callVitalsListWS(curPatient, 0, WSConfig.WS_VITAL_PARAM_DEFAULT_LIMIT);
 
         this.patientName = (TextView) view.findViewById(R.id.name_value_tv);
         return view;
@@ -173,20 +170,28 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
                     ArrayList<Vital> vitalList = resultData.getParcelableArrayList(RippleRequestFactory.BUNDLE_EXTRA_VITAL_LIST);
                     int cnt = 0;
                     for (Vital vital : vitalList) {
-                        mh.mCurrentSeries.add(
-                                ((double) vital.sensor_timestamp) / 1000.0,
-                                ((double) vital.value) / 10000000.0);
-                        //Log.i(Common.LOG_TAG, "Added point: (" + (vital.timestamp / 1000.0) + ", " + (vital.value / 10000000.0) + ")");
-                        mh.mChartView.repaint();
-                        cnt++;
-                        Thread.currentThread().yield();
+                        if (curPatient == vital.pid && vital.vid >= curVital) {
+                            curVital = (vital.vid > curVital) ? vital.vid : curVital;
+                            double time = (double) vital.sensor_timestamp;
+                            double value = (double) vital.value;
+                            mh.mCurrentSeries.add(time / 1000.0, value / 10000000.0);
+                            //Log.i(Common.LOG_TAG, "Added point: (" + (vital.timestamp / 1000.0)
+                            // + ", " + (vital.value / 10000000.0) + ")");
+                            mh.mChartView.repaint();
+                            cnt++;
+                            Thread.currentThread().yield();
+                        } else {
+                            Log.e(Common.LOG_TAG, "Uneeded data entry, pid:" + vital.pid
+                                    + ", vid:" + vital.vid);
+                        }
                     }
                     Log.i(Common.LOG_TAG, "Added " + cnt + " data points");
                 }
-                while (date.getTime() - prevTime < POLL_DELAY) {
+                while (System.currentTimeMillis() - prevTime < POLL_DELAY) {
                     Thread.currentThread().yield();
                 }
-                callVitalsListWS();
+                curVital = Math.max(0, curVital - 1);
+                callVitalsListWS(curPatient, curVital, WSConfig.WS_VITAL_PARAM_DEFAULT_LIMIT);
             }
         }).start();
     }
@@ -219,9 +224,13 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     public void onClick(View view) {
     }
 
-    public void setPatient(int id)
-    {
-        this.curPatient = id;
+    public void setPatient(int pid) {
+        if (curPatient != pid) {
+            // TODO: derive the initial vid from a DB query on the new PID
+            // TODO: clear the old patient graphics
+            callVitalsListWS(pid, 0, WSConfig.WS_VITAL_PARAM_DEFAULT_LIMIT);
+        }
+        this.curPatient = pid;
         // TODO: may need settext on UI thread
         this.patientName.setText("Dummy Patient(" + this.curPatient + ")");
     }

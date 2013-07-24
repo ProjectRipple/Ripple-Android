@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MulticastSocket;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -89,6 +90,8 @@ public class MulticastClient {
                 this.listenThread.start();
             }
 
+        } catch(SocketException rte) {
+            Log.e(Common.LOG_TAG, "Failed wifi interface: " + rte);
         } catch (IOException e) {
             Log.e(Common.LOG_TAG, "join group Address is not a multicast Address");
             throw new IllegalArgumentException(e);
