@@ -38,11 +38,12 @@ public final class RippleRequestFactory {
      *
      * @return The request.
      */
-    public static Request getVitalListRequest(int pid, int vidi, int limit) {
+    public static Request getVitalListRequest(int pid, int vidi, int rowLimit, int timeLimit) {
         Request request = new Request(REQUEST_TYPE_VITAL_LIST);
         request.put(VitalsListOperation.PARAM_PID, pid);
         request.put(VitalsListOperation.PARAM_VIDI, vidi);
-        request.put(VitalsListOperation.PARAM_LIMIT, limit);
+        request.put(VitalsListOperation.PARAM_ROWLIMIT, rowLimit);
+        request.put(VitalsListOperation.PARAM_TIMELIMIT, timeLimit);
         return request;
     }
 

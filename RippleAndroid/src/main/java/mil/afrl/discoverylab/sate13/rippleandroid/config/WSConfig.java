@@ -18,9 +18,11 @@ public final class WSConfig {
     public static final String WS_PROPERTY_QUERYTYPE = "QueryType";
     public static final String WS_VITAL_PROPERTY_PID = "pid";
     public static final String WS_VITAL_PROPERTY_VIDI = "vidi";
-    public static final String WS_VITAL_PROPERTY_LIMIT = "limit";
+    public static final String WS_VITAL_PROPERTY_ROWLIMIT = "rowlimit";
+    public static final String WS_VITAL_PROPERTY_TIMELIMIT = "timelimit";
 
-    public static final int WS_VITAL_PARAM_DEFAULT_LIMIT = 10;
+    public static final int WS_VITAL_PARAM_DEFAULT_ROWLIMIT = 10;
+    public static final int WS_VITAL_PARAM_DEFAULT_TIMELIMIT = 5000;
     public static final int SERVER_TCP_PORT = 0;
 
 }
