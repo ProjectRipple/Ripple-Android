@@ -1,60 +1,41 @@
 package mil.afrl.discoverylab.sate13.rippleandroid.data.factory;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import com.foxykeep.datadroid.exception.DataException;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
+import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.config.JSONTag;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
 
-/**
- * Created by burt on 7/3/13.
- */
 public final class VitalListJsonFactory {
-    private static final String TAG = VitalListJsonFactory.class.getSimpleName();
+    private static Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
 
     private VitalListJsonFactory() {
         // No public constructor
     }
 
     public static Bundle parseResult(String wsResponse) throws DataException {
-        ArrayList<Vital> vitalList = new ArrayList<Vital>();
 
-        try {
-            JSONObject parser = new JSONObject(wsResponse);
-            JSONObject jsonRoot = parser.getJSONObject(JSONTag.VITALS);
-            JSONArray jsonVITALSArray = jsonRoot.getJSONArray(JSONTag.VITAL);
-            int size = jsonVITALSArray.length();
-            for (int i = 0; i < size; i++) {
-                JSONObject jsonVITALS = jsonVITALSArray.getJSONObject(i);
-                Vital vital = new Vital();
+        JsonObject json = gson.fromJson(wsResponse, JsonObject.class);
+        JsonArray vList = json.getAsJsonArray(JSONTag.VITALS);
 
-                vital.vid = jsonVITALS.getInt(JSONTag.VITALS_VID);
-                vital.pid = jsonVITALS.getInt(JSONTag.VITALS_PID);
-                vital.server_timestamp = jsonVITALS.getString(JSONTag.VITALS_SERVER_TIMESTAMP);
-                vital.sensor_timestamp = jsonVITALS.getInt(JSONTag.VITALS_SENSOR_TIMESTAMP);
-                vital.sensor_type = jsonVITALS.getInt(JSONTag.VITALS_SENSOR_TYPE);
-                vital.value_type = jsonVITALS.getInt(JSONTag.VITALS_VALUE_TYPE);
-                vital.value = jsonVITALS.getInt(JSONTag.VITALS_VALUE);
+        ArrayList<Vital> vitalList = new ArrayList<Vital>(vList.size());
 
-                vitalList.add(vital);
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "JSONException", e);
-            throw new DataException(e);
+        for (JsonElement j : vList) {
+            vitalList.add(gson.fromJson(j, Vital.class));
         }
 
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(RippleRequestFactory.BUNDLE_EXTRA_VITAL_LIST, vitalList);
         return bundle;
     }
-
 }
