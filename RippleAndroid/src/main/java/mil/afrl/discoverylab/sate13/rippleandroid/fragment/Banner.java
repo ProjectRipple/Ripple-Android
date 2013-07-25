@@ -50,6 +50,7 @@ public class Banner extends Fragment {
     private static final String SAVE_STATE = "save_state";
 
     private List<Patient> mPatients;
+    private final Object patientLock = new Object();
     private Context mContext;
     private MulticastClient multicastClient;
 
@@ -63,8 +64,8 @@ public class Banner extends Fragment {
 
             switch (msg.what) {
                 case Common.RIPPLE_MSG_MCAST:
-                    if (mPatients == null) {
-                        // No patients to update
+                    if (mPatients == null || msg.obj == null) {
+                        // No patients to update or no message
                         return;
                     }
 //                    Log.d(Common.LOG_TAG, "Banner Handler" + msg.obj);
@@ -77,7 +78,8 @@ public class Banner extends Fragment {
 
                     boolean patientFound = false;
                     Patient curPatient = null;
-                    synchronized (mPatients) {
+                    // find patient
+                    synchronized (patientLock) {
                         for (Patient p : mPatients) {
                             if (p.getPid() == patientId) {
                                 patientFound = true;
@@ -94,20 +96,19 @@ public class Banner extends Fragment {
                             createPatientView(curPatient);
                         }
                     }
-                    if (curPatient != null) {
-                        for (JsonElement j : vitals) {
+                    // get values from json and set them for patient
+                    for (JsonElement j : vitals) {
 
-                            Vital v = gson.fromJson(j, Vital.class);
+                        Vital v = gson.fromJson(j, Vital.class);
 
-                            if (v.value_type == VITAL_BLOOD_OX.getValue()) {
-                                curPatient.setO2(v.value);
-                            } else if (v.value_type == Common.VITAL_TYPES.VITAL_PULSE.getValue()) {
-                                curPatient.setBpm(v.value);
-                            } else if (v.value_type == Common.VITAL_TYPES.VITAL_TEMPERATURE.getValue()) {
-                                curPatient.setTemperature(v.value);
-                            } else {
-                                Log.e(Common.LOG_TAG, "Unknown Vital type: " + v.value_type);
-                            }
+                        if (v.value_type == VITAL_BLOOD_OX.getValue()) {
+                            curPatient.setO2(v.value);
+                        } else if (v.value_type == Common.VITAL_TYPES.VITAL_PULSE.getValue()) {
+                            curPatient.setBpm(v.value);
+                        } else if (v.value_type == Common.VITAL_TYPES.VITAL_TEMPERATURE.getValue()) {
+                            curPatient.setTemperature(v.value);
+                        } else {
+                            Log.e(Common.LOG_TAG, "Unknown Vital type: " + v.value_type);
                         }
                     }
 
@@ -121,8 +122,7 @@ public class Banner extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewgroup, Bundle savedInstanceState) {
-        if(viewgroup == null)
-        {
+        if (viewgroup == null) {
             // Fragment being re-created from a Bundle & won't be shown
             return null;
         }
@@ -172,7 +172,7 @@ public class Banner extends Fragment {
                 this.createPatientView(p);
             }
         }
-        Log.d(Common.LOG_TAG, this.mPatients.size()+"");
+        Log.d(Common.LOG_TAG, this.mPatients.size() + "");
 
         return view;
 
@@ -217,7 +217,7 @@ public class Banner extends Fragment {
     private Bundle saveState() {
 //        Log.d(Common.LOG_TAG, "Banner: saving state");
         Bundle state = new Bundle();
-        synchronized (this.mPatients) {
+        synchronized (this.patientLock) {
             state.putParcelableArray(PATIENT_LIST, this.mPatients.toArray(new Patient[this.mPatients.size()]));
         }
         return state;
@@ -241,8 +241,7 @@ public class Banner extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         // Stop client
-        if(this.multicastClient != null)
-        {
+        if (this.multicastClient != null) {
             this.multicastClient.removeHandler(this.mHandler);
             this.multicastClient.disconnect();
             this.multicastClient = null;

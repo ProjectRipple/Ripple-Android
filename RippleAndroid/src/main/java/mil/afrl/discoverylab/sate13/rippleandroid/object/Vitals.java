@@ -54,7 +54,7 @@ public class Vitals {
     }
 
     private enum Sensors{
-        PULSE_OX, RESP, ECG;
+        PULSE_OX, RESP, ECG
     }
 
     private enum Value{

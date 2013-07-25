@@ -10,7 +10,7 @@ import java.util.List;
  */
 public abstract class Speaker {
 
-    private List<Handler> listeners = new ArrayList<Handler>();
+    private final List<Handler> listeners = new ArrayList<Handler>();
 
     public void adListener(Handler listener) {
         if (listener != null) {

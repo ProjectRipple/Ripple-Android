@@ -129,11 +129,10 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         if (savedState != null) {
             mh.restore(savedState);
             mRequestManager = RippleRequestManager.from(getActivity());
-            if (savedState != null) {
-                mRequestList = savedState.getParcelableArrayList(SAVED_STATE_REQUEST_LIST);
-            } else {
-                mRequestList = new ArrayList<Request>();
-            }
+            mRequestList = savedState.getParcelableArrayList(SAVED_STATE_REQUEST_LIST);
+
+        } else {
+            mRequestList = new ArrayList<Request>();
         }
     }
 
