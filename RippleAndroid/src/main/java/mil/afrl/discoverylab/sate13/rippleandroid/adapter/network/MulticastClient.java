@@ -17,6 +17,7 @@ import java.util.List;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 
 /**
+ * Class to manage listening for multicast messages on wireless
  * Created by james on 7/22/13.
  */
 public class MulticastClient {
@@ -25,13 +26,13 @@ public class MulticastClient {
     private MulticastSocket socket = null;
 
     // Name of Network interface
-    private static String NI_NAME = "wlan0";
+    private static String NI_NAME = Common.MCAST_INTERFACE;
     // reference to current listener thread
     private Thread listenThread = null;
     // flag for listener thread
     private volatile boolean listening = false;
     // List of Handlers to send messages
-    private List<Handler> listeners = new ArrayList<Handler>();
+    private final List<Handler> listeners = new ArrayList<Handler>();
 
     public MulticastClient()
     {
@@ -61,8 +62,8 @@ public class MulticastClient {
 
     /**
      * Joins a multicast group on specified port
-     * @param group
-     * @param port
+     * @param group Address of group to join, must be a valid multicast address
+     * @param port Port to listen for multicast messages on
      */
     public void joinGroup(InetAddress group, int port)
     {
@@ -100,8 +101,8 @@ public class MulticastClient {
 
     /**
      * Leaves the specific multicast group
-     * @param group
-     * @param port
+     * @param group Address of group to leave, must be a valid multicast address
+     * @param port Port to listen for multicast messages on
      */
     public void leaveGroup(InetAddress group, int port)
     {

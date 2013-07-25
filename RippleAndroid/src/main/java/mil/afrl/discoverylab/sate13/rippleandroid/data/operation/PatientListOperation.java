@@ -44,9 +44,9 @@ public final class PatientListOperation implements Operation {
         if (PatientListSize > 0) {
             ArrayList<ContentProviderOperation> operationList = new ArrayList<ContentProviderOperation>();
 
-            for (int i = 0; i < PatientListSize; i++) {
+            for (Patient aPatient : PatientList) {
                 operationList.add(ContentProviderOperation.newInsert(RippleContent.db_patient.CONTENT_URI)
-                        .withValues(PatientList.get(i).toContentValues()).build());
+                        .withValues(aPatient.toContentValues()).build());
             }
 
             try {

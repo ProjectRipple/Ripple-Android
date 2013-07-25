@@ -28,7 +28,7 @@ public class TcpClient {
     private PrintWriter out = null;
     private Socket socket = null;
     private Thread listenThread = null;
-    private List<Handler> listeners = new ArrayList<Handler>();
+    private final List<Handler> listeners = new ArrayList<Handler>();
     private static Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
     //private Thread messageHandlerThread = null;
     //private int userNum = -1;
@@ -179,7 +179,7 @@ public class TcpClient {
             Log.e(Common.LOG_TAG, "TCP: Couldn't get I/O for the connection", e);
             return false;
         } catch (Exception e) {
-            Log.e(Common.LOG_TAG, e.getMessage().toString());
+            Log.e(Common.LOG_TAG, e.getMessage());
             return false;
         }
         return true;

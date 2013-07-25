@@ -39,7 +39,7 @@ public final class Common {
         public int getValue() {
             return id;
         }
-    };
+    }
 
     public enum NW_MSG_TYPES {
         UDP_BANNER_VITAL(true, "vitals"), TCP_STREAM_VITAL(false, "vitals"), UNKNOWN(false, "");
@@ -71,6 +71,6 @@ public final class Common {
         }
     }
 
-    ;
+
 
 }

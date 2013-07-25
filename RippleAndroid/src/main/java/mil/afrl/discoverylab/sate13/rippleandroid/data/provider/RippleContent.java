@@ -123,7 +123,7 @@ public abstract class RippleContent {
         }
 
         static String getBulkInsertString() {
-            return new StringBuilder("INSERT INTO ").append(TABLE_NAME).append(" ( ").append(Columns.IP_ADDR.getName()).append(", ").append(Columns.FIRST_NAME.getName()).append(", ").append(Columns.LAST_NAME.getName()).append(", ").append(Columns.SSN.getName()).append(", ").append(Columns.DOB.getName()).append(", ").append(Columns.SEX.getName()).append(", ").append(Columns.NBC_CONTAMINATION.getName()).append(", ").append(Columns.TYPE.getName()).append(" ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)").toString();
+            return "INSERT INTO " + TABLE_NAME + " ( " + Columns.IP_ADDR.getName() + ", " + Columns.FIRST_NAME.getName() + ", " + Columns.LAST_NAME.getName() + ", " + Columns.SSN.getName() + ", " + Columns.DOB.getName() + ", " + Columns.SEX.getName() + ", " + Columns.NBC_CONTAMINATION.getName() + ", " + Columns.TYPE.getName() + " ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         }
 
         static void bindValuesInBulkInsert(SQLiteStatement stmt, ContentValues values) {
@@ -246,7 +246,7 @@ public abstract class RippleContent {
         }
 
         static String getBulkInsertString() {
-            return new StringBuilder("INSERT INTO ").append(TABLE_NAME).append(" ( ").append(Columns.PID.getName()).append(", ").append(Columns.SERVER_TIMESTAMP.getName()).append(", ").append(Columns.SENSOR_TIMESTAMP.getName()).append(", ").append(Columns.SENSOR_TYPE.getName()).append(", ").append(Columns.VALUE_TYPE.getName()).append(", ").append(Columns.VALUE.getName()).append(" ) VALUES (?, ?, ?, ?, ?, ?)").toString();
+            return "INSERT INTO " + TABLE_NAME + " ( " + Columns.PID.getName() + ", " + Columns.SERVER_TIMESTAMP.getName() + ", " + Columns.SENSOR_TIMESTAMP.getName() + ", " + Columns.SENSOR_TYPE.getName() + ", " + Columns.VALUE_TYPE.getName() + ", " + Columns.VALUE.getName() + " ) VALUES (?, ?, ?, ?, ?, ?)";
         }
 
         static void bindValuesInBulkInsert(SQLiteStatement stmt, ContentValues values) {
@@ -356,7 +356,7 @@ public abstract class RippleContent {
         }
 
         static String getBulkInsertString() {
-            return new StringBuilder("INSERT INTO ").append(TABLE_NAME).append(" ( ").append(Columns.PID.getName()).append(", ").append(Columns.TYPE.getName()).append(", ").append(Columns.DETAILS.getName()).append(" ) VALUES (?, ?, ?)").toString();
+            return "INSERT INTO " + TABLE_NAME + " ( " + Columns.PID.getName() + ", " + Columns.TYPE.getName() + ", " + Columns.DETAILS.getName() + " ) VALUES (?, ?, ?)";
         }
 
         static void bindValuesInBulkInsert(SQLiteStatement stmt, ContentValues values) {
@@ -464,7 +464,7 @@ public abstract class RippleContent {
         }
 
         static String getBulkInsertString() {
-            return new StringBuilder("INSERT INTO ").append(TABLE_NAME).append(" ( ").append(Columns.PID.getName()).append(", ").append(Columns.LOCATION.getName()).append(", ").append(Columns.TYPE.getName()).append(", ").append(Columns.STATUS.getName()).append(" ) VALUES (?, ?, ?, ?)").toString();
+            return "INSERT INTO " + TABLE_NAME + " ( " + Columns.PID.getName() + ", " + Columns.LOCATION.getName() + ", " + Columns.TYPE.getName() + ", " + Columns.STATUS.getName() + " ) VALUES (?, ?, ?, ?)";
         }
 
         static void bindValuesInBulkInsert(SQLiteStatement stmt, ContentValues values) {

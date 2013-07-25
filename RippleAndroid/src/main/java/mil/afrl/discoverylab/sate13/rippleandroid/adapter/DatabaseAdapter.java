@@ -213,7 +213,7 @@ public class DatabaseAdapter {
                                  "TIME",                                // Order By
                                  null);                                 // Limit
         cursor.moveToFirst();
-        while (cursor.isAfterLast() == false) {
+        while (!cursor.isAfterLast()) {
             data.add((double) cursor.getInt(cursor.getColumnIndex("TIME")),
                      cursor.getDouble(cursor.getColumnIndex("VALUE")));
             cursor.moveToNext();

@@ -30,7 +30,7 @@ public class UdpClient {
     private InetAddress serverAddr;
     private DatagramSocket socket = null;
     private Thread listenTread = null;
-    private List<Handler> listeners = new ArrayList<Handler>();
+    private final List<Handler> listeners = new ArrayList<Handler>();
     private static Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
     //private Thread messageHandlerThread = null;
     //private Queue<String> messageQueue = new LinkedList<String>();
@@ -142,8 +142,7 @@ public class UdpClient {
                             try {
 
 
-                                String rootTag = input.substring(input.indexOf("{") + 1,
-                                        input.indexOf(":") - 1);
+//                                String rootTag = input.substring(input.indexOf("{") + 1, input.indexOf(":") - 1);
 
 
                                 synchronized (listeners) {
