@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import com.foxykeep.datadroid.requestmanager.RequestManager;
 
 import java.util.ArrayList;
 
-import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.ui.GraphHelper;
 import mil.afrl.discoverylab.sate13.rippleandroid.config.WSConfig;
@@ -183,7 +181,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
                             }
                             Thread.currentThread().yield();
                         }
-                        Log.i(Common.LOG_TAG, "Added " + cnt + " data points");
+                        //Log.i(Common.LOG_TAG, "Added " + cnt + " data points");
                     }
                     curVital = Math.max(0, curVital - 1);
                 } else {
