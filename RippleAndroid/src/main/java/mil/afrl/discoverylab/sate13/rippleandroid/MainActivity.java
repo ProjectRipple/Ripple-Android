@@ -84,8 +84,14 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
     private void initMap() {
 
         MapFragment fm = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-        map = fm.getMap();
-        map.setMyLocationEnabled(true);
+        // Map is only there for larger screens
+        if(fm != null){
+            map = fm.getMap();
+            // map may be null if tablet is rotated from landscape to portrait, which will remove the map fragment from user's view
+            if(map != null){
+                map.setMyLocationEnabled(true);
+            }
+        }
         lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String provider = lm.getBestProvider(criteria, true);
@@ -124,10 +130,13 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
 
         // Creating a LatLng object for the current location
         LatLng latLng = new LatLng(latitude, longitude);
-
-        // Showing the current location in Google Map
-        map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        map.animateCamera(CameraUpdateFactory.zoomTo(15));
+        // map may be null for smaller devices
+        if(map != null)
+        {
+            // Showing the current location in Google Map
+            map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+            map.animateCamera(CameraUpdateFactory.zoomTo(15));
+        }
     }
 
     @Override

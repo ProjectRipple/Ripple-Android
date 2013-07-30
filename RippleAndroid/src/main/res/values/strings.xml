@@ -15,6 +15,7 @@
     <string name="age"><u>Age:</u></string>
     <string name="sex"><u>Sex:</u></string>
     <string name="nbc_contamination"><u>NBC-Contamination:</u></string>
+    <string name="nbc"><u>NBC:</u></string>
 
     <string name="temp"><u>Temp:</u></string>
     <string name="pulse"><u>Pulse:</u></string>

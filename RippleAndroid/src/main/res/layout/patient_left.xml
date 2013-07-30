@@ -109,7 +109,7 @@
                 <TextView
                         style="@style/bodyfontblack"
                         android:id="@+id/nbc_contamination_tv"
-                        android:text="@string/nbc_contamination"
+                        android:text="@string/nbc"
                         android:layout_row="1"
                         android:layout_column="0"/>
 
