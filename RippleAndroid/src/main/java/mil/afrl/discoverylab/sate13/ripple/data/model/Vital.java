@@ -1,4 +1,4 @@
-package mil.afrl.discoverylab.sate13.rippleandroid.data.model;
+package mil.afrl.discoverylab.sate13.ripple.data.model;
 
 import android.content.ContentValues;
 import android.os.Parcel;
@@ -24,16 +24,16 @@ public final class Vital implements Parcelable, Serializable {
     public Integer vid;
     public Integer pid;
     public Date server_timestamp;
-    public Integer sensor_timestamp;
-    public Integer sensor_type;
-    public Integer value_type;
+    public Long sensor_timestamp;
+    public String sensor_type;
+    public String value_type;
     public Integer value;
 
     private Vital() {
         // No public default constructor
     }
 
-    public Vital(Integer pid, String server_timestamp, Integer sensor_timestamp, Integer sensor_type, Integer value_type, Integer value) {
+    public Vital(Integer pid, String server_timestamp, Long sensor_timestamp, String sensor_type, String value_type, Integer value) {
         this.vid = -1;
         this.pid = pid;
         try {
@@ -47,6 +47,16 @@ public final class Vital implements Parcelable, Serializable {
         this.value = value;
     }
 
+    public Vital(Vital v) {
+        vid = v.vid;
+        pid = v.pid;
+        server_timestamp = new Date(v.server_timestamp.getTime());
+        sensor_timestamp = v.sensor_timestamp;
+        sensor_type = v.sensor_type;
+        value_type = v.value_type;
+        value = v.value;
+    }
+
     public Vital(Parcel in) {
         vid = in.readInt();
         pid = in.readInt();
@@ -55,9 +65,9 @@ public final class Vital implements Parcelable, Serializable {
         } catch (ParseException e) {
             server_timestamp = new Date();
         }
-        sensor_timestamp = in.readInt();
-        sensor_type = in.readInt();
-        value_type = in.readInt();
+        sensor_timestamp = in.readLong();
+        sensor_type = in.readString();
+        value_type = in.readString();
         value = in.readInt();
     }
 
@@ -69,9 +79,9 @@ public final class Vital implements Parcelable, Serializable {
         dest.writeInt(vid);
         dest.writeInt(pid);
         dest.writeString(Common.SIMPLE_DATETIME_FORMAT.format(server_timestamp));
-        dest.writeInt(sensor_timestamp);
-        dest.writeInt(sensor_type);
-        dest.writeInt(value_type);
+        dest.writeLong(sensor_timestamp);
+        dest.writeString(sensor_type);
+        dest.writeString(value_type);
         dest.writeInt(value);
     }
 

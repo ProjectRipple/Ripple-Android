@@ -20,14 +20,15 @@ import com.foxykeep.datadroid.requestmanager.Request;
 import com.foxykeep.datadroid.requestmanager.RequestManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import mil.afrl.discoverylab.sate13.ripple.data.model.SubscriptionResponse;
+import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.UdpClient;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.ui.GraphHelper;
 import mil.afrl.discoverylab.sate13.rippleandroid.config.WSConfig;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.model.SubscriptionResponse;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestManager;
 
@@ -40,8 +41,8 @@ import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequ
 public class PatientLeft extends Fragment implements View.OnClickListener, RequestManager.RequestListener {
 
     private static final String SAVED_STATE_REQUEST_LIST = "savedStateRequestList";
-    private static UdpClient udpc = new UdpClient(WSConfig.UDP_VITALS_STREAM_HOST, WSConfig.UDP_VITALS_STREAM_PORT);
-    private int curPatient;
+    private static UdpClient udpc = new UdpClient();
+    private int curPatient = -1;
     private int curVital;
     protected RippleRequestManager mRequestManager;
     protected ArrayList<Request> mRequestList;
@@ -51,21 +52,28 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
 
     private Handler handler = new Handler() {
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(final Message msg) {
             super.handleMessage(msg);
 
             switch (msg.what) {
                 case Common.RIPPLE_MSG_VITALS_STREAM: {
-
-                    Vital v = (Vital) msg.obj;
-                    if (v.sensor_type == 1 && v.pid == curPatient) {
-                        graphHelper.addPoint((double) v.sensor_timestamp, (double) v.value);
-                    }
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            List<Vital> vitals = (List<Vital>) msg.obj;
+                            for (Vital v : vitals) {
+                                if (v.sensor_type.equals("1") && v.pid == curPatient) {
+                                    graphHelper.addPoint((double) v.sensor_timestamp, (double) v.value);
+                                }
+                            }
+                        }
+                    }).start();
                     break;
                 }
                 default:
                     Log.e(Common.LOG_TAG, "Unknown Message type: " + msg.what);
             }
+
         }
     };
 
@@ -182,10 +190,12 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
 
     @Override
     public void onRequestFinished(final Request request, final Bundle resultData) {
-        SubscriptionResponse response = resultData.getParcelable(RippleRequestFactory.BUNDLE_EXTRA_VITAL_LIST);
+        SubscriptionResponse response = resultData.getParcelable(RippleRequestFactory.BUNDLE_EXTRA_SUBSCRIPTION);
         if (response.success) {
             if (response.action_echo.equals("unsubscribe") && curPatient >= 0) {
                 Log.d(Common.LOG_TAG, "Successfully unsubscribed: " + response.toString());
+                // Clear the Graph
+                graphHelper.clearGraph();
                 callSubscriptionWS(curPatient, "subscribe");
             } else if (response.action_echo.equals("subscribe") && response.pid_echo == curPatient) {
                 Log.d(Common.LOG_TAG, "Successfully subscribed: " + response.toString());
@@ -230,23 +240,23 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         udpc.removehandler(handler);
         udpc.disconnect();
     }
+
     public void setPatient(int pid) {
         if (curPatient != pid) {
             if (curPatient >= 0) {
                 // Unsubscribe
-                callSubscriptionWS(curPatient, "unsubscribe");
-                // Clear the Graph
-                graphHelper.clearGraph();
-                // Disconnect the UdpStream
-                udpc.removehandler(handler);
+                callSubscriptionWS(pid, "unsubscribe");
             } else {
                 // Subscribe
-                callSubscriptionWS(curPatient, "subscribe");
+                callSubscriptionWS(pid, "subscribe");
                 // Connect to UdpStream
+                if (!udpc.isListening()) {
+                    udpc.connect(WSConfig.UDP_VITALS_STREAM_HOST, WSConfig.UDP_VITALS_STREAM_PORT);
+                }
                 udpc.addHandler(handler);
             }
-            // TODO: may need settext on UI thread
             curPatient = pid;
+            // TODO: may need settext on UI thread
             patientName.setText("Dummy Patient(" + curPatient + ")");
         } else {
             // Do Nothing

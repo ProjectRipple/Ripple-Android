@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.config.WSConfig;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.factory.PatientListJsonFactory;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Patient;
+import mil.afrl.discoverylab.sate13.ripple.data.model.Patient;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.provider.RippleContent;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.provider.RippleProvider;
 

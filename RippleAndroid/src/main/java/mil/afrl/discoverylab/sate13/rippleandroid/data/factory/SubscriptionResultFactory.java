@@ -6,7 +6,7 @@ import com.foxykeep.datadroid.exception.DataException;
 import com.google.gson.JsonObject;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.model.SubscriptionResponse;
+import mil.afrl.discoverylab.sate13.ripple.data.model.SubscriptionResponse;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
 
 public final class SubscriptionResultFactory {

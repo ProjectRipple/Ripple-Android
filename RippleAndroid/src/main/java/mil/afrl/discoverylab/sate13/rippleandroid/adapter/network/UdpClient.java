@@ -9,14 +9,15 @@ import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.channels.DatagramChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vital;
 
 public class UdpClient {
 
@@ -83,43 +84,67 @@ public class UdpClient {
         if (port < 0 || port > 65355)
             throw new IllegalArgumentException("port must by in range 0-65355");
 
-        this.setServerHost(serverHost);
-        this.setPort(port);
+        setServerHost(serverHost);
+        setPort(port);
 
-        // Retrieve the ServerName
-        try {
-            this.serverAddr = InetAddress.getByName(this.getServerHost());
-        } catch (UnknownHostException e1) {
-            Log.e(Common.LOG_TAG, "UDP: C: Unable to retrieve the ServerName", e1);
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-        DatagramChannel chan = null;
-        try {
-            chan = DatagramChannel.open();
-        } catch (IOException e1) {
-            Log.e(Common.LOG_TAG, "UDP: C: unable to open the DataGram Channel", e1);
-        }
+                if (listenThread != null) {
+                    try {
+                        listenThread.wait();
+                    } catch (InterruptedException e) {
+                    }
+                }
 
-        this.socket = chan.socket();
-        try {
-            this.socket.bind(null);
-        } catch (SocketException e1) {
-            Log.e(Common.LOG_TAG, "UDP: C: Unable to bind the socket", e1);
-        }
-        this.socket.connect(this.serverAddr, getPort());
+                // Retrieve the ServerName
+                try {
+                    serverAddr = InetAddress.getByName(getServerHost());
+                } catch (UnknownHostException e1) {
+                    Log.e(Common.LOG_TAG, "UDP: C: Unable to retrieve the ServerName", e1);
+                }
 
-        if (this.listenThread == null) {
-            // start thread after first join
-            this.listenThread = new Thread(new ListenThread());
-            // Set thread as daemon (prevents blocking of JVM exit if thread is still running as JVM can exit if only daemon threads remain)
-            this.listenThread.setDaemon(true);
-            // Give the thread a name
-            this.listenThread.setName("UDPClient listener thread");
-            // set flag to true
-            this.listening = true;
-            // start thread
-            this.listenThread.start();
-        }
+                DatagramChannel chan = null;
+                try {
+                    chan = DatagramChannel.open();
+                } catch (IOException e1) {
+                    Log.e(Common.LOG_TAG, "UDP: C: unable to open the DataGram Channel", e1);
+                }
+
+                if (socket != null) {
+                    socket.close();
+                }
+                socket = chan.socket();
+                try {
+                    socket.bind(new InetSocketAddress("0.0.0.0", getPort())); //InetAddress.getByName(getServerHost())
+                } catch (SocketException e1) {
+                    Log.e(Common.LOG_TAG, "UDP: C: Unable to bind the socket", e1);
+                }
+
+                /*try {
+                    socket.connect(serverAddr, getPort());
+                } catch (Exception e) {
+                    Log.e(Common.LOG_TAG, "Failed to connect to UDP Vital Stream server: "
+                            + getServerHost() + " Exception: " + e);
+                }*/
+
+                if (listenThread == null) {
+                    // start thread after first join
+                    listenThread = new Thread(new ListenThread());
+                    // Set thread as daemon (prevents blocking of JVM exit if thread is still running as JVM can exit if only daemon threads remain)
+                    listenThread.setDaemon(true);
+                    // Give the thread a name
+                    listenThread.setName("UDPClient listener thread");
+                    // set flag to true
+                    listening = true;
+                    // start thread
+                    listenThread.start();
+                } else {
+                    listenThread.notify();
+                }
+            }
+        }).start();
     }
 
     public void sendMessage(String msg) {
@@ -162,36 +187,46 @@ public class UdpClient {
         }
     }
 
+    public boolean isListening() {
+        return listening;
+    }
+
     private class ListenThread implements Runnable {
         // constants
-        private static final int BUF_SIZE = 4096;
+        private static final int BUF_SIZE = 10000;
         // buffer for receiving data
-        private byte[] dataBuffer;
-        // Input string
-        private String input;
+        private byte[] dataBuffer = new byte[BUF_SIZE];
         // packet for receiving data
         private DatagramPacket receivePacket;
         // Vital object to deserialize and send
-        private Vital vital;
+        private List<Vital> vitals;
+
+        private List<Vital> copy(List<Vital> vitals) {
+            List<Vital> vs = new ArrayList<Vital>();
+            for (Vital v : vitals) {
+                vs.add(new Vital(v));
+            }
+            return vitals;
+        }
 
         @Override
         public void run() {
+            /*
+             * Prepare a UDP-Packet that can contain the data we
+             * want to receive
+             */
+            receivePacket = new DatagramPacket(dataBuffer, dataBuffer.length);
+
 
             Log.d(Common.LOG_TAG, "UDP: S: Receiving...");
             while (listening) {
                 try {
 
-						/*
-                         * By magic we know, how much data will be waiting for
-						 * us
-						 */
-                    dataBuffer = new byte[BUF_SIZE];
-
-                        /*
-                         * Prepare a UDP-Packet that can contain the data we
-						 * want to receive
-						 */
-                    receivePacket = new DatagramPacket(dataBuffer, dataBuffer.length);
+                    // Reset packet/buffer for reuse
+                    // Reset packet length to buffer max
+                    this.receivePacket.setLength(this.dataBuffer.length);
+                    // Clear packet buffer
+                    // Arrays.fill(this.dataBuffer, (byte) 0);
 
 						/* Receive the UDP-Packet */
                     socket.receive(receivePacket);
@@ -200,25 +235,31 @@ public class UdpClient {
                     try {
                         ByteArrayInputStream baos = new ByteArrayInputStream(receivePacket.getData());
                         ObjectInputStream oos = new ObjectInputStream(baos);
-                        vital = (Vital) oos.readObject();
+                        int streamSize = oos.readInt();
+                        vitals = new ArrayList<Vital>(streamSize);
+                        for (int i = 0; i < streamSize; i++) {
+                            vitals.add((Vital) oos.readObject());
+                        }
                     } catch (Exception e) {
                         Log.e(Common.LOG_TAG, "Unable to deserialize message " + e);
                     }
 
-                    if (vital != null) {
+                    if (vitals != null && !vitals.isEmpty()) {
 
                         // Bundle deserialized object into a message
                         // Send the message to all subscribed handlers
                         synchronized (listeners) {
                             for (Handler l : listeners) {
-                                l.sendMessage(l.obtainMessage(Common.RIPPLE_MSG_VITALS_STREAM, vital));
+                                //for (Vital vital : vitals) {
+                                l.sendMessage(l.obtainMessage(Common.RIPPLE_MSG_VITALS_STREAM, copy(vitals)));
+                                //}
                             }
                         }
 
-                        vital = null;
+                        vitals = null;
                     }
 
-                    Log.d(Common.LOG_TAG, "UDP: S: Received something:");
+                    //Log.d(Common.LOG_TAG, "UDP: S: Received something:");
 
                 } catch (Exception e) {
                     Log.e(Common.LOG_TAG, "UDP: S: Error", e);

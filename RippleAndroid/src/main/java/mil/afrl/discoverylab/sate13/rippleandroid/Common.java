@@ -18,7 +18,7 @@ public final class Common {
 
     public static final Gson GSON = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
 
-    public static final String LOG_TAG = "RIPPLE";
+    public static final String LOG_TAG = "RIPPLE_LOG_TAG";
     public static final String CSV_DELIMITER = ";";
     public static final String PACKAGE_NAMESPACE = "mil.afrl.discoverylab.sate13.rippleandroid";
     public static final int ECG_CSV = R.raw.model;

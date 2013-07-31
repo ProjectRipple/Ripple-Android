@@ -1,4 +1,4 @@
-package mil.afrl.discoverylab.sate13.rippleandroid.data.model;
+package mil.afrl.discoverylab.sate13.ripple.data.model;
 
 import android.content.ContentValues;
 

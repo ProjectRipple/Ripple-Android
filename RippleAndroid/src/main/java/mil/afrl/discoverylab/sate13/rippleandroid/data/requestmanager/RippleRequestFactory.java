@@ -51,7 +51,7 @@ public final class RippleRequestFactory {
     }
 
     public static Request getSubscriptionRequest(int pid, String action, int port) {
-        Request request = new Request(REQUEST_TYPE_VITAL_LIST);
+        Request request = new Request(REQUEST_TYPE_SUBSCRIPTION);
         request.put(SubscriptionOperation.PARAM_PID, pid);
         request.put(SubscriptionOperation.PARAM_ACTION, action);
         request.put(SubscriptionOperation.PARAM_PORT, port);

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.config.JSONTag;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Patient;
+import mil.afrl.discoverylab.sate13.ripple.data.model.Patient;
 
 public final class PatientListJsonFactory {
     private static Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();

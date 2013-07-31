@@ -29,14 +29,18 @@ public class SubscriptionOperation implements RequestService.Operation {
 
         params.put(WSConfig.WS_PROPERTY_QUERYTYPE, "Subscription");
         params.put(WSConfig.WS_SUBSCRIPTION_PROPERTY_PID, request.getIntAsString(PARAM_PID));
-        params.put(WSConfig.WS_SUBSCRIPTION_PROPERTY_ACTION, request.getIntAsString(PARAM_ACTION));
+        params.put(WSConfig.WS_SUBSCRIPTION_PROPERTY_ACTION, request.getString(PARAM_ACTION));
         params.put(WSConfig.WS_SUBSCRIPTION_PROPERTY_PORT, request.getIntAsString(PARAM_PORT));
 
         NetworkConnection networkConnection = new NetworkConnection(context, WSConfig.WS_QUERY_URL);
 
         networkConnection.setParameters(params);
 
-        return SubscriptionResultFactory.parseResult(networkConnection.execute().body);
+        NetworkConnection.ConnectionResult res = networkConnection.execute();
+
+        Bundle b = SubscriptionResultFactory.parseResult(res.body);
+
+        return b;
     }
 
 }

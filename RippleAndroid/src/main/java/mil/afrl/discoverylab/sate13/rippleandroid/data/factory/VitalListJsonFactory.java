@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.config.JSONTag;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vital;
+import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
 
 public final class VitalListJsonFactory {
@@ -35,9 +35,9 @@ public final class VitalListJsonFactory {
                 vitalList.add(new Vital(
                         jsonVITALS.getInt(JSONTag.VITALS_PID),
                         jsonVITALS.getString(JSONTag.VITALS_SERVER_TIMESTAMP),
-                        jsonVITALS.getInt(JSONTag.VITALS_SENSOR_TIMESTAMP),
-                        jsonVITALS.getInt(JSONTag.VITALS_SENSOR_TYPE),
-                        jsonVITALS.getInt(JSONTag.VITALS_VALUE_TYPE),
+                        jsonVITALS.getLong(JSONTag.VITALS_SENSOR_TIMESTAMP),
+                        jsonVITALS.getString(JSONTag.VITALS_SENSOR_TYPE),
+                        jsonVITALS.getString(JSONTag.VITALS_VALUE_TYPE),
                         jsonVITALS.getInt(JSONTag.VITALS_VALUE)));
             }
         } catch (JSONException e) {

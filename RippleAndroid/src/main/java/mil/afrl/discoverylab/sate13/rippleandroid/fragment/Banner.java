@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.PatientView;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.MulticastClient;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.object.Patient;
 
 import static mil.afrl.discoverylab.sate13.rippleandroid.Common.VITAL_TYPES.VITAL_BLOOD_OX;
@@ -98,15 +98,18 @@ public class Banner extends Fragment {
                     for (JsonElement j : vitals) {
 
                         Vital v = gson.fromJson(j, Vital.class);
-
-                        if (v.value_type == VITAL_BLOOD_OX.getValue()) {
-                            curPatient.setO2(v.value);
-                        } else if (v.value_type == Common.VITAL_TYPES.VITAL_PULSE.getValue()) {
-                            curPatient.setBpm(v.value);
-                        } else if (v.value_type == Common.VITAL_TYPES.VITAL_TEMPERATURE.getValue()) {
-                            curPatient.setTemperature(v.value);
-                        } else {
-                            //Log.e(Common.LOG_TAG, "Unknown Vital type: " + v.value_type);
+                        try {
+                            if (Integer.valueOf(v.value_type) == VITAL_BLOOD_OX.getValue()) {
+                                curPatient.setO2(v.value);
+                            } else if (Integer.valueOf(v.value_type) == Common.VITAL_TYPES.VITAL_PULSE.getValue()) {
+                                curPatient.setBpm(v.value);
+                            } else if (Integer.valueOf(v.value_type) == Common.VITAL_TYPES.VITAL_TEMPERATURE.getValue()) {
+                                curPatient.setTemperature(v.value);
+                            } else {
+                                //Log.e(Common.LOG_TAG, "Unknown Vital type: " + v.value_type);
+                            }
+                        } catch (NumberFormatException nfe) {
+                            Log.e(Common.LOG_TAG, "Failed to parse value type: " + nfe);
                         }
                     }
 
