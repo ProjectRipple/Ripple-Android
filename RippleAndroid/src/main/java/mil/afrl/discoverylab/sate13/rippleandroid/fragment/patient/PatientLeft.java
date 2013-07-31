@@ -223,6 +223,13 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     public void onClick(View view) {
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        graphHelper.clearGraph();
+        udpc.removehandler(handler);
+        udpc.disconnect();
+    }
     public void setPatient(int pid) {
         if (curPatient != pid) {
             if (curPatient >= 0) {
