@@ -3,9 +3,6 @@ package mil.afrl.discoverylab.sate13.rippleandroid.adapter.network;
 import android.os.Handler;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -20,37 +17,33 @@ import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 
 public class UdpClient {
 
-/*    public interface UdpMessageListener{
-        public void onMessage(UdpClient client, String message);
-    }*/
-
+    // flag for listener thread
     private volatile boolean listening = false;
     private int port;
     private String serverHost;
     private InetAddress serverAddr;
+    // Reference to socket
     private DatagramSocket socket = null;
-    private Thread listenTread = null;
+    // Reference to the current listener thread
+    private Thread listenThread = null;
+    // List of handlers to send messages
     private final List<Handler> listeners = new ArrayList<Handler>();
-    private static Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
-    //private Thread messageHandlerThread = null;
-    //private Queue<String> messageQueue = new LinkedList<String>();
-    //private static int queueLimit = 500;
 
     public UdpClient() {
     }
 
-    public void addTcpListener(Handler listener) {
-        if (listener != null) {
+    public void addHandler(Handler handle) {
+        if (handle != null) {
             synchronized (this.listeners) {
-                this.listeners.add(listener);
+                this.listeners.add(handle);
             }
         }
     }
 
-    public void removeTcpListener(Handler listener) {
-        if (listener != null) {
+    public void removehandler(Handler handle) {
+        if (handle != null) {
             synchronized (this.listeners) {
-                this.listeners.remove(listener);
+                this.listeners.remove(handle);
             }
         }
     }
@@ -78,8 +71,10 @@ public class UdpClient {
     }
 
     public void connect(String serverHost, int port) {
+
         if (port < 0 || port > 65355)
             throw new IllegalArgumentException("port must by in range 0-65355");
+
         this.setServerHost(serverHost);
         this.setPort(port);
 
@@ -96,6 +91,7 @@ public class UdpClient {
         } catch (IOException e1) {
             Log.e(Common.LOG_TAG, "UDP: C: unable to open the DataGram Channel", e1);
         }
+
         this.socket = chan.socket();
         try {
             this.socket.bind(null);
@@ -104,121 +100,30 @@ public class UdpClient {
         }
         this.socket.connect(this.serverAddr, getPort());
 
-        this.listenTread = new Thread() {
-            @Override
-            public void run() {
-                Log.d(Common.LOG_TAG, "UDP: S: Receiving...");
-                while (listening) {
-                    try {
-                        /* Retrieve the ServerName */
-                        // InetAddress serverAddr =
-                        // InetAddress.getByName(SERVERIP);
-
-                        //Log.d(Common.LOG_TAG, "UDP: S: Connecting...");
-                        /* Create new UDP-Socket */
-                        // DatagramSocket socket = new
-                        // DatagramSocket(SERVERPORT, serverAddr);
-
-						/*
-                         * By magic we know, how much data will be waiting for
-						 * us
-						 */
-                        byte[] buf = new byte[4096];
-                        /*
-                         * Prepare a UDP-Packet that can contain the data we
-						 * want to receive
-						 */
-                        DatagramPacket packet = new DatagramPacket(buf, buf.length);
-
-						/* Receive the UDP-Packet */
-                        socket.receive(packet);
-
-                        String input = new String(packet.getData()).trim();
-
-                        /*synchronized(messageQueue) {
-                            messageQueue.offer(input);
-                        }*/
-                        if (input != null) {
-                            try {
-
-
-//                                String rootTag = input.substring(input.indexOf("{") + 1, input.indexOf(":") - 1);
-
-
-                                synchronized (listeners) {
-                                    for (Handler l : listeners) {
-                                        //l.onMessage(UdpClient.this, input);
-                                        l.sendMessage(l.obtainMessage(0, input));
-                                    }
-                                }
-                            } catch (Exception e) {
-                                Log.e(Common.LOG_TAG, "Invalid JSON: " + input);
-                            }
-                        }
-
-                        Log.d(Common.LOG_TAG, "UDP: S: Received something:");// '" + input + "'");
-
-                    } catch (Exception e) {
-                        Log.e(Common.LOG_TAG, "UDP: S: Error", e);
-                    }
-                }
-                Log.d(Common.LOG_TAG, "UDP: S: Done.");
-            }
-        };
-
-        /*this.messageHandlerThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String input = "";
-                while (listening == true) {
-                    while (messageQueue.size() > 0) {
-
-                        synchronized (messageQueue) {
-                            input = messageQueue.poll();
-                            if (messageQueue.size() > queueLimit) {
-                                messageQueue.clear();
-                                Log.d(Common.LOG_TAG, "UDP: Queue size exceeded. Size = " + messageQueue.size());
-                            }
-                        }
-                        if (input != null) {
-                            synchronized (listeners) {
-                                for (UdpMessageListener l : listeners) {
-                                    l.onMessage(UdpClient.this, input);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        });*/
-
-        this.listening = true;
-
-        /*this.messageHandlerThread.setDaemon(true);
-        this.messageHandlerThread.setName("UDP Message Handler Thread");
-        this.messageHandlerThread.start();*/
-
-        //this.listenTread.setDaemon(true);
-        this.listenTread.setName("UDP Listen");
-        this.listenTread.start();
+        if (this.listenThread == null) {
+            // start thread after first join
+            this.listenThread = new Thread(new ListenThread());
+            // Set thread as daemon (prevents blocking of JVM exit if thread is still running as JVM can exit if only daemon threads remain)
+            this.listenThread.setDaemon(true);
+            // Give the thread a name
+            this.listenThread.setName("UDPClient listener thread");
+            // set flag to true
+            this.listening = true;
+            // start thread
+            this.listenThread.start();
+        }
     }
 
     public void sendMessage(String msg) {
         try {
 
             Log.d("UDP", "C: Connecting...");
-            /* Create new UDP-Socket */
-            // DatagramSocket socket = new DatagramSocket();
-
-			/* Prepare some data to be sent. */
+            /* Prepare some data to be sent. */
             byte[] buf = msg.getBytes();
 
 			/*
              * Create UDP-packet with data & destination(url+port)
 			 */
-            // DatagramPacket packet = new DatagramPacket(buf, buf.length,
-            // this.serverAddr, this.port);
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
 
             //Log.d(Common.LOG_TAG, "UDP: C: Sending: '" + new String(buf).trim() + "'");
@@ -226,30 +131,87 @@ public class UdpClient {
 			/* Send out the packet */
             socket.send(packet);
 
-            Log.d(Common.LOG_TAG, "UDP: C: Sent.");
-            Log.d(Common.LOG_TAG, "UDP: C: Done.");
+            Log.d(Common.LOG_TAG, "UDP: C: Packet Sent.");
         } catch (Exception e) {
             Log.e(Common.LOG_TAG, "UDP: C: Error", e);
         }
     }
 
+    /**
+     * Closes all connections for this client
+     */
     public void disconnect() {
+        // set flag to false
         this.listening = false;
+        // close socket and set to null
         if (this.socket != null) {
             this.socket.close();
             this.socket = null;
         }
-
-        if (this.listenTread != null) {
-            this.listenTread.interrupt();
+        // interupt thread and set to null
+        if (this.listenThread != null) {
+            this.listenThread.interrupt();
         }
-
-        /*synchronized (this.messageQueue) {
-            this.messageQueue.clear();
-        }
-        if (this.messageHandlerThread != null) {
-            this.messageHandlerThread.interrupt();
-        }*/
     }
 
+    private class ListenThread implements Runnable {
+        // constants
+        private static final int BUF_SIZE = 4096;
+        // buffer for receiving data
+        private byte[] dataBuffer;
+        // packet for receiving data
+        private DatagramPacket receivePacket;
+        // Input string
+        private String input;
+
+        @Override
+        public void run() {
+
+            Log.d(Common.LOG_TAG, "UDP: S: Receiving...");
+            while (listening) {
+                try {
+
+						/*
+                         * By magic we know, how much data will be waiting for
+						 * us
+						 */
+                    dataBuffer = new byte[BUF_SIZE];
+
+                        /*
+                         * Prepare a UDP-Packet that can contain the data we
+						 * want to receive
+						 */
+                    receivePacket = new DatagramPacket(dataBuffer, dataBuffer.length);
+
+						/* Receive the UDP-Packet */
+                    socket.receive(receivePacket);
+
+                    input = new String(receivePacket.getData()).trim();
+
+                    if (input != null) {
+
+                        // Seserialize the object
+                        // Bundle it into a message
+                        // Send the message to all subscribed handlers
+
+                        try {
+                            synchronized (listeners) {
+                                for (Handler l : listeners) {
+                                    l.sendMessage(l.obtainMessage(0, input));
+                                }
+                            }
+                        } catch (Exception e) {
+                            Log.e(Common.LOG_TAG, "Invalid Message: " + input);
+                        }
+                    }
+
+                    Log.d(Common.LOG_TAG, "UDP: S: Received something:");// '" + input + "'");
+
+                } catch (Exception e) {
+                    Log.e(Common.LOG_TAG, "UDP: S: Error", e);
+                }
+            }
+            Log.d(Common.LOG_TAG, "UDP: S: Done.");
+        }
+    }
 }
