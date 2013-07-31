@@ -3,6 +3,7 @@ package mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager;
 import com.foxykeep.datadroid.requestmanager.Request;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
+import mil.afrl.discoverylab.sate13.rippleandroid.data.operation.SubscriptionOperation;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.operation.VitalsListOperation;
 
 /**
@@ -15,9 +16,11 @@ public final class RippleRequestFactory {
     // Request types
     public static final int REQUEST_TYPE_PATIENT_LIST = 0;
     public static final int REQUEST_TYPE_VITAL_LIST = 1;
+    public static final int REQUEST_TYPE_SUBSCRIPTION = 2;
 
     // Response data
     public static final String BUNDLE_EXTRA_VITAL_LIST = Common.PACKAGE_NAMESPACE + ".extra.vitalList";
+    public static final String BUNDLE_EXTRA_SUBSCRIPTION = Common.PACKAGE_NAMESPACE + ".extra.subscription";
     public static final String BUNDLE_EXTRA_ERROR_MESSAGE = Common.PACKAGE_NAMESPACE + ".extra.errorMessage";
 
     private RippleRequestFactory() {
@@ -44,6 +47,14 @@ public final class RippleRequestFactory {
         request.put(VitalsListOperation.PARAM_VIDI, vidi);
         request.put(VitalsListOperation.PARAM_ROWLIMIT, rowLimit);
         request.put(VitalsListOperation.PARAM_TIMELIMIT, timeLimit);
+        return request;
+    }
+
+    public static Request getSubscriptionRequest(int pid, String action, int port) {
+        Request request = new Request(REQUEST_TYPE_VITAL_LIST);
+        request.put(SubscriptionOperation.PARAM_PID, pid);
+        request.put(SubscriptionOperation.PARAM_ACTION, action);
+        request.put(SubscriptionOperation.PARAM_PORT, port);
         return request;
     }
 

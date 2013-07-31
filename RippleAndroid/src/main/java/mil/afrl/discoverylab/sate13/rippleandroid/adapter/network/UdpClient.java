@@ -35,6 +35,11 @@ public class UdpClient {
     public UdpClient() {
     }
 
+    public UdpClient(String serverHost, int port) {
+        super();
+        connect(serverHost, port);
+    }
+
     public void addHandler(Handler handle) {
         if (handle != null) {
             synchronized (this.listeners) {
@@ -159,7 +164,6 @@ public class UdpClient {
 
     private class ListenThread implements Runnable {
         // constants
-        private static final int WHAT = 0;
         private static final int BUF_SIZE = 4096;
         // buffer for receiving data
         private byte[] dataBuffer;
@@ -207,7 +211,7 @@ public class UdpClient {
                         // Send the message to all subscribed handlers
                         synchronized (listeners) {
                             for (Handler l : listeners) {
-                                l.sendMessage(l.obtainMessage(WHAT, vital));
+                                l.sendMessage(l.obtainMessage(Common.RIPPLE_MSG_VITALS_STREAM, vital));
                             }
                         }
 

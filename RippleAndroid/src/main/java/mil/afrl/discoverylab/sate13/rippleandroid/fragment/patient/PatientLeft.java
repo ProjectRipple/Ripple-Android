@@ -5,6 +5,8 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +23,10 @@ import java.util.ArrayList;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
+import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.UdpClient;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.ui.GraphHelper;
 import mil.afrl.discoverylab.sate13.rippleandroid.config.WSConfig;
+import mil.afrl.discoverylab.sate13.rippleandroid.data.model.SubscriptionResponse;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestManager;
@@ -35,25 +39,41 @@ import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequ
  */
 public class PatientLeft extends Fragment implements View.OnClickListener, RequestManager.RequestListener {
 
-    private static final Long POLL_DELAY = 250L; // in milliseconds
     private static final String SAVED_STATE_REQUEST_LIST = "savedStateRequestList";
-    //private static Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
-    private int curPatient = 1;
+    private static UdpClient udpc = new UdpClient(WSConfig.UDP_VITALS_STREAM_HOST, WSConfig.UDP_VITALS_STREAM_PORT);
+    private int curPatient;
     private int curVital;
-    private Long prevTime;
     protected RippleRequestManager mRequestManager;
     protected ArrayList<Request> mRequestList;
     private View view;
     private TextView patientName;
     private GraphHelper graphHelper;
 
-    private synchronized void callVitalsListWS(int pid, int vidi) {
-        prevTime = System.currentTimeMillis();
-        Request request = RippleRequestFactory.getVitalListRequest(
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            switch (msg.what) {
+                case Common.RIPPLE_MSG_VITALS_STREAM: {
+
+                    Vital v = (Vital) msg.obj;
+                    if (v.sensor_type == 1 && v.pid == curPatient) {
+                        graphHelper.addPoint((double) v.sensor_timestamp, (double) v.value);
+                    }
+                    break;
+                }
+                default:
+                    Log.e(Common.LOG_TAG, "Unknown Message type: " + msg.what);
+            }
+        }
+    };
+
+    private synchronized void callSubscriptionWS(int pid, String action) {
+        Request request = RippleRequestFactory.getSubscriptionRequest(
                 pid,
-                vidi,
-                WSConfig.WS_VITAL_PARAM_DEFAULT_ROWLIMIT,
-                WSConfig.WS_VITAL_PARAM_DEFAULT_TIMELIMIT);
+                action,
+                WSConfig.UDP_VITALS_STREAM_PORT);
         mRequestManager.execute(request, this);
         mRequestList.add(request);
     }
@@ -113,8 +133,6 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             mRequestList = new ArrayList<Request>();
         }
 
-        //callVitalsListWS(curPatient, 0);
-
         this.patientName = (TextView) view.findViewById(R.id.name_value_tv);
         return view;
     }
@@ -164,56 +182,17 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
 
     @Override
     public void onRequestFinished(final Request request, final Bundle resultData) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                //boolean firstCall = true;
-/*                if (curVital != 0) {
-                    while (System.currentTimeMillis() - prevTime < POLL_DELAY) {
-                        Thread.currentThread().yield();
-                    }
-                    callVitalsListWS(curPatient, curVital);
-                    firstCall = false;
-                }*/
-
-                int pid;
-                if (mRequestList.contains(request)) {
-                    mRequestList.remove(request);
-                    ArrayList<Vital> vitalList = resultData.getParcelableArrayList(RippleRequestFactory.BUNDLE_EXTRA_VITAL_LIST);
-                    if (!vitalList.isEmpty()) {
-
-                        pid = vitalList.get(0).pid;
-                        if (curPatient == pid) {
-                            int cnt = 0;
-                            for (Vital vital : vitalList) {
-                                if (vital.sensor_type == 1) {
-                                    if (graphHelper.addPoint(
-                                            (double) vital.sensor_timestamp,
-                                            (double) vital.value)
-                                            ) {
-                                        //(double) vital.value / 10000000.0)) {
-                                        curVital = vital.sensor_timestamp;
-                                        //curVital = vital.vid;
-                                        cnt++;
-                                    }
-                                }
-                                Thread.currentThread().yield();
-                            }
-                            graphHelper.chartView.repaint();
-                            Log.i(Common.LOG_TAG, "Added " + cnt + " data points");
-                        }
-                        //curVital = Math.max(0, curVital - 1);
-                    } else {
-                        curVital = 0;
-                    }
-                }
-                while (System.currentTimeMillis() - prevTime < POLL_DELAY) {
-                    Thread.currentThread().yield();
-                }
-                callVitalsListWS(curPatient, curVital);
+        SubscriptionResponse response = resultData.getParcelable(RippleRequestFactory.BUNDLE_EXTRA_VITAL_LIST);
+        if (response.success) {
+            if (response.action_echo.equals("unsubscribe") && curPatient >= 0) {
+                Log.d(Common.LOG_TAG, "Successfully unsubscribed: " + response.toString());
+                callSubscriptionWS(curPatient, "subscribe");
+            } else if (response.action_echo.equals("subscribe") && response.pid_echo == curPatient) {
+                Log.d(Common.LOG_TAG, "Successfully subscribed: " + response.toString());
             }
-        }).start();
+        } else {
+            Log.e(Common.LOG_TAG, "Negative Subscription Response: " + response.toString());
+        }
     }
 
     @Override
@@ -245,15 +224,26 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     }
 
     public void setPatient(int pid) {
-        //if (curPatient != pid) {
-        // TODO: derive the initial vid from a DB query on the new PID
-        // TODO: clear the old patient graphics
-        graphHelper.clearGraph();
-        callVitalsListWS(pid, 0);
-        //}
-        this.curPatient = pid;
-        // TODO: may need settext on UI thread
-        this.patientName.setText("Dummy Patient(" + this.curPatient + ")");
+        if (curPatient != pid) {
+            if (curPatient >= 0) {
+                // Unsubscribe
+                callSubscriptionWS(curPatient, "unsubscribe");
+                // Clear the Graph
+                graphHelper.clearGraph();
+                // Disconnect the UdpStream
+                udpc.removehandler(handler);
+            } else {
+                // Subscribe
+                callSubscriptionWS(curPatient, "subscribe");
+                // Connect to UdpStream
+                udpc.addHandler(handler);
+            }
+            // TODO: may need settext on UI thread
+            curPatient = pid;
+            patientName.setText("Dummy Patient(" + curPatient + ")");
+        } else {
+            // Do Nothing
+        }
     }
 
 }

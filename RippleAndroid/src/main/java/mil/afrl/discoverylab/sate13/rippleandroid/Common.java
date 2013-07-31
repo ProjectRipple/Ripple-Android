@@ -1,5 +1,8 @@
 package mil.afrl.discoverylab.sate13.rippleandroid;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.text.SimpleDateFormat;
 
 /**
@@ -13,6 +16,8 @@ public final class Common {
         // Empty
     }
 
+    public static final Gson GSON = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
+
     public static final String LOG_TAG = "RIPPLE";
     public static final String CSV_DELIMITER = ";";
     public static final String PACKAGE_NAMESPACE = "mil.afrl.discoverylab.sate13.rippleandroid";
@@ -24,6 +29,7 @@ public final class Common {
     public static final String MCAST_INTERFACE = "wlan0";
     // message constants
     public static final int RIPPLE_MSG_MCAST = 22;
+    public static final int RIPPLE_MSG_VITALS_STREAM = 44;
 
     public static final SimpleDateFormat SIMPLE_DATETIME_FORMAT = new SimpleDateFormat(DATE_TIME_FORMAT);
 

@@ -8,6 +8,7 @@ import com.foxykeep.datadroid.service.RequestService;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.data.exception.MyCustomRequestException;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.operation.PatientListOperation;
+import mil.afrl.discoverylab.sate13.rippleandroid.data.operation.SubscriptionOperation;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.operation.VitalsListOperation;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
 
@@ -30,6 +31,8 @@ public final class RippleRequestService extends RequestService {
                 return new PatientListOperation();
             case RippleRequestFactory.REQUEST_TYPE_VITAL_LIST:
                 return new VitalsListOperation();
+            case RippleRequestFactory.REQUEST_TYPE_SUBSCRIPTION:
+                return new SubscriptionOperation();
         }
         return null;
     }

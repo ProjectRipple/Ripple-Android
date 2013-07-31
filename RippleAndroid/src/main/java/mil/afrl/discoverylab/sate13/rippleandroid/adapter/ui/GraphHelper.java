@@ -138,23 +138,20 @@ public class GraphHelper {
     }
 
     public boolean addPoint(double x, double y) {
-        boolean res = false;
         if (x > prevPoint) {
-            prevPoint = x;
-            /*if (currentSeries.getItemCount() > DEFAULT_MAX_ITEMS) {
+            /*while (currentSeries.getItemCount() > DEFAULT_MAX_ITEMS) {
                 currentSeries.remove(0);
             }*/
             while ((x - currentSeries.getMinX()) > 1000) {
                 currentSeries.remove(0);
             }
             currentSeries.add(x, y);
-            //Log.i(Common.LOG_TAG, "Added point: (" + (vital.timestamp / 1000.0)
-            // + ", " + (vital.value / 10000000.0) + ")");
             chartView.repaint();
-            res = true;
+            prevPoint = x;
+            return true;
         } else {
             Log.d(Common.LOG_TAG, "Graph: Out of order x values x=" + x + " prevx=" + prevPoint);
+            return false;
         }
-        return res;
     }
 }

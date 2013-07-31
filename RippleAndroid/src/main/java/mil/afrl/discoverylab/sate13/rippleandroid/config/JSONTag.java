@@ -50,4 +50,10 @@ public final class JSONTag {
     public static final String TRAUMA_TYPE = "type";
     public static final String TRAUMA_STATUS = "status";
 
+    // Subscription Result Tags
+    public static final String SUCCESS = "success";
+    public static final String EXCEPTION = "exception";
+    public static final String PID_ECHO = "pid_echo";
+    public static final String ACTION_ECHO = "action_echo";
+    public static final String PORT_ECHO = "port_echo";
 }

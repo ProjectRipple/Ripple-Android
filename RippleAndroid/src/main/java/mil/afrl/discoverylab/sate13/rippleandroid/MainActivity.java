@@ -9,8 +9,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -38,21 +36,6 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
     /*Mapping Vars*/
     private GoogleMap map;
     private LocationManager lm;
-
-    /*Network Clients Message Handler*/
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-
-            if (msg.what == Common.NW_MSG_TYPES.UDP_BANNER_VITAL.ordinal()) {
-
-            } else if (msg.what == Common.NW_MSG_TYPES.TCP_STREAM_VITAL.ordinal()) {
-                //Banner.update((String) msg.obj);
-            } else {
-                Log.e(Common.LOG_TAG, "Unknown Network Message type: " + msg.what);
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
