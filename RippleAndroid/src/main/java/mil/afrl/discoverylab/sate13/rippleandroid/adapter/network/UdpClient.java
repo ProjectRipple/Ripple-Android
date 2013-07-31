@@ -3,7 +3,9 @@ package mil.afrl.discoverylab.sate13.rippleandroid.adapter.network;
 import android.os.Handler;
 import android.util.Log;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
+import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vital;
 
 public class UdpClient {
 
@@ -156,13 +159,16 @@ public class UdpClient {
 
     private class ListenThread implements Runnable {
         // constants
+        private static final int WHAT = 0;
         private static final int BUF_SIZE = 4096;
         // buffer for receiving data
         private byte[] dataBuffer;
-        // packet for receiving data
-        private DatagramPacket receivePacket;
         // Input string
         private String input;
+        // packet for receiving data
+        private DatagramPacket receivePacket;
+        // Vital object to deserialize and send
+        private Vital vital;
 
         @Override
         public void run() {
@@ -186,26 +192,29 @@ public class UdpClient {
 						/* Receive the UDP-Packet */
                     socket.receive(receivePacket);
 
-                    input = new String(receivePacket.getData()).trim();
-
-                    if (input != null) {
-
-                        // Seserialize the object
-                        // Bundle it into a message
-                        // Send the message to all subscribed handlers
-
-                        try {
-                            synchronized (listeners) {
-                                for (Handler l : listeners) {
-                                    l.sendMessage(l.obtainMessage(0, input));
-                                }
-                            }
-                        } catch (Exception e) {
-                            Log.e(Common.LOG_TAG, "Invalid Message: " + input);
-                        }
+                    // Deserialize the object contained in the data in the newly received packet
+                    try {
+                        ByteArrayInputStream baos = new ByteArrayInputStream(receivePacket.getData());
+                        ObjectInputStream oos = new ObjectInputStream(baos);
+                        vital = (Vital) oos.readObject();
+                    } catch (Exception e) {
+                        Log.e(Common.LOG_TAG, "Unable to deserialize message " + e);
                     }
 
-                    Log.d(Common.LOG_TAG, "UDP: S: Received something:");// '" + input + "'");
+                    if (vital != null) {
+
+                        // Bundle deserialized object into a message
+                        // Send the message to all subscribed handlers
+                        synchronized (listeners) {
+                            for (Handler l : listeners) {
+                                l.sendMessage(l.obtainMessage(WHAT, vital));
+                            }
+                        }
+
+                        vital = null;
+                    }
+
+                    Log.d(Common.LOG_TAG, "UDP: S: Received something:");
 
                 } catch (Exception e) {
                     Log.e(Common.LOG_TAG, "UDP: S: Error", e);
