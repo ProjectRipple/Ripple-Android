@@ -3,6 +3,7 @@ package mil.afrl.discoverylab.sate13.rippleandroid.adapter.ui;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.LinearLayout;
 
 import org.achartengine.ChartFactory;
@@ -11,6 +12,8 @@ import org.achartengine.model.XYMultipleSeriesDataset;
 import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
+
+import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 
 /**
  * Created by burt on 7/23/13.
@@ -41,6 +44,8 @@ public class GraphHelper {
      */
     public XYSeries currentSeries;
 
+    private double prevPoint = 0.0;
+
 
     public GraphHelper(Activity activity, LinearLayout layout) {
         // set some properties on the main renderer
@@ -63,8 +68,10 @@ public class GraphHelper {
         chartRenderer.setShowLegend(false);
         chartRenderer.setDisplayValues(false);
         //chartRenderer.setInitialRange(new double[]{0, 2000, -0.3, 0.7});
-        chartRenderer.setYAxisMax(0.7);
-        chartRenderer.setYAxisMin(-0.3);
+        chartRenderer.setYAxisMax(3000.0);
+        //chartRenderer.setYAxisMax(0.7);
+        chartRenderer.setYAxisMin(1500.0);
+        //chartRenderer.setYAxisMin(-0.3);
         chartRenderer.setClickEnabled(false);
         chartRenderer.setPanEnabled(false);
         chartRenderer.setZoomEnabled(false);
@@ -132,8 +139,12 @@ public class GraphHelper {
 
     public boolean addPoint(double x, double y) {
         boolean res = false;
-        if (x > currentSeries.getMaxX()) {
-            if (currentSeries.getItemCount() > DEFAULT_MAX_ITEMS) {
+        if (x > prevPoint) {
+            prevPoint = x;
+            /*if (currentSeries.getItemCount() > DEFAULT_MAX_ITEMS) {
+                currentSeries.remove(0);
+            }*/
+            while ((x - currentSeries.getMinX()) > 1000) {
                 currentSeries.remove(0);
             }
             currentSeries.add(x, y);
@@ -141,6 +152,8 @@ public class GraphHelper {
             // + ", " + (vital.value / 10000000.0) + ")");
             chartView.repaint();
             res = true;
+        } else {
+            Log.d(Common.LOG_TAG, "Graph: Out of order x values x=" + x + " prevx=" + prevPoint);
         }
         return res;
     }

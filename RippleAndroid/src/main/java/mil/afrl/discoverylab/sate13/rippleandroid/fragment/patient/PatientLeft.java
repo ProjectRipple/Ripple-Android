@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.foxykeep.datadroid.requestmanager.RequestManager;
 
 import java.util.ArrayList;
 
+import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.ui.GraphHelper;
 import mil.afrl.discoverylab.sate13.rippleandroid.config.WSConfig;
@@ -111,7 +113,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             mRequestList = new ArrayList<Request>();
         }
 
-        callVitalsListWS(curPatient, 0);
+        //callVitalsListWS(curPatient, 0);
 
         this.patientName = (TextView) view.findViewById(R.id.name_value_tv);
         return view;
@@ -165,27 +167,46 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         new Thread(new Runnable() {
             @Override
             public void run() {
+
+                //boolean firstCall = true;
+/*                if (curVital != 0) {
+                    while (System.currentTimeMillis() - prevTime < POLL_DELAY) {
+                        Thread.currentThread().yield();
+                    }
+                    callVitalsListWS(curPatient, curVital);
+                    firstCall = false;
+                }*/
+
                 int pid;
                 if (mRequestList.contains(request)) {
                     mRequestList.remove(request);
                     ArrayList<Vital> vitalList = resultData.getParcelableArrayList(RippleRequestFactory.BUNDLE_EXTRA_VITAL_LIST);
-                    pid = vitalList.get(0).pid;
-                    if (curPatient == pid) {
-                        int cnt = 0;
-                        for (Vital vital : vitalList) {
-                            if (graphHelper.addPoint(
-                                    (double) vital.sensor_timestamp,
-                                    (double) vital.value / 10000000.0)) {
-                                curVital = vital.vid;
-                                cnt++;
+                    if (!vitalList.isEmpty()) {
+
+                        pid = vitalList.get(0).pid;
+                        if (curPatient == pid) {
+                            int cnt = 0;
+                            for (Vital vital : vitalList) {
+                                if (vital.sensor_type == 1) {
+                                    if (graphHelper.addPoint(
+                                            (double) vital.sensor_timestamp,
+                                            (double) vital.value)
+                                            ) {
+                                        //(double) vital.value / 10000000.0)) {
+                                        curVital = vital.sensor_timestamp;
+                                        //curVital = vital.vid;
+                                        cnt++;
+                                    }
+                                }
+                                Thread.currentThread().yield();
                             }
-                            Thread.currentThread().yield();
+                            graphHelper.chartView.repaint();
+                            Log.i(Common.LOG_TAG, "Added " + cnt + " data points");
                         }
-                        //Log.i(Common.LOG_TAG, "Added " + cnt + " data points");
+                        //curVital = Math.max(0, curVital - 1);
+                    } else {
+                        curVital = 0;
                     }
-                    curVital = Math.max(0, curVital - 1);
-                } else {
-                    curVital = 0;
                 }
                 while (System.currentTimeMillis() - prevTime < POLL_DELAY) {
                     Thread.currentThread().yield();
@@ -224,12 +245,12 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     }
 
     public void setPatient(int pid) {
-        if (curPatient != pid) {
-            // TODO: derive the initial vid from a DB query on the new PID
-            // TODO: clear the old patient graphics
-            graphHelper.clearGraph();
-            callVitalsListWS(pid, 0);
-        }
+        //if (curPatient != pid) {
+        // TODO: derive the initial vid from a DB query on the new PID
+        // TODO: clear the old patient graphics
+        graphHelper.clearGraph();
+        callVitalsListWS(pid, 0);
+        //}
         this.curPatient = pid;
         // TODO: may need settext on UI thread
         this.patientName.setText("Dummy Patient(" + this.curPatient + ")");

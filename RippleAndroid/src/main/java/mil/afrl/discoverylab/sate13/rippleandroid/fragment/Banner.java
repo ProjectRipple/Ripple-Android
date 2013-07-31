@@ -11,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 
 import com.google.gson.Gson;
@@ -31,7 +30,6 @@ import java.util.TimerTask;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.PatientView;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
-import mil.afrl.discoverylab.sate13.rippleandroid.RandomPatient;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.MulticastClient;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.object.Patient;
@@ -108,7 +106,7 @@ public class Banner extends Fragment {
                         } else if (v.value_type == Common.VITAL_TYPES.VITAL_TEMPERATURE.getValue()) {
                             curPatient.setTemperature(v.value);
                         } else {
-                            Log.e(Common.LOG_TAG, "Unknown Vital type: " + v.value_type);
+                            //Log.e(Common.LOG_TAG, "Unknown Vital type: " + v.value_type);
                         }
                     }
 

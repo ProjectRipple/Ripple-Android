@@ -1,10 +1,7 @@
 package mil.afrl.discoverylab.sate13.rippleandroid.data.operation;
 
-import android.content.ContentProviderOperation;
 import android.content.Context;
-import android.content.OperationApplicationException;
 import android.os.Bundle;
-import android.os.RemoteException;
 
 import com.foxykeep.datadroid.exception.ConnectionException;
 import com.foxykeep.datadroid.exception.DataException;
@@ -12,16 +9,11 @@ import com.foxykeep.datadroid.network.NetworkConnection;
 import com.foxykeep.datadroid.requestmanager.Request;
 import com.foxykeep.datadroid.service.RequestService.Operation;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.config.WSConfig;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.factory.VitalListJsonFactory;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.model.Vital;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.provider.RippleContent;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.provider.RippleProvider;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
 
 public final class VitalsListOperation implements Operation {
 
@@ -48,7 +40,7 @@ public final class VitalsListOperation implements Operation {
         NetworkConnection.ConnectionResult result = networkConnection.execute();
 
         Bundle bundle = VitalListJsonFactory.parseResult(result.body);
-        ArrayList<Vital> vitalList = bundle.getParcelableArrayList(RippleRequestFactory.BUNDLE_EXTRA_VITAL_LIST);
+/*        ArrayList<Vital> vitalList = bundle.getParcelableArrayList(RippleRequestFactory.BUNDLE_EXTRA_VITAL_LIST);
 
         // Adds the Vital in the database
         if (!vitalList.isEmpty()) {
@@ -64,7 +56,7 @@ public final class VitalsListOperation implements Operation {
             } catch (OperationApplicationException e) {
                 throw new DataException(e);
             }
-        }
+        }*/
         return bundle;
     }
 }
