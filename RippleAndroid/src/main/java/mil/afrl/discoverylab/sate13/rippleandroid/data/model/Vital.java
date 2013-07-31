@@ -19,6 +19,8 @@ import mil.afrl.discoverylab.sate13.rippleandroid.data.provider.RippleContent;
  */
 public final class Vital implements Parcelable, Serializable {
 
+    private static final long serialVersionUID = 512L;
+
     public Integer vid;
     public Integer pid;
     public Date server_timestamp;
