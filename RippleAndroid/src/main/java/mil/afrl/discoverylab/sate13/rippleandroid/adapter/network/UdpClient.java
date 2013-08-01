@@ -44,7 +44,9 @@ public class UdpClient {
     public void addHandler(Handler handle) {
         if (handle != null) {
             synchronized (this.listeners) {
-                this.listeners.add(handle);
+                if (!this.listeners.contains(handle)) {
+                    this.listeners.add(handle);
+                }
             }
         }
     }
@@ -52,7 +54,9 @@ public class UdpClient {
     public void removehandler(Handler handle) {
         if (handle != null) {
             synchronized (this.listeners) {
-                this.listeners.remove(handle);
+                if (this.listeners.contains(handle)) {
+                    this.listeners.remove(handle);
+                }
             }
         }
     }
@@ -92,9 +96,11 @@ public class UdpClient {
             public void run() {
 
                 if (listenThread != null) {
-                    try {
-                        listenThread.wait();
-                    } catch (InterruptedException e) {
+                    synchronized (listenThread) {
+                        try {
+                            listenThread.wait();
+                        } catch (InterruptedException e) {
+                        }
                     }
                 }
 
@@ -141,7 +147,9 @@ public class UdpClient {
                     // start thread
                     listenThread.start();
                 } else {
-                    listenThread.notify();
+                    synchronized (listenThread) {
+                        listenThread.notify();
+                    }
                 }
             }
         }).start();
@@ -192,80 +200,57 @@ public class UdpClient {
     }
 
     private class ListenThread implements Runnable {
+
         // constants
         private static final int BUF_SIZE = 10000;
         // buffer for receiving data
         private byte[] dataBuffer = new byte[BUF_SIZE];
-        // packet for receiving data
-        private DatagramPacket receivePacket;
-        // Vital object to deserialize and send
-        private List<Vital> vitals;
-
-        private List<Vital> copy(List<Vital> vitals) {
-            List<Vital> vs = new ArrayList<Vital>();
-            for (Vital v : vitals) {
-                vs.add(new Vital(v));
-            }
-            return vitals;
-        }
+        /*
+         * Prepare a UDP-Packet that can contain the data we
+         * want to receive
+         */
+        private DatagramPacket receivePacket = new DatagramPacket(dataBuffer, dataBuffer.length);
+        // Vitals array object to deserialize and send
+        private Vital[] vitals;
 
         @Override
         public void run() {
-            /*
-             * Prepare a UDP-Packet that can contain the data we
-             * want to receive
-             */
-            receivePacket = new DatagramPacket(dataBuffer, dataBuffer.length);
 
-
-            Log.d(Common.LOG_TAG, "UDP: S: Receiving...");
+            Log.d(Common.LOG_TAG, "UDP: S: Running...");
             while (listening) {
+
+
+                // Reset packet/buffer for reuse & Reset packet length to buffer max
+                receivePacket.setLength(dataBuffer.length);
+                // Clear packet buffer // Arrays.fill(this.dataBuffer, (byte) 0);
+
                 try {
-
-                    // Reset packet/buffer for reuse
-                    // Reset packet length to buffer max
-                    this.receivePacket.setLength(this.dataBuffer.length);
-                    // Clear packet buffer
-                    // Arrays.fill(this.dataBuffer, (byte) 0);
-
-						/* Receive the UDP-Packet */
+                    // Receive the UDP-Packet
                     socket.receive(receivePacket);
 
                     // Deserialize the object contained in the data in the newly received packet
-                    try {
-                        ByteArrayInputStream baos = new ByteArrayInputStream(receivePacket.getData());
-                        ObjectInputStream oos = new ObjectInputStream(baos);
-                        int streamSize = oos.readInt();
-                        vitals = new ArrayList<Vital>(streamSize);
-                        for (int i = 0; i < streamSize; i++) {
-                            vitals.add((Vital) oos.readObject());
+                    ObjectInputStream oos = new ObjectInputStream(new ByteArrayInputStream(receivePacket.getData()));
+
+                    //Log.d(Common.LOG_TAG, "Receiving " + oos.readInt() + " new points");
+                    oos.readInt();
+
+                    vitals = (Vital[]) oos.readObject();
+
+                    // Bundle deserialized object into a message & Send the message to all subscribed handlers
+                    synchronized (listeners) {
+                        for (Handler l : listeners) {
+                            l.sendMessage(l.obtainMessage(Common.RIPPLE_MSG_VITALS_STREAM, vitals));
                         }
-                    } catch (Exception e) {
-                        Log.e(Common.LOG_TAG, "Unable to deserialize message " + e);
                     }
 
-                    if (vitals != null && !vitals.isEmpty()) {
-
-                        // Bundle deserialized object into a message
-                        // Send the message to all subscribed handlers
-                        synchronized (listeners) {
-                            for (Handler l : listeners) {
-                                //for (Vital vital : vitals) {
-                                l.sendMessage(l.obtainMessage(Common.RIPPLE_MSG_VITALS_STREAM, copy(vitals)));
-                                //}
-                            }
-                        }
-
-                        vitals = null;
-                    }
-
-                    //Log.d(Common.LOG_TAG, "UDP: S: Received something:");
-
-                } catch (Exception e) {
-                    Log.e(Common.LOG_TAG, "UDP: S: Error", e);
+                } catch (IOException e) {
+                    Log.e(Common.LOG_TAG, "Unable to receive message " + e);
+                } catch (ClassNotFoundException e) {
+                    Log.e(Common.LOG_TAG, "Unable to read an Object from the stream " + e);
                 }
+
             }
-            Log.d(Common.LOG_TAG, "UDP: S: Done.");
+            Log.d(Common.LOG_TAG, "UDP: S: Stoped");
         }
     }
 }

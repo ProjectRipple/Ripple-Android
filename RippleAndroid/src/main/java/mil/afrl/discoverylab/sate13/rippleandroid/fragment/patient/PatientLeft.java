@@ -20,7 +20,6 @@ import com.foxykeep.datadroid.requestmanager.Request;
 import com.foxykeep.datadroid.requestmanager.RequestManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import mil.afrl.discoverylab.sate13.ripple.data.model.SubscriptionResponse;
 import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
@@ -43,7 +42,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     private static final String SAVED_STATE_REQUEST_LIST = "savedStateRequestList";
     private static UdpClient udpc = new UdpClient();
     private int curPatient = -1;
-    private int curVital;
+    //private int curVital;
     protected RippleRequestManager mRequestManager;
     protected ArrayList<Request> mRequestList;
     private View view;
@@ -57,17 +56,9 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
 
             switch (msg.what) {
                 case Common.RIPPLE_MSG_VITALS_STREAM: {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            List<Vital> vitals = (List<Vital>) msg.obj;
-                            for (Vital v : vitals) {
-                                if (v.sensor_type.equals("1") && v.pid == curPatient) {
-                                    graphHelper.addPoint((double) v.sensor_timestamp, (double) v.value);
-                                }
-                            }
-                        }
-                    }).start();
+
+                    graphHelper.offerVitals((Vital[]) msg.obj);
+
                     break;
                 }
                 default:
@@ -78,12 +69,15 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     };
 
     private synchronized void callSubscriptionWS(int pid, String action) {
-        Request request = RippleRequestFactory.getSubscriptionRequest(
-                pid,
-                action,
-                WSConfig.UDP_VITALS_STREAM_PORT);
-        mRequestManager.execute(request, this);
-        mRequestList.add(request);
+        if (pid >= 0) {
+            Log.d(Common.LOG_TAG, action + "ing from " + curPatient);
+            Request request = RippleRequestFactory.getSubscriptionRequest(
+                    pid,
+                    action,
+                    WSConfig.UDP_VITALS_STREAM_PORT);
+            mRequestManager.execute(request, this);
+            mRequestList.add(request);
+        }
     }
 
     /**
@@ -105,8 +99,9 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         assert view != null;
 
         LinearLayout layout = (LinearLayout) view.findViewById(R.id.chart);
-        graphHelper = new GraphHelper(this.getActivity(), layout);
-        layout.addView(graphHelper.chartView,
+        graphHelper = new GraphHelper(this.getActivity());
+
+        layout.addView(graphHelper.getChartView(),
                 new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT));
 
@@ -194,9 +189,6 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         if (response.success) {
             if (response.action_echo.equals("unsubscribe") && curPatient >= 0) {
                 Log.d(Common.LOG_TAG, "Successfully unsubscribed: " + response.toString());
-                // Clear the Graph
-                graphHelper.clearGraph();
-                callSubscriptionWS(curPatient, "subscribe");
             } else if (response.action_echo.equals("subscribe") && response.pid_echo == curPatient) {
                 Log.d(Common.LOG_TAG, "Successfully subscribed: " + response.toString());
             }
@@ -236,30 +228,47 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     @Override
     public void onDestroy() {
         super.onDestroy();
+        callSubscriptionWS(curPatient, "unsubscribe");
+        graphHelper.stopPlotter();
         graphHelper.clearGraph();
         udpc.removehandler(handler);
         udpc.disconnect();
     }
 
     public void setPatient(int pid) {
+
+        graphHelper.clearGraph();
+
         if (curPatient != pid) {
+
             if (curPatient >= 0) {
-                // Unsubscribe
-                callSubscriptionWS(pid, "unsubscribe");
-            } else {
-                // Subscribe
-                callSubscriptionWS(pid, "subscribe");
-                // Connect to UdpStream
-                if (!udpc.isListening()) {
-                    udpc.connect(WSConfig.UDP_VITALS_STREAM_HOST, WSConfig.UDP_VITALS_STREAM_PORT);
-                }
-                udpc.addHandler(handler);
+                callSubscriptionWS(curPatient, "unsubscribe");
             }
+
+            graphHelper.startPlotter();
+
+            // Subscribe
+            callSubscriptionWS(pid, "subscribe");
+
+            // Connect to UdpStream
+            if (!udpc.isListening()) {
+                udpc.connect(WSConfig.UDP_VITALS_STREAM_HOST, WSConfig.UDP_VITALS_STREAM_PORT);
+            }
+
+            udpc.addHandler(handler);
+
             curPatient = pid;
+
             // TODO: may need settext on UI thread
             patientName.setText("Dummy Patient(" + curPatient + ")");
         } else {
-            // Do Nothing
+
+            graphHelper.stopPlotter();
+
+            callSubscriptionWS(curPatient, "unsubscribe");
+
+            udpc.removehandler(handler);
+
         }
     }
 

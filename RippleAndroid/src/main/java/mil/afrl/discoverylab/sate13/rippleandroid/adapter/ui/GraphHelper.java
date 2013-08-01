@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.LinearLayout;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -13,19 +12,28 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
+import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 
-/**
- * Created by burt on 7/23/13.
- */
 public class GraphHelper {
 
-    private static final int DEFAULT_MAX_ITEMS = 100;
+    private boolean plotting = false;
+
+    private Queue<Vital[]> vitalsQ = new LinkedList<Vital[]>();
+
+    private static final Long DEFAULT_MAX_X_RANGE = 1000L;
+
+    private double maxX = 0.0;
+
+    private Thread plotter;
 
     /**
      * The chart view that displays the data.
      */
-    public GraphicalView chartView;
+    private GraphicalView chartView;
 
     /**
      * The main dataset that includes all the series that go into a chart.
@@ -42,21 +50,14 @@ public class GraphHelper {
     /**
      * The most recently added series.
      */
-    public XYSeries currentSeries;
+    private XYSeries currentSeries;
 
-    private double prevPoint = 0.0;
-
-
-    public GraphHelper(Activity activity, LinearLayout layout) {
+    public GraphHelper(Activity activity) {
         // set some properties on the main renderer
         chartRenderer.setApplyBackgroundColor(true);
         chartRenderer.setBackgroundColor(Color.argb(255, 238, 237, 240));
         chartRenderer.setLabelsColor(Color.BLACK);
         chartRenderer.setMarginsColor(Color.WHITE);
-        //chartRenderer.setAxisTitleTextSize(16);
-        //chartRenderer.setChartTitleTextSize(16);
-        //chartRenderer.setLabelsTextSize(16);
-        //chartRenderer.setLegendTextSize(16);
         //chartRenderer.setMargins(new int[]{32, 32, 32, 32});
         chartRenderer.setYLabelsPadding((float) 10);
         chartRenderer.setZoomButtonsVisible(false);
@@ -67,37 +68,18 @@ public class GraphHelper {
         chartRenderer.setYLabelsColor(0, Color.BLACK);
         chartRenderer.setShowLegend(false);
         chartRenderer.setDisplayValues(false);
-        //chartRenderer.setInitialRange(new double[]{0, 2000, -0.3, 0.7});
-        chartRenderer.setYAxisMax(3000.0);
-        //chartRenderer.setYAxisMax(0.7);
         chartRenderer.setYAxisMin(1500.0);
-        //chartRenderer.setYAxisMin(-0.3);
+        chartRenderer.setYAxisMax(3000.0);
+        chartRenderer.setInitialRange(new double[]{0, 1000, 1500.0, 3000.0});
         chartRenderer.setClickEnabled(false);
         chartRenderer.setPanEnabled(false);
         chartRenderer.setZoomEnabled(false);
 
         setupSeries();
-        initializeChart(activity, layout);
 
-        //chartView.
+        chartView = ChartFactory.getLineChartView(activity, chartSeriesSset, chartRenderer);
+
         chartView.repaint();
-    }
-
-    private void setupSeries() {
-        String seriesTitle = "";
-
-        // create a new series of data
-        XYSeries series = new XYSeries(seriesTitle);
-        chartSeriesSset.addSeries(series);
-        currentSeries = series;
-
-        // create a new renderer for the new series
-        XYSeriesRenderer renderer = new XYSeriesRenderer();
-        renderer.setColor(Color.RED);
-
-        chartRenderer.addSeriesRenderer(renderer);
-        seriesRenderer = renderer;
-
     }
 
     /**
@@ -127,31 +109,129 @@ public class GraphHelper {
         }
     }
 
-    public void initializeChart(Activity activity, LinearLayout layout) {
-        chartView = ChartFactory.getLineChartView(activity, chartSeriesSset, chartRenderer);
-    }
-
     public void clearGraph() {
         currentSeries.clear();
         setupSeries();
         chartView.repaint();
     }
 
-    public boolean addPoint(double x, double y) {
-        if (x > prevPoint) {
-            /*while (currentSeries.getItemCount() > DEFAULT_MAX_ITEMS) {
-                currentSeries.remove(0);
-            }*/
-            while ((x - currentSeries.getMinX()) > 1000) {
+    public GraphicalView getChartView() {
+        return chartView;
+    }
+
+    public boolean getPlotting() {
+        return plotting;
+    }
+
+    public boolean isVitalsQEmpty() {
+        return vitalsQ.isEmpty();
+    }
+
+    public Vital[] vitalsQRemove() {
+        return vitalsQ.remove();
+    }
+
+    public boolean offerVitals(Vital[] vitals) {
+        return vitalsQ.offer(vitals);
+    }
+
+    public void startPlotter() {
+        if (plotter == null) {
+
+            plotter = new Thread(new PlottingThread());
+            plotter.setName("Plotter Thread");
+            plotter.setDaemon(true);
+
+            plotting = true;
+            plotter.start();
+        }
+    }
+
+    public void stopPlotter() {
+        if (plotter != null) {
+
+            plotting = false;
+            plotter.interrupt();
+
+            vitalsQ.clear();
+            plotter = null;
+        }
+    }
+
+    private void setupSeries() {
+
+        // create a new series of data
+        XYSeries series = new XYSeries("");
+        chartSeriesSset.addSeries(series);
+        currentSeries = series;
+
+        // create a new renderer for the new series
+        XYSeriesRenderer renderer = new XYSeriesRenderer();
+        renderer.setColor(Color.RED);
+
+        chartRenderer.addSeriesRenderer(renderer);
+        seriesRenderer = renderer;
+    }
+
+    synchronized private boolean addVitalsPoint(double x, Integer y) {
+        if (x > maxX) {
+
+            if (maxX != 0) {
+                while ((x - maxX) > 25) {
+                    maxX += 5.0;
+                    //Log.d(Common.LOG_TAG, "Adding (" + maxX + ", 0.0)");
+                    currentSeries.add(maxX, 0.0);
+                }
+            }
+
+            while ((x - currentSeries.getMinX()) > DEFAULT_MAX_X_RANGE && currentSeries.getItemCount() > 0) {
                 currentSeries.remove(0);
             }
-            currentSeries.add(x, y);
-            chartView.repaint();
-            prevPoint = x;
+
+            //Log.d(Common.LOG_TAG, "Adding (" + x + ", " + y + ")");
+            currentSeries.add(x, (double) y);
+
+            maxX = x;
+
             return true;
         } else {
-            Log.d(Common.LOG_TAG, "Graph: Out of order x values x=" + x + " prevx=" + prevPoint);
+            Log.d(Common.LOG_TAG, "Graph: Out of order x values (" + x + ", " + y + ") vs. ("
+                    + currentSeries.getX(currentSeries.getItemCount() - 1) + ", " +
+                    +currentSeries.getY(currentSeries.getItemCount() - 1) + ")");
             return false;
         }
     }
+
+    private class PlottingThread implements Runnable {
+
+        public PlottingThread() {
+        }
+
+        @Override
+        public void run() {
+            while (getPlotting()) {
+
+                if (!isVitalsQEmpty()) {
+
+                    for (Vital v : vitalsQRemove()) {
+
+                        if (v.sensor_type.equals("1")) {// && v.pid == curPatient) {
+
+                            //if (v.sensor_type_int == Common.VITAL_TYPES.VITAL_ECG.getValue() && v.pid == curPatient) {
+                            if (addVitalsPoint((double) v.sensor_timestamp, v.value)) {
+                                getChartView().repaint();
+                            }
+
+                        }
+
+                    }
+
+                } else {
+                    Thread.yield();
+                }
+
+            }
+        }
+    }
+
 }

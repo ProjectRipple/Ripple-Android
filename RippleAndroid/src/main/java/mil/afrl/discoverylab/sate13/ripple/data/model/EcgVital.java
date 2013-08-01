@@ -18,7 +18,7 @@ import mil.afrl.discoverylab.sate13.rippleandroid.data.provider.RippleContent;
 /**
  * Created by burt on 7/3/13.
  */
-public final class Vital implements Parcelable, Serializable {
+public final class EcgVital implements Parcelable, Serializable {
 
 
     private static final long serialVersionUID = 512L;
@@ -33,7 +33,7 @@ public final class Vital implements Parcelable, Serializable {
     public String value_type;
     public Integer value;
 
-    private Vital() {
+    private EcgVital() {
         // No public default constructor
     }
 
@@ -47,7 +47,7 @@ public final class Vital implements Parcelable, Serializable {
         }
     }
 
-    public Vital(Integer pid, String server_timestamp, Long sensor_timestamp, String sensor_type, String value_type, Integer value) {
+    public EcgVital(Integer pid, String server_timestamp, Long sensor_timestamp, String sensor_type, String value_type, Integer value) {
         this.pid = pid;
         try {
             this.server_timestamp = Common.SIMPLE_DATETIME_FORMAT.parse(server_timestamp);
@@ -61,7 +61,7 @@ public final class Vital implements Parcelable, Serializable {
         this.value = value;
     }
 
-    public Vital(Vital v) {
+    public EcgVital(EcgVital v) {
         vid = v.vid;
         pid = v.pid;
         server_timestamp = new Date(v.server_timestamp.getTime());
@@ -72,7 +72,7 @@ public final class Vital implements Parcelable, Serializable {
         value = v.value;
     }
 
-    public Vital(Parcel in) {
+    public EcgVital(Parcel in) {
         vid = in.readInt();
         pid = in.readInt();
         try {
@@ -114,13 +114,13 @@ public final class Vital implements Parcelable, Serializable {
         return cv;
     }
 
-    public static final Parcelable.Creator<Vital> CREATOR = new Parcelable.Creator<Vital>() {
-        public Vital createFromParcel(Parcel in) {
-            return new Vital(in);
+    public static final Creator<EcgVital> CREATOR = new Creator<EcgVital>() {
+        public EcgVital createFromParcel(Parcel in) {
+            return new EcgVital(in);
         }
 
-        public Vital[] newArray(int size) {
-            return new Vital[size];
+        public EcgVital[] newArray(int size) {
+            return new EcgVital[size];
         }
     };
 
