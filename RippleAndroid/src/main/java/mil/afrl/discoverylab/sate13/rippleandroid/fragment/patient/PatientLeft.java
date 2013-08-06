@@ -229,10 +229,10 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     public void onDestroy() {
         super.onDestroy();
         callSubscriptionWS(curPatient, "unsubscribe");
-        graphHelper.stopPlotter();
-        graphHelper.clearGraph();
         udpc.removehandler(handler);
         udpc.disconnect();
+        graphHelper.stopPlotter();
+        graphHelper.clearGraph();
     }
 
     public void setPatient(int pid) {
@@ -262,12 +262,14 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             // TODO: may need settext on UI thread
             patientName.setText("Dummy Patient(" + curPatient + ")");
         } else {
+            // reset to default id
+            this.curPatient = -1;
 
-            graphHelper.stopPlotter();
+            udpc.removehandler(handler);
 
             callSubscriptionWS(curPatient, "unsubscribe");
 
-            udpc.removehandler(handler);
+            graphHelper.stopPlotter();
 
         }
     }
