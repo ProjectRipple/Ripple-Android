@@ -18,36 +18,26 @@ import mil.afrl.discoverylab.sate13.rippleandroid.data.provider.RippleContent;
 /**
  * Created by burt on 7/3/13.
  */
-public final class EcgVital implements Parcelable, Serializable {
+public final class MultiValueVital implements Parcelable, Serializable {
 
 
     private static final long serialVersionUID = 512L;
 
-    public transient Integer sensor_type_int;
 
     public Integer vid = -1;
     public Integer pid;
     public Date server_timestamp;
     public Long sensor_timestamp;
-    public String sensor_type;
-    public String value_type;
-    public Integer value;
+    public Integer sensor_type;
+    public Integer value_type;
+    public Integer period_ms;
+    public int[] values;
 
-    private EcgVital() {
+    private MultiValueVital() {
         // No public default constructor
     }
 
-    private void parseSensorType() {
-        if (sensor_type != null) {
-            try {
-                sensor_type_int = Integer.parseInt(sensor_type);
-            } catch (NumberFormatException nfe) {
-                Log.e(Common.LOG_TAG, "Unable to parse sensorType: " + sensor_type);
-            }
-        }
-    }
-
-    public EcgVital(Integer pid, String server_timestamp, Long sensor_timestamp, String sensor_type, String value_type, Integer value) {
+    public MultiValueVital(Integer pid, String server_timestamp, Long sensor_timestamp, Integer sensor_type, Integer value_type, Integer period_ms, int[] values) {
         this.pid = pid;
         try {
             this.server_timestamp = Common.SIMPLE_DATETIME_FORMAT.parse(server_timestamp);
@@ -56,23 +46,22 @@ public final class EcgVital implements Parcelable, Serializable {
         }
         this.sensor_timestamp = sensor_timestamp;
         this.sensor_type = sensor_type;
-        parseSensorType();
         this.value_type = value_type;
-        this.value = value;
+        this.period_ms = period_ms;
+        this.values = values;
     }
 
-    public EcgVital(EcgVital v) {
+    public MultiValueVital(MultiValueVital v) {
         vid = v.vid;
         pid = v.pid;
         server_timestamp = new Date(v.server_timestamp.getTime());
         sensor_timestamp = v.sensor_timestamp;
         sensor_type = v.sensor_type;
-        parseSensorType();
         value_type = v.value_type;
-        value = v.value;
+        values = v.values;
     }
 
-    public EcgVital(Parcel in) {
+    public MultiValueVital(Parcel in) {
         vid = in.readInt();
         pid = in.readInt();
         try {
@@ -81,10 +70,10 @@ public final class EcgVital implements Parcelable, Serializable {
             server_timestamp = new Date();
         }
         sensor_timestamp = in.readLong();
-        sensor_type = in.readString();
-        parseSensorType();
-        value_type = in.readString();
-        value = in.readInt();
+        sensor_type = in.readInt();
+        value_type = in.readInt();
+        period_ms = in.readInt();
+        in.readIntArray(values);
     }
 
     public int describeContents() {
@@ -96,31 +85,31 @@ public final class EcgVital implements Parcelable, Serializable {
         dest.writeInt(pid);
         dest.writeString(Common.SIMPLE_DATETIME_FORMAT.format(server_timestamp));
         dest.writeLong(sensor_timestamp);
-        dest.writeString(sensor_type);
-        parseSensorType();
-        dest.writeString(value_type);
-        dest.writeInt(value);
+        dest.writeInt(sensor_type);
+        dest.writeInt(value_type);
+        dest.writeInt(period_ms);
+        dest.writeIntArray(values);
     }
 
-    public ContentValues toContentValues() {
-        ContentValues cv = new ContentValues();
-        cv.put(RippleContent.db_vital.Columns.VID.getName(), vid);
-        cv.put(RippleContent.db_vital.Columns.PID.getName(), pid);
-        cv.put(RippleContent.db_vital.Columns.SERVER_TIMESTAMP.getName(), Common.SIMPLE_DATETIME_FORMAT.format(server_timestamp));
-        cv.put(RippleContent.db_vital.Columns.SENSOR_TIMESTAMP.getName(), sensor_timestamp);
-        cv.put(RippleContent.db_vital.Columns.SENSOR_TYPE.getName(), sensor_type);
-        cv.put(RippleContent.db_vital.Columns.VALUE_TYPE.getName(), value_type);
-        cv.put(RippleContent.db_vital.Columns.VALUE.getName(), value);
-        return cv;
-    }
+//    public ContentValues toContentValues() {
+//        ContentValues cv = new ContentValues();
+//        cv.put(RippleContent.db_vital.Columns.VID.getName(), vid);
+//        cv.put(RippleContent.db_vital.Columns.PID.getName(), pid);
+//        cv.put(RippleContent.db_vital.Columns.SERVER_TIMESTAMP.getName(), Common.SIMPLE_DATETIME_FORMAT.format(server_timestamp));
+//        cv.put(RippleContent.db_vital.Columns.SENSOR_TIMESTAMP.getName(), sensor_timestamp);
+//        cv.put(RippleContent.db_vital.Columns.SENSOR_TYPE.getName(), sensor_type);
+//        cv.put(RippleContent.db_vital.Columns.VALUE_TYPE.getName(), value_type);
+//        cv.put(RippleContent.db_vital.Columns.VALUE.getName(), values);
+//        return cv;
+//    }
 
-    public static final Creator<EcgVital> CREATOR = new Creator<EcgVital>() {
-        public EcgVital createFromParcel(Parcel in) {
-            return new EcgVital(in);
+    public static final Creator<MultiValueVital> CREATOR = new Creator<MultiValueVital>() {
+        public MultiValueVital createFromParcel(Parcel in) {
+            return new MultiValueVital(in);
         }
 
-        public EcgVital[] newArray(int size) {
-            return new EcgVital[size];
+        public MultiValueVital[] newArray(int size) {
+            return new MultiValueVital[size];
         }
     };
 

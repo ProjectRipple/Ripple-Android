@@ -21,6 +21,7 @@ import com.foxykeep.datadroid.requestmanager.RequestManager;
 
 import java.util.ArrayList;
 
+import mil.afrl.discoverylab.sate13.ripple.data.model.MultiValueVital;
 import mil.afrl.discoverylab.sate13.ripple.data.model.SubscriptionResponse;
 import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
@@ -57,7 +58,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             switch (msg.what) {
                 case Common.RIPPLE_MSG_VITALS_STREAM: {
 
-                    graphHelper.offerVitals((Vital[]) msg.obj);
+                    graphHelper.offerVitals((MultiValueVital[]) msg.obj);
 
                     break;
                 }
@@ -78,6 +79,13 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             mRequestManager.execute(request, this);
             mRequestList.add(request);
         }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Need to recreate client since it is disconnected on destroy
+        udpc = new UdpClient();
     }
 
     /**
