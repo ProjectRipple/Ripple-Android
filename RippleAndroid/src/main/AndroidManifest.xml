@@ -49,6 +49,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+                android:name=".PrefsActivity"
+                android:theme="@android:style/Theme.Black.NoTitleBar" />
 
         <service
                 android:name=".data.service.RippleRequestService"

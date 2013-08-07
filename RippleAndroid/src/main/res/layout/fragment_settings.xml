@@ -1,0 +1,31 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <PreferenceCategory android:title="Broker Settings" >
+
+        <EditTextPreference
+            android:dialogTitle="@string/ip_address_dialog_title"
+            android:key="ipAddressPref"
+            android:summary="@string/ip_address_summary"
+            android:digits="0123456789ABCDEF.:"
+            android:inputType="textCapCharacters"
+            android:title="@string/ip_address_title" />
+
+        <!--<EditTextPreference-->
+            <!--android:dialogTitle="@string/port_number_dialog_title"-->
+            <!--android:key="portNumberPref"-->
+            <!--android:summary="@string/port_number_summary"-->
+            <!--android:inputType="number"-->
+            <!--android:title="@string/port_number_title" />-->
+            
+         <!--<EditTextPreference-->
+            <!--android:dialogTitle="@string/port_number_dialog_title"-->
+            <!--android:key="portTexturePref"-->
+            <!--android:summary="@string/port_number_texture_summary"-->
+            <!--android:inputType="number"-->
+            <!--android:title="@string/port_number_texture_title" />-->
+        
+    </PreferenceCategory>
+
+</PreferenceScreen>

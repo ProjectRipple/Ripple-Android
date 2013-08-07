@@ -24,5 +24,11 @@
     <string name="resp"><u>Resp:</u></string>
     <string name="pain"><u>Pain:</u></string>
 
+    <string name="ip_address_summary">Enter IP address for Broker</string>
+    <string name="ip_address_title">IP address</string>
+    <string name="ip_address_dialog_title">Enter IP address</string>
+    <string name="invalid_input">Invalid Input</string>
+    <string name="ip_error_message">An IP address contains the format of:\n0-255.0-255.0-255.0-255 for IPv4\nOR [0-9,A-F]{1,4}::[0-9,A-F]{1,4} for IPv6 \nPlease try again.</string>
+
 
 </resources>

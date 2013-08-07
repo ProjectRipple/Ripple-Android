@@ -4,6 +4,7 @@ package mil.afrl.discoverylab.sate13.rippleandroid.fragment.patient;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import mil.afrl.discoverylab.sate13.ripple.data.model.MultiValueVital;
 import mil.afrl.discoverylab.sate13.ripple.data.model.SubscriptionResponse;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
+import mil.afrl.discoverylab.sate13.rippleandroid.PrefsActivity;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.UdpClient;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.ui.GraphHelper;
@@ -53,6 +55,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     private TextView bloodOx;
     private GraphHelper graphHelper;
     private Handler bannerHandler;
+    private Button settingsButton;
 
     private Handler handler = new Handler() {
         @Override
@@ -168,6 +171,14 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         this.temperature = (TextView) view.findViewById(R.id.temp_value_tv);
         this.pulse = (TextView) view.findViewById(R.id.pulse_value_tv);
         this.bloodOx = (TextView) view.findViewById(R.id.o2_value_tv);
+
+        this.settingsButton = (Button) view.findViewById(R.id.setting_button);
+        this.settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), PrefsActivity.class));
+            }
+        });
         return view;
     }
 
