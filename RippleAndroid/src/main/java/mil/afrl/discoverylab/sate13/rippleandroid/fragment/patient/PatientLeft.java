@@ -23,7 +23,6 @@ import java.util.ArrayList;
 
 import mil.afrl.discoverylab.sate13.ripple.data.model.MultiValueVital;
 import mil.afrl.discoverylab.sate13.ripple.data.model.SubscriptionResponse;
-import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.UdpClient;
@@ -68,15 +67,15 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
                     break;
                 }
                 case Common.RIPPLE_MSG_VITALS_TEMPERATURE: {
-                    temperature.setText(Integer.toString(((Vital) msg.obj).value));
+                    temperature.setText(Integer.toString(msg.arg1));
                     break;
                 }
                 case Common.RIPPLE_MSG_VITALS_PULSE: {
-                    pulse.setText(Integer.toString(((Vital) msg.obj).value));
+                    pulse.setText(Integer.toString(msg.arg1));
                     break;
                 }
                 case Common.RIPPLE_MSG_VITALS_BLOOD_OX: {
-                    bloodOx.setText(Integer.toString(((Vital) msg.obj).value));
+                    bloodOx.setText(Integer.toString(msg.arg1));
                     break;
                 }
                 default:
@@ -294,17 +293,14 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             // TODO: may need settext on UI thread
             patientName.setText("Dummy Patient(" + curPatient + ")");
         } else {
-            // reset to default id
-            this.curPatient = -1;
-
             udpc.removehandler(handler);
 
             callSubscriptionWS(curPatient, "unsubscribe");
 
             graphHelper.stopPlotter();
 
+            // reset to default id
             curPatient = -1;
-
         }
     }
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -16,7 +17,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import mil.afrl.discoverylab.sate13.ripple.data.model.MultiValueVital;
-import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 
 public class GraphHelper {
@@ -244,12 +244,14 @@ public class GraphHelper {
                                 timestamp += period;
                             }
 
-                        } else if (v.sensor_type.equals(Integer.toString(Common.VITAL_TYPES.VITAL_TEMPERATURE.getValue()))) {
-                            patientHandler.sendMessage(patientHandler.obtainMessage(Common.RIPPLE_MSG_VITALS_TEMPERATURE, v));
-                        } else if (v.value_type.equals(Integer.toString(Common.VITAL_TYPES.VITAL_PULSE.getValue()))) {
-                            patientHandler.sendMessage(patientHandler.obtainMessage(Common.RIPPLE_MSG_VITALS_PULSE, v));
-                        } else if (v.sensor_type.equals(Integer.toString(Common.VITAL_TYPES.VITAL_BLOOD_OX.getValue()))) {
-                            patientHandler.sendMessage(patientHandler.obtainMessage(Common.RIPPLE_MSG_VITALS_BLOOD_OX, v));
+                        } else if (v.value_type == Common.VITAL_TYPES.VITAL_TEMPERATURE.getValue()) {
+                            patientHandler.sendMessage(patientHandler.obtainMessage(Common.RIPPLE_MSG_VITALS_TEMPERATURE, v.values[0], 0));
+                        } else if (v.value_type == Common.VITAL_TYPES.VITAL_PULSE.getValue()) {
+                            patientHandler.sendMessage(patientHandler.obtainMessage(Common.RIPPLE_MSG_VITALS_PULSE, v.values[0], 0));
+                        } else if (v.value_type == Common.VITAL_TYPES.VITAL_BLOOD_OX.getValue()) {
+                            patientHandler.sendMessage(patientHandler.obtainMessage(Common.RIPPLE_MSG_VITALS_BLOOD_OX, v.values[0], 0));
+                        } else {
+                            Log.d(Common.LOG_TAG, "Unknown value / sensor type: " + v.value_type + " / " + v.sensor_timestamp);
                         }
 
                     }
