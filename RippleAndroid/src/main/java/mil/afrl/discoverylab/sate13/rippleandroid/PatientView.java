@@ -24,6 +24,8 @@ public class PatientView extends View {
     private Patient mPatient;
     // Reference to context
     private Context mContext;
+    // rectangle for drawing
+    RectF mRect = new RectF();
     // Colors
     private Paint mPaintBG, mPaintText, mPaintStatus;
     private static final Paint mPaintRed = new Paint();
@@ -98,43 +100,43 @@ public class PatientView extends View {
         int statHeight = (vHeight - 10) / 3;
         int statWidth = (int) (vWidth * .6);
 
-
-        RectF rect = new RectF();
         // Draw border color
-        rect.set(0, 0, vWidth - 2, vHeight);
-        canvas.drawRoundRect(rect, 10, 10, mPaintStatus);
+        mRect.set(0, 0, vWidth - 2, vHeight);
+        canvas.drawRoundRect(mRect, 10, 10, mPaintStatus);
 
         // Draw inner background
-        rect.set(BORDER, BORDER - 1, vWidth - (BORDER * 2), vHeight - (BORDER * 2) + 1);
-        canvas.drawRoundRect(rect, 10, 10, mPaintBG);
+        mRect.set(BORDER, BORDER - 1, vWidth - (BORDER * 2), vHeight - (BORDER * 2) + 1);
+        canvas.drawRoundRect(mRect, 10, 10, mPaintBG);
 
         // Draw rectangle for temperature, formally respiration value
-        rect.set(BORDER * 2, BORDER * 2, statWidth, (statHeight) - BORDER);
+        mRect.set(BORDER * 2, BORDER * 2, statWidth, (statHeight) - BORDER);
         //canvas.drawRoundRect(rect, 10, 10, getColor(DataFields.RESP_PM));
-        canvas.drawRoundRect(rect, 10, 10, getColor(DataFields.TEMPERATURE));
+        canvas.drawRoundRect(mRect, 10, 10, getColor(DataFields.TEMPERATURE));
 
         // Draw rectangle for pulse value
-        rect.set(BORDER * 2, statHeight + BORDER * 2, statWidth, statHeight * 2 - BORDER);
-        canvas.drawRoundRect(rect, 10, 10, getColor(DataFields.BEATS_PM));
+        mRect.set(BORDER * 2, statHeight + BORDER * 2, statWidth, statHeight * 2 - BORDER);
+        canvas.drawRoundRect(mRect, 10, 10, getColor(DataFields.BEATS_PM));
 
         // Draw rectangle for blood oxygen value
-        rect.set(BORDER * 2, statHeight * 2 + BORDER * 2, statWidth, statHeight * 3 - BORDER);
-        canvas.drawRoundRect(rect, 10, 10, getColor(DataFields.PULSE_OX));
+        mRect.set(BORDER * 2, statHeight * 2 + BORDER * 2, statWidth, statHeight * 3 - BORDER);
+        canvas.drawRoundRect(mRect, 10, 10, getColor(DataFields.PULSE_OX));
 
         //canvas.drawRect(statWidth, BORDER,vWidth-BORDER, vHeight-(BORDER*2), mPaintBG);
 
         // Draw temperature (formally respiration), pulse, and blood oxygen
         //canvas.drawText(mPatient.getRpm() + "", statWidth / 2, BORDER * 2 + statHeight / 2, mPaintText);
-        canvas.drawText(mPatient.getTemperature() + "", statWidth / 2, BORDER * 2 + statHeight / 2, mPaintText);
-        canvas.drawText(mPatient.getBpm() + "", statWidth / 2, BORDER * 2 + statHeight + statHeight / 2, mPaintText);
-        canvas.drawText(mPatient.getO2() + "", statWidth / 2, BORDER * 2 + (statHeight * 2) + statHeight / 2, mPaintText);
+        canvas.drawText("Temp: "+mPatient.getTemperature() + "", statWidth / 6, BORDER * 2 + statHeight / 2, mPaintText);
+        canvas.drawText("  HR: "+mPatient.getBpm() + "", statWidth / 6, BORDER * 2 + statHeight + statHeight / 2, mPaintText);
+        canvas.drawText("SpO2: "+mPatient.getO2() + "", statWidth / 6, BORDER * 2 + (statHeight * 2) + statHeight / 2, mPaintText);
         // Draw id
         if (this.mBitmap == null) {
             canvas.drawText(mRowOrder + "", statWidth + ((vWidth - statWidth - (BORDER * 2)) / 2), vHeight / 2, mPaintYellow);
         } else {
+            // left, top, right, bottom
+            mRect.set(statWidth + BORDER, BORDER, vWidth - BORDER, vHeight - (BORDER*2));
             canvas.drawBitmap(mBitmap, null,
-                    //new Rect(vHeight, statWidth, statWidth + ((vWidth - statWidth - (BORDER * 2))), 0),
-                    new Rect(vHeight - BORDER, statWidth - BORDER, vWidth - BORDER, BORDER),
+                    //new Rect(vHeight - BORDER, statWidth - BORDER, vWidth - BORDER, BORDER),
+                    mRect,
                     mBMPaint);
         }
     }
