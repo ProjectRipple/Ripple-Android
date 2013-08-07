@@ -3,7 +3,7 @@ package mil.afrl.discoverylab.sate13.rippleandroid.adapter.ui;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 
 import org.achartengine.ChartFactory;
 import org.achartengine.GraphicalView;
@@ -52,7 +52,9 @@ public class GraphHelper {
      */
     private XYSeries currentSeries;
 
-    public GraphHelper(Activity activity) {
+    private Handler patientHandler;
+
+    public GraphHelper(Activity activity, Handler handler) {
         // set some properties on the main renderer
         chartRenderer.setApplyBackgroundColor(true);
         chartRenderer.setBackgroundColor(Color.argb(255, 238, 237, 240));
@@ -80,6 +82,8 @@ public class GraphHelper {
         chartView = ChartFactory.getLineChartView(activity, chartSeriesSset, chartRenderer);
 
         chartView.repaint();
+
+        patientHandler = handler;
     }
 
     /**
@@ -180,7 +184,7 @@ public class GraphHelper {
                 while ((x - maxX) > 25) {
                     maxX += 5.0;
                     //Log.d(Common.LOG_TAG, "Adding (" + maxX + ", 0.0)");
-                    currentSeries.add(maxX, 0.0);
+                    currentSeries.add(maxX, Common.SIM_BASELINE_GUESS);
                 }
             }
 
@@ -195,9 +199,9 @@ public class GraphHelper {
 
             return true;
         } else {
-            Log.d(Common.LOG_TAG, "Graph: Out of order x values (" + x + ", " + y + ") vs. ("
+/*            Log.d(Common.LOG_TAG, "Graph: Out of order x values (" + x + ", " + y + ") vs. ("
                     + currentSeries.getX(currentSeries.getItemCount() - 1) + ", " +
-                    +currentSeries.getY(currentSeries.getItemCount() - 1) + ")");
+                    +currentSeries.getY(currentSeries.getItemCount() - 1) + ")");*/
             return false;
         }
     }
@@ -215,13 +219,19 @@ public class GraphHelper {
 
                     for (Vital v : vitalsQRemove()) {
 
-                        if (v.sensor_type.equals("1")) {// && v.pid == curPatient) {
-
+                        if (v.sensor_type.equals(Integer.toString(Common.VITAL_TYPES.VITAL_ECG.getValue()))) {
                             //if (v.sensor_type_int == Common.VITAL_TYPES.VITAL_ECG.getValue() && v.pid == curPatient) {
+
                             if (addVitalsPoint((double) v.sensor_timestamp, v.value)) {
                                 getChartView().repaint();
                             }
 
+                        } else if (v.sensor_type.equals(Integer.toString(Common.VITAL_TYPES.VITAL_TEMPERATURE.getValue()))) {
+                            patientHandler.sendMessage(patientHandler.obtainMessage(Common.RIPPLE_MSG_VITALS_TEMPERATURE, v));
+                        } else if (v.value_type.equals(Integer.toString(Common.VITAL_TYPES.VITAL_PULSE.getValue()))) {
+                            patientHandler.sendMessage(patientHandler.obtainMessage(Common.RIPPLE_MSG_VITALS_PULSE, v));
+                        } else if (v.sensor_type.equals(Integer.toString(Common.VITAL_TYPES.VITAL_BLOOD_OX.getValue()))) {
+                            patientHandler.sendMessage(patientHandler.obtainMessage(Common.RIPPLE_MSG_VITALS_BLOOD_OX, v));
                         }
 
                     }

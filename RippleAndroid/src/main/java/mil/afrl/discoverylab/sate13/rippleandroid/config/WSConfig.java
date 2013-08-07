@@ -11,7 +11,7 @@ public final class WSConfig {
     //public static final String ROOT_URL = "http://24.123.68.123/ripple/www/"; // Delta
     //public static final String ROOT_URL = "http://10.0.3.181:8080/RippleBroker/"; // Ripple
     //public static final String ROOT_URL = "http://192.168.0.200:8080/RippleBroker/"; // Ripple
-    public static final String ROOT_URL = "http://192.168.0.101:8080/RippleBroker/"; // James
+    public static final String ROOT_URL = "http://[abcd::222:19FF:FEF8:8FA7]:8080/RippleBroker/"; // James
     public static final String WS_QUERY_URL = ROOT_URL + "Query";
     public static final String WS_VITAL_LIST_URL_JSON = ROOT_URL + "Query?QueryType=VITAL&pid=1&vidi=0&limit=50";
     //public static final String WS_PATIENT_LIST_URL_JSON = ROOT_URL + "patientListJson.php";

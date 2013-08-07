@@ -106,5 +106,9 @@ public class FingerPaint extends View {
         }
         return true;
     }
+
+    public Bitmap getmBitmap() {
+        return mBitmap;
+    }
 }
 

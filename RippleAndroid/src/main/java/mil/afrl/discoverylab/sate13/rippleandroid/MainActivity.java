@@ -60,6 +60,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
 
 
         patLeft = (PatientLeft) fragmentManager.findFragmentById(R.id.bottomleft);
+        patLeft.setBannerHandler(banner.getHandler());
 
         initMap();
     }

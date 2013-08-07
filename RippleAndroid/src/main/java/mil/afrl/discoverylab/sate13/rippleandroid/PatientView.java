@@ -1,11 +1,12 @@
 package mil.afrl.discoverylab.sate13.rippleandroid;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
-import android.util.Log;
 import android.view.View;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.object.Patient;
@@ -28,8 +29,10 @@ public class PatientView extends View {
     private static final Paint mPaintRed = new Paint();
     private static final Paint mPaintYellow = new Paint();
     private static final Paint mPaintGreen = new Paint();
+    private static final Paint mBMPaint = new Paint(Paint.DITHER_FLAG);
     // Id
     private int mRowOrder;
+    private Bitmap mBitmap = null;
 
     private enum DataFields {
         RESP_PM, PULSE_OX, BEATS_PM, TEMPERATURE
@@ -81,6 +84,7 @@ public class PatientView extends View {
         mPaintRed.setColor(Color.RED);
         mPaintYellow.setColor(Color.YELLOW);
         mPaintGreen.setColor(Color.GREEN);
+
     }
 
     @Override
@@ -125,7 +129,14 @@ public class PatientView extends View {
         canvas.drawText(mPatient.getBpm() + "", statWidth / 2, BORDER * 2 + statHeight + statHeight / 2, mPaintText);
         canvas.drawText(mPatient.getO2() + "", statWidth / 2, BORDER * 2 + (statHeight * 2) + statHeight / 2, mPaintText);
         // Draw id
-        canvas.drawText(mRowOrder + "", statWidth + ((vWidth - statWidth - (BORDER * 2)) / 2), vHeight / 2, mPaintYellow);
+        if (this.mBitmap == null) {
+            canvas.drawText(mRowOrder + "", statWidth + ((vWidth - statWidth - (BORDER * 2)) / 2), vHeight / 2, mPaintYellow);
+        } else {
+            canvas.drawBitmap(mBitmap, null,
+                    //new Rect(vHeight, statWidth, statWidth + ((vWidth - statWidth - (BORDER * 2))), 0),
+                    new Rect(vHeight - BORDER, statWidth - BORDER, vWidth - BORDER, BORDER),
+                    mBMPaint);
+        }
     }
 
     private Paint getColor(DataFields type) {
@@ -192,5 +203,9 @@ public class PatientView extends View {
         } else {
             return mPaintRed;
         }
+    }
+
+    public void setmBitmap(Bitmap mBitmap) {
+        this.mBitmap = mBitmap;
     }
 }

@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
  */
 public final class Common {
 
+
     private Common() {
         // Empty
     }
@@ -41,6 +42,14 @@ public final class Common {
     // Messaging What Constants
     public static final int RIPPLE_MSG_MCAST = 22;
     public static final int RIPPLE_MSG_VITALS_STREAM = 44;
+    public static final int RIPPLE_MSG_VITALS_TEMPERATURE = 33;
+    public static final int RIPPLE_MSG_VITALS_PULSE = 55;
+    public static final int RIPPLE_MSG_VITALS_BLOOD_OX = 66;
+    public static final int RIPPLE_MSG_BITMAP = 99;
+
+    // Fudge Values
+    public static final double SIM_BASELINE_GUESS = 1858.077626;
+
 
     //ECG Vitals Streaming
     //public static final int

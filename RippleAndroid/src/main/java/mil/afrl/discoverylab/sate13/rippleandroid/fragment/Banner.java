@@ -3,6 +3,7 @@ package mil.afrl.discoverylab.sate13.rippleandroid.fragment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -61,18 +62,16 @@ public class Banner extends Fragment {
             super.handleMessage(msg);
 
             switch (msg.what) {
-                case Common.RIPPLE_MSG_MCAST:
+                case Common.RIPPLE_MSG_MCAST: {
                     if (mPatients == null || msg.obj == null) {
                         // No patients to update or no message
                         return;
                     }
 //                    Log.d(Common.LOG_TAG, "Banner Handler" + msg.obj);
 
-
                     JsonObject json = gson.fromJson(msg.obj.toString(), JsonObject.class);
                     int patientId = json.getAsJsonPrimitive("pid").getAsInt();
                     JsonArray vitals = json.getAsJsonArray("vitals");
-
 
                     boolean patientFound = false;
                     Patient curPatient = null;
@@ -114,6 +113,17 @@ public class Banner extends Fragment {
                     }
 
 
+                    break;
+                }
+                case Common.RIPPLE_MSG_BITMAP:
+
+                    for (int i = 0; i < tableRow.getVirtualChildCount(); i++) {
+                        PatientView p = (PatientView) tableRow.getVirtualChildAt(i);
+                        if (p.getPid() == msg.arg1) {
+                            p.setmBitmap((Bitmap) msg.obj);
+                            p.postInvalidate();
+                        }
+                    }
                     break;
             }
         }
@@ -266,4 +276,7 @@ public class Banner extends Fragment {
         this.tableRow.postInvalidate();
     }
 
+    public Handler getHandler() {
+        return mHandler;
+    }
 }

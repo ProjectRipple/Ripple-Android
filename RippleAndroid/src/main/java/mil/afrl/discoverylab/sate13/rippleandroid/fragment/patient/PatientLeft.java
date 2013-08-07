@@ -30,6 +30,7 @@ import mil.afrl.discoverylab.sate13.rippleandroid.adapter.ui.GraphHelper;
 import mil.afrl.discoverylab.sate13.rippleandroid.config.WSConfig;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
 import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestManager;
+import mil.afrl.discoverylab.sate13.rippleandroid.view.FingerPaint;
 
 /**
  * The left patient fragment is used to display the most recent health data and information
@@ -47,7 +48,11 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     protected ArrayList<Request> mRequestList;
     private View view;
     private TextView patientName;
+    private TextView temperature;
+    private TextView pulse;
+    private TextView bloodOx;
     private GraphHelper graphHelper;
+    private Handler bannerHandler;
 
     private Handler handler = new Handler() {
         @Override
@@ -56,9 +61,19 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
 
             switch (msg.what) {
                 case Common.RIPPLE_MSG_VITALS_STREAM: {
-
                     graphHelper.offerVitals((Vital[]) msg.obj);
-
+                    break;
+                }
+                case Common.RIPPLE_MSG_VITALS_TEMPERATURE: {
+                    temperature.setText(Integer.toString(((Vital) msg.obj).value));
+                    break;
+                }
+                case Common.RIPPLE_MSG_VITALS_PULSE: {
+                    pulse.setText(Integer.toString(((Vital) msg.obj).value));
+                    break;
+                }
+                case Common.RIPPLE_MSG_VITALS_BLOOD_OX: {
+                    bloodOx.setText(Integer.toString(((Vital) msg.obj).value));
                     break;
                 }
                 default:
@@ -70,7 +85,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
 
     private synchronized void callSubscriptionWS(int pid, String action) {
         if (pid >= 0) {
-            Log.d(Common.LOG_TAG, action + "ing from " + curPatient);
+            Log.d(Common.LOG_TAG, action + "ing from " + pid);
             Request request = RippleRequestFactory.getSubscriptionRequest(
                     pid,
                     action,
@@ -99,7 +114,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         assert view != null;
 
         LinearLayout layout = (LinearLayout) view.findViewById(R.id.chart);
-        graphHelper = new GraphHelper(this.getActivity());
+        graphHelper = new GraphHelper(this.getActivity(), handler);
 
         layout.addView(graphHelper.getChartView(),
                 new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -122,6 +137,10 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
                 dialogButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        bannerHandler.sendMessage(bannerHandler.obtainMessage(Common.RIPPLE_MSG_BITMAP,
+                                curPatient,
+                                0,
+                                ((FingerPaint) dialog.findViewById(R.id.fingerpaint)).getmBitmap()));
                         dialog.dismiss();
                     }
                 });
@@ -137,6 +156,9 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         }
 
         this.patientName = (TextView) view.findViewById(R.id.name_value_tv);
+        this.temperature = (TextView) view.findViewById(R.id.temp_value_tv);
+        this.pulse = (TextView) view.findViewById(R.id.pulse_value_tv);
+        this.bloodOx = (TextView) view.findViewById(R.id.o2_value_tv);
         return view;
     }
 
@@ -269,7 +291,12 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
 
             udpc.removehandler(handler);
 
+            curPatient = -1;
+
         }
     }
 
+    public void setBannerHandler(Handler bannerHandler) {
+        this.bannerHandler = bannerHandler;
+    }
 }
