@@ -21,6 +21,7 @@ import com.foxykeep.datadroid.requestmanager.RequestManager;
 
 import java.util.ArrayList;
 
+import mil.afrl.discoverylab.sate13.ripple.data.model.MultiValueVital;
 import mil.afrl.discoverylab.sate13.ripple.data.model.SubscriptionResponse;
 import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
@@ -61,7 +62,9 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
 
             switch (msg.what) {
                 case Common.RIPPLE_MSG_VITALS_STREAM: {
-                    graphHelper.offerVitals((Vital[]) msg.obj);
+
+                    graphHelper.offerVitals((MultiValueVital[]) msg.obj);
+
                     break;
                 }
                 case Common.RIPPLE_MSG_VITALS_TEMPERATURE: {
@@ -93,6 +96,13 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             mRequestManager.execute(request, this);
             mRequestList.add(request);
         }
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Need to recreate client since it is disconnected on destroy
+        udpc = new UdpClient();
     }
 
     /**
@@ -251,10 +261,10 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     public void onDestroy() {
         super.onDestroy();
         callSubscriptionWS(curPatient, "unsubscribe");
-        graphHelper.stopPlotter();
-        graphHelper.clearGraph();
         udpc.removehandler(handler);
         udpc.disconnect();
+        graphHelper.stopPlotter();
+        graphHelper.clearGraph();
     }
 
     public void setPatient(int pid) {
@@ -284,12 +294,14 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             // TODO: may need settext on UI thread
             patientName.setText("Dummy Patient(" + curPatient + ")");
         } else {
+            // reset to default id
+            this.curPatient = -1;
 
-            graphHelper.stopPlotter();
+            udpc.removehandler(handler);
 
             callSubscriptionWS(curPatient, "unsubscribe");
 
-            udpc.removehandler(handler);
+            graphHelper.stopPlotter();
 
             curPatient = -1;
 

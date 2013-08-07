@@ -15,6 +15,7 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import mil.afrl.discoverylab.sate13.ripple.data.model.MultiValueVital;
 import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 
@@ -22,7 +23,7 @@ public class GraphHelper {
 
     private boolean plotting = false;
 
-    private Queue<Vital[]> vitalsQ = new LinkedList<Vital[]>();
+    private Queue<MultiValueVital[]> vitalsQ = new LinkedList<MultiValueVital[]>();
 
     private static final Long DEFAULT_MAX_X_RANGE = 1000L;
 
@@ -70,7 +71,7 @@ public class GraphHelper {
         chartRenderer.setYLabelsColor(0, Color.BLACK);
         chartRenderer.setShowLegend(false);
         chartRenderer.setDisplayValues(false);
-        chartRenderer.setYAxisMin(1500.0);
+        chartRenderer.setYAxisMin(1000.0);
         chartRenderer.setYAxisMax(3000.0);
         chartRenderer.setInitialRange(new double[]{0, 1000, 1500.0, 3000.0});
         chartRenderer.setClickEnabled(false);
@@ -130,12 +131,20 @@ public class GraphHelper {
     public boolean isVitalsQEmpty() {
         return vitalsQ.isEmpty();
     }
+//
+//    public Vital[] vitalsQRemove() {
+//        return vitalsQ.remove();
+//    }
 
-    public Vital[] vitalsQRemove() {
+    public MultiValueVital[] vitalsQRemove() {
         return vitalsQ.remove();
     }
 
-    public boolean offerVitals(Vital[] vitals) {
+//    public boolean offerVitals(Vital[] vitals) {
+//        return vitalsQ.offer(vitals);
+//    }
+
+    public boolean offerVitals(MultiValueVital[] vitals) {
         return vitalsQ.offer(vitals);
     }
 
@@ -217,13 +226,22 @@ public class GraphHelper {
 
                 if (!isVitalsQEmpty()) {
 
-                    for (Vital v : vitalsQRemove()) {
+                    for (MultiValueVital v : vitalsQRemove()) {
+                        long timestamp = v.sensor_timestamp;
+                        int period = v.period_ms;
 
-                        if (v.sensor_type.equals(Integer.toString(Common.VITAL_TYPES.VITAL_ECG.getValue()))) {
-                            //if (v.sensor_type_int == Common.VITAL_TYPES.VITAL_ECG.getValue() && v.pid == curPatient) {
+                        if (v.value_type == Common.VITAL_TYPES.VITAL_ECG.getValue()) {// && v.pid == curPatient) {
 
-                            if (addVitalsPoint((double) v.sensor_timestamp, v.value)) {
-                                getChartView().repaint();
+//                            if (addVitalsPoint((double) v.sensor_timestamp, v.value)) {
+//                                getChartView().repaint();
+//                            }
+                            int vitalCount = v.values.length;
+                            for (int counter = 0; counter < vitalCount; counter++) {
+                                if (addVitalsPoint(timestamp, v.values[counter])) {
+                                    getChartView().repaint();
+                                }
+                                // increment time and counter
+                                timestamp += period;
                             }
 
                         } else if (v.sensor_type.equals(Integer.toString(Common.VITAL_TYPES.VITAL_TEMPERATURE.getValue()))) {

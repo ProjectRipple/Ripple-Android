@@ -16,6 +16,7 @@ import java.nio.channels.DatagramChannel;
 import java.util.ArrayList;
 import java.util.List;
 
+import mil.afrl.discoverylab.sate13.ripple.data.model.MultiValueVital;
 import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 
@@ -211,7 +212,7 @@ public class UdpClient {
          */
         private DatagramPacket receivePacket = new DatagramPacket(dataBuffer, dataBuffer.length);
         // Vitals array object to deserialize and send
-        private Vital[] vitals;
+        private MultiValueVital[] vitals;
 
         @Override
         public void run() {
@@ -234,7 +235,7 @@ public class UdpClient {
                     //Log.d(Common.LOG_TAG, "Receiving " + oos.readInt() + " new points");
                     oos.readInt();
 
-                    vitals = (Vital[]) oos.readObject();
+                    vitals = (MultiValueVital[]) oos.readObject();
 
                     // Bundle deserialized object into a message & Send the message to all subscribed handlers
                     synchronized (listeners) {
