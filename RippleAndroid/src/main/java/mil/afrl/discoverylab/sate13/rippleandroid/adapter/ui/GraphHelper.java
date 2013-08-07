@@ -115,6 +115,7 @@ public class GraphHelper {
     }
 
     public void clearGraph() {
+        maxX = 0.0;
         currentSeries.clear();
         setupSeries();
         chartView.repaint();
@@ -208,7 +209,8 @@ public class GraphHelper {
 
             return true;
         } else {
-/*            Log.d(Common.LOG_TAG, "Graph: Out of order x values (" + x + ", " + y + ") vs. ("
+            Log.d(Common.LOG_TAG, "Graph: Out of order x values (" + x + ", " + y + ")");
+            /*vs. ("
                     + currentSeries.getX(currentSeries.getItemCount() - 1) + ", " +
                     +currentSeries.getY(currentSeries.getItemCount() - 1) + ")");*/
             return false;
