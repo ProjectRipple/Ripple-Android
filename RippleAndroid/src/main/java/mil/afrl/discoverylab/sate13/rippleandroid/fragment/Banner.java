@@ -116,13 +116,18 @@ public class Banner extends Fragment {
                     break;
                 }
                 case Common.RIPPLE_MSG_BITMAP:
-
+                    boolean patientFound = false;
                     for (int i = 0; i < tableRow.getVirtualChildCount(); i++) {
                         PatientView p = (PatientView) tableRow.getVirtualChildAt(i);
                         if (p.getPid() == msg.arg1) {
+                            patientFound = true;
                             p.setmBitmap((Bitmap) msg.obj);
                             p.postInvalidate();
+                            break;
                         }
+                    }
+                    if(!patientFound){
+                        ((Bitmap) msg.obj).recycle();
                     }
                     break;
             }

@@ -173,7 +173,7 @@ public class PatientView extends View {
 
     private Paint getTemperaturePaint() {
         int val = mPatient.getTemperature();
-        if (val < 99 && val > 97) {
+        if (val <= 99 && val >= 97) {
             return mPaintGreen;
         } else if (val < 101 && val > 90) {
             return mPaintYellow;
@@ -206,6 +206,9 @@ public class PatientView extends View {
     }
 
     public void setmBitmap(Bitmap mBitmap) {
+        if(this.mBitmap != null){
+            this.mBitmap.recycle();
+        }
         this.mBitmap = mBitmap;
     }
 }
