@@ -15,7 +15,7 @@ public final class WSConfig {
     public static final String BROKER_ROOT = "RippleBroker";
     public static final String DEFAULT_IP = "abcd::222:19FF:FEF8:8FA7";
     public static String ROOT_URL = "http://["+DEFAULT_IP+"]:"+BROKER_PORT+"/"+BROKER_ROOT+"/"; // James
-    public static final String WS_QUERY_URL = ROOT_URL + "Query";
+    public static String WS_QUERY_URL = ROOT_URL + "Query";
     public static final String WS_VITAL_LIST_URL_JSON = ROOT_URL + "Query?QueryType=VITAL&pid=1&vidi=0&limit=50";
     //public static final String WS_PATIENT_LIST_URL_JSON = ROOT_URL + "patientListJson.php";
     public static final String WS_PATIENT_LIST_URL_JSON = ROOT_URL + "Query?QueryType=PATIENT";

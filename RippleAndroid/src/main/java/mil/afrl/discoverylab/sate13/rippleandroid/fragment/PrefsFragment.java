@@ -21,17 +21,18 @@ public class PrefsFragment extends PreferenceFragment {
     private SharedPreferences prefs;
     private Editor myEditor;
     private EditTextPreference ipTextBox, portNumTextBox, textPortNumTextBox;
-    private static final String IP_REG_EXPRESSION = "^((1\\d{2}|2[0-4]\\d|25[0-5]|\\d?\\d)\\.){3}(?:1\\d{2}|2[0-4]\\d|25[0-5]|\\d?\\d)$";
+    public static final String IP_REG_EXPRESSION = "^((1\\d{2}|2[0-4]\\d|25[0-5]|\\d?\\d)\\.){3}(?:1\\d{2}|2[0-4]\\d|25[0-5]|\\d?\\d)$";
     private static final String IPV6_REG_EXPRESSION = "^([\\dA-F]{1,4}:|((?=.*(::))(?!.*\\3.+\\3))\\3?)([\\dA-F]{1,4}(\\3|:\\b)|\\2){5}(([\\dA-F]{1,4}(\\3|:\\b|$)|\\2){2}|(((2[0-4]|1\\d|[1-9])?\\d|25[0-5])\\.?\\b){4})\\z";
 
-    public static final String IPV6_HEX4DECCOMPRESSED_REGEX = "\\A((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?) ::((?:[0-9A-Fa-f]{1,4}:)*)(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}\\z";
-    public static final String IPV6_6HEX4DEC_REGEX = "\\A((?:[0-9A-Fa-f]{1,4}:){6,6})(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}\\z";
+    private static final String IPV6_HEX4DECCOMPRESSED_REGEX = "\\A((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?) ::((?:[0-9A-Fa-f]{1,4}:)*)(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}\\z";
+    private static final String IPV6_6HEX4DEC_REGEX = "\\A((?:[0-9A-Fa-f]{1,4}:){6,6})(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}\\z";
     public static final String IPV6_HEXCOMPRESSED_REGEX = "\\A((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)\\z";
     public static final String IPV6_REGEX = "\\A(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\\z";
 
-    private String IP_FROM_PREFS = "ipAddressPref";
-    private String PORT_NUM_PREFS = "portNumberPref";
-    private String TEXT_PORT_PREFS = "portTexturePref";
+    public static final String IP_FROM_PREFS = "ipAddressPref";
+    private static final String PORT_NUM_PREFS = "portNumberPref";
+    private static final String TEXT_PORT_PREFS = "portTexturePref";
+
 
     @Override
     /**
@@ -70,10 +71,12 @@ public class PrefsFragment extends PreferenceFragment {
                     myEditor.putString(IP_FROM_PREFS, newValueString);
                     myEditor.commit();
                     WSConfig.ROOT_URL = "http://" + newValueString + ":" + WSConfig.BROKER_PORT + "/" + WSConfig.BROKER_ROOT + "/";
+                    WSConfig.WS_QUERY_URL = WSConfig.ROOT_URL + "Query";
                 } else if (validIPv6 && newValueString.length() > 0) {
                     myEditor.putString(IP_FROM_PREFS, newValueString);
                     myEditor.commit();
                     WSConfig.ROOT_URL = "http://[" + newValueString + "]:" + WSConfig.BROKER_PORT + "/" + WSConfig.BROKER_ROOT + "/";
+                    WSConfig.WS_QUERY_URL = WSConfig.ROOT_URL + "Query";
                 } else {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle(R.string.invalid_input);
