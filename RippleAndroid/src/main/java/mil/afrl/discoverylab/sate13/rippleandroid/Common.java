@@ -1,5 +1,6 @@
 package mil.afrl.discoverylab.sate13.rippleandroid;
 
+import com.google.android.gms.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
