@@ -33,7 +33,7 @@ public class UDPMessageHandler implements Runnable {
             MoteUDPInput.Unparsed unparsed = queue.take();
             AnalyticsEngine analytics = new AnalyticsEngine();
 
-            //RippleMoteMessage message = RippleMoteMessage.parse(unparsed.sender,unparsed.message, System.currentTimeMillis());
+            RippleMoteMessage message = RippleMoteMessage.parse(unparsed.sender,unparsed.message, System.currentTimeMillis());
             takeAction(analytics.analyze(unparsed.sender, unparsed.message), unparsed);
             Log.e(Common.LOG_TAG, "Message Analytics Complete");
             }catch(Exception e){

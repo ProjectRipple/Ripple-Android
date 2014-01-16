@@ -79,8 +79,7 @@ public class MoteUDPInput implements Runnable{
                 InetSocketAddress sockAddr = ((InetSocketAddress) this.receivePacket.getSocketAddress());
 
                 msg.sender = sockAddr;
-                msg.message = Arrays.copyOf(this.receivePacket.getData(), this.receivePacket.getLength());
-
+                msg.message = Arrays.copyOfRange(this.receivePacket.getData(), 4, 40);
                  // Send packet to the queue thread
                 queue.put(msg);
 
