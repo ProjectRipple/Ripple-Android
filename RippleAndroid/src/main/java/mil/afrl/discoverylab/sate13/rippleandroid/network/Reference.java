@@ -1,8 +1,5 @@
 package mil.afrl.discoverylab.sate13.rippleandroid.network;
 
-/**
- * Created by harmonbc on 1/6/14.
- */
 import java.text.SimpleDateFormat;
 
 /**
@@ -12,58 +9,9 @@ import java.text.SimpleDateFormat;
 public class Reference {
 
     public enum ANALYTICS_RESPONSE{
-        NO_ATTENTION_NEEDED,  ANOMALY_DETECTED, ONGOING_ASSESSMENT, LOW_PRIORITY, MEDIUM_PRIORITY, HIGH_PRIORITY, IMMEDIATE_INTERVENTION;
+        NO_ATTENTION_NEEDED, ANOMALY_DETECTED, ONGOING_ASSESSMENT, LOW_PRIORITY, MEDIUM_PRIORITY, HIGH_PRIORITY, IMMEDIATE_INTERVENTION;
     }
 
-    public enum QUERY_TYPES {
-        PATIENT, VITAL, SUBSCRIPTION;
-    }
-    //Sensor constants
-    public enum SENSOR_TYPES {
-
-        SENSOR_PULSE_OX(0), SENSOR_ECG(1), SENSOR_TEMPERATURE(2);
-        private final int id;
-
-        SENSOR_TYPES(int id) {
-            this.id = id;
-        }
-
-        public int getValue() {
-            return id;
-        }
-    };
-    // Vital constants
-    public enum VITAL_TYPES {
-        VITAL_PULSE(0), VITAL_ECG(1), VITAL_TEMPERATURE(2), VITAL_BLOOD_OX(3);
-        private final int id;
-
-        VITAL_TYPES(int id) {
-            this.id = id;
-        }
-
-        public int getValue() {
-            return id;
-        }
-    };
-// Sensor table names and values
-
-    public enum TABLE_NAMES {
-
-        PATIENT, VITAL, VITAL_BLOB
-    };
-
-    public interface TableColumns {
-    };
-
-    public enum PATIENT_TABLE_COLUMNS implements TableColumns {
-
-        PID, IP_ADDR, FIRST_NAME, LAST_NAME, SSN, DOB, SEX, NBC_CONTAMINATION, TYPE
-    };
-
-    public enum VITAL_TABLE_COLUMNS implements TableColumns {
-
-        VID, PID, SERVER_TIMESTAMP, SENSOR_TIMESTAMP, SENSOR_TYPE, VALUE_TYPE, VALUE
-    };
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final SimpleDateFormat datetimeFormat = new SimpleDateFormat(DATE_TIME_FORMAT);
     // database table structures
