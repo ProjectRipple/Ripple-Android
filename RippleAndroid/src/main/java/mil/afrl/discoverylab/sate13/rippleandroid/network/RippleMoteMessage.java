@@ -20,13 +20,8 @@ public class RippleMoteMessage {
 
     private static final String DELIM=",";
 
-    private static final int SIZE_HEADER = 16;
-    //Header Parsing
-    private static final int SIZE_HEADER_DISPATCH = 8;
-    private static final int SIZE_HEADER_RIPPLECOMM_VERSION=4;
-    private static final int SIZE_HEADER_MSG_TYPE=4;
     //Body Parsing
-    private static final int SIZE_SOURCE_ADDRESS=1;
+    private static final int SIZE_SOURCE_ADDRESS=8;
     private static final int SIZE_SEQ=2;
     private static final int SIZE_EST_AGE=1;
     private static final int SIZE_HOPS=1;
@@ -36,16 +31,10 @@ public class RippleMoteMessage {
     private static final int SIZE_TEMP=1;
     private static final int SIZE_DEVICE_STATUS=2;
 
-    private static final int INDEX_HEADER=0;
-    //Header Indexes
-    private static final int INDEX_HEADER_DISPATCH_START=0;
-    private static final int INDEX_HEADER_DISPATCH_END=7;
-    private static final int INDEX_HEADER_RIPPLECOMM_VERSION_START=8;
-    private static final int INDEX_HEADER_RIPPLECOMM_VERSION_END=11;
-    private static final int INDEX_HEADER_MSG_TYPE_START=12;
-    private static final int INDEX_HEADER_MSG_TYPE_END=15;
     //Body Indexes
-    private static final int INDEX_SEQ_START=16;
+    private static final int INDEX_SOURCE_START=0;
+    private static final int INDEX_SOURCE_END=INDEX_SOURCE_START+SIZE_SOURCE_ADDRESS-1;
+    private static final int INDEX_SEQ_START=INDEX_SOURCE_END+1;
     private static final int INDEX_SEQ_END=INDEX_SEQ_START+SIZE_SEQ-1;
     private static final int INDEX_EST_AGE=INDEX_SEQ_END+1;
     private static final int INDEX_HOPS=INDEX_EST_AGE+1;
@@ -60,7 +49,7 @@ public class RippleMoteMessage {
     // Message information
     public InetSocketAddress senderAddress;
     public long timeReceived;
-    public int sequence, hops, estAge,  hr, sp02, bpm, temp, status;
+    public int source,sequence, hops, estAge,  hr, sp02, bpm, temp, status;
     public String id;
 
     /**
@@ -76,6 +65,7 @@ public class RippleMoteMessage {
         result.senderAddress = address;
         result.timeReceived = time;
 
+        result.source = parseValue(INDEX_SOURCE_START, SIZE_SOURCE_ADDRESS, message);
         result.sequence = parseValue(INDEX_SEQ_START, SIZE_SEQ, message);
         result.estAge = parseValue(INDEX_EST_AGE, SIZE_EST_AGE, message);
         result.hops = parseValue(INDEX_HOPS, SIZE_HOPS, message);
@@ -90,10 +80,8 @@ public class RippleMoteMessage {
     }
 
     public static int parseValue(int startIndex, int size, byte[] message){
-
         int value=0;
         if(size==1) return (message[startIndex]&0xff);
-
         else{
             for(int i=startIndex; i < startIndex+size-1; i++){
                 value |= (message[i]&0xff);
@@ -108,6 +96,7 @@ public class RippleMoteMessage {
     public String toString(){
         StringBuilder sb = new StringBuilder(300);
         sb.append("[")
+                .append(source).append(DELIM)
                 .append(timeReceived).append(DELIM)
                 .append(sequence).append(DELIM)
                 .append(hops).append(DELIM)
