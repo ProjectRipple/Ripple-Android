@@ -69,12 +69,14 @@ public class DatabaseAdapter {
     /**
      * SQL table creation statement for the Patient table.
      */
-    private static final String VITAL_BLOB_CREATE =
+    private static final String VITAL_TABLE_CREATE =
             "CREATE TABLE IF NOT EXISTS " + TableType.VITAL.name() + "(\n" +
-            "VID INTEGER AUTO INCREMENT,\n" +
+            "VID INTEGER,\n" +
             "TIME INTEGER,\n" +
+            "SENSOR_TYPE TEXT,\n" +
             "IP_ADDR TEXT,\n" +
-            "VALUE BLOB,\n" +
+            "VALUE_TYPE TEXT,\n" +
+            "VALUE REAL," +
             "PRIMARY KEY(VID));";
 
     private static final int DATABASE_VERSION = 1;
@@ -153,16 +155,19 @@ public class DatabaseAdapter {
      *
      * @return true, if insertion was successful - false, otherwise
      */
-    public synchronized boolean storeVitalData(long time,
+    public synchronized boolean storeVitalData(int time,
+                                               String sensor_type,
                                                String ip_addr,
-                                               byte[] value) {
+                                               String value_type,
+                                               double value) {
         SQLiteDatabase db = helper.getWritableDatabase();
-
         db.beginTransaction();
 
         ContentValues map = new ContentValues();
         map.put("TIME", time);
+        map.put("SENSOR_TYPE", sensor_type);
         map.put("IP_ADDR", ip_addr);
+        map.put("VALUE_TYPE", value_type);
         map.put("VALUE", value);
 
         if (db.insert(TableType.VITAL.name(), null, map) == -1) {
@@ -177,6 +182,131 @@ public class DatabaseAdapter {
             //Log.d(Common.LOG_TAG, TableType.VITAL.name() + " table insertion - " + map.toString());
             return true;
         }
+    }
+
+    /**
+     * For a specific patient ip address and sensor type, store all time-value pairs in the
+     * provided XYSeries
+     * <p/>
+     * Note: Does not check for duplicate rows in the XYSeries
+     *
+     * @return false if the provided series is null or if an empty set is returned by the query
+     */
+    public synchronized boolean getVitalXY(String ip_addr,
+                                           String sensor_type,
+                                           XYSeries data) {
+        if (data == null) {
+            return false;
+        }
+        int preItemCount = data.getItemCount();
+
+        // query db
+        SQLiteDatabase db = helper.getReadableDatabase();
+        String where = "IP_ADDR = '" + ip_addr + "' AND SENSOR_TYPE = '" + sensor_type + "'";
+        Cursor cursor = db.query(true,                                  // Distinct
+                                 TableType.VITAL.name(),                // Table
+                                 new String[]{"TIME", "VALUE"},         // Columns
+                                 where,                                 // Selection
+                                 null,                                  // Selection Args
+                                 null,                                  // Group By
+                                 null,                                  // Having
+                                 "TIME",                                // Order By
+                                 null);                                 // Limit
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            data.add((double) cursor.getInt(cursor.getColumnIndex("TIME")),
+                     cursor.getDouble(cursor.getColumnIndex("VALUE")));
+            cursor.moveToNext();
+        }
+        cursor.close();
+        db.close();
+
+        return (data.getItemCount() != preItemCount);
+    }
+
+
+    /**
+     * Forwards the contents of a db to a writer instance in CSV format.
+     * The actual contents forwarded depend on the table type.
+     *
+     * @param type
+     * @param writer
+     * @return true, if export was successful - false, otherwise
+     */
+    public synchronized boolean export(TableType type, BufferedWriter writer) {
+
+        if (writer == null) {
+            Log.e(Common.LOG_TAG, "No writer for export available - aborted.");
+            return false;
+        }
+
+        try {
+            switch (type) {
+                case PATIENT:
+                    return exportPatientTable(writer);
+                default:
+                    Log.e(Common.LOG_TAG, "Table type not supported for export module.");
+                    return false;
+            }
+        } catch (IOException e) {
+            Log.e(Common.LOG_TAG, "Cannot export table: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public synchronized boolean isTableEmpty(String table) {
+        boolean res;
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.query(true,                                  // Distinct
+                                 table,                                 // Table
+                                 null,                                  // Columns
+                                 null,                                  // Selection
+                                 null,                                  // Selection Args
+                                 null,                                  // Group By
+                                 null,                                  // Having
+                                 null,                                  // Order By
+                                 "1");                                  // Limit
+        cursor.moveToFirst();
+        res = cursor.isAfterLast();
+        cursor.close();
+        db.close();
+        return res;
+    }
+
+    /**
+     * Exports the contents of the patients table to a writer instance in CSV
+     * format. The header row identifies column contents:
+     *
+     * @param writer
+     * @return true, if export was successful - false, otherwise
+     * @throws IOException
+     */
+    private synchronized boolean exportPatientTable(BufferedWriter writer) throws IOException {
+
+        // Create header
+        String header = "# ID, IP_ADDR, FISRT_NAME, LAST_NAME, SSN, AGE, SEX, NBC_CONTAMINATION, TYPE\n";
+        writer.write(header);
+
+        // Fetch data from SESSION table
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.query(TableType.PATIENT.name(), null, null, null, null, null, null);
+
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            writer.write(Integer.toString(cursor.getInt(0)) + ",\""
+                         + cursor.getString(1) + ",\""
+                         + cursor.getString(2) + ",\""
+                         + cursor.getString(3) + ",\""
+                         + Integer.toString(cursor.getInt(4)) + ",\""
+                         + cursor.getString(5) + ",\""
+                         + Integer.toString(cursor.getInt(6)) + "\"\n");
+            cursor.moveToNext();
+        }
+        writer.flush();
+        cursor.close();
+        db.close();
+
+        return true;
     }
 
     public synchronized boolean clear(TableType type) {
@@ -216,7 +346,7 @@ public class DatabaseAdapter {
         @Override
         public void onCreate(SQLiteDatabase db) {
             createTable(TableType.PATIENT.name(), PATIENT_TABLE_CREATE, db);
-            createTable(TableType.VITAL.name(), VITAL_BLOB_CREATE, db);
+            createTable(TableType.VITAL.name(), VITAL_TABLE_CREATE, db);
         }
 
         public boolean createTable(String name, String query, SQLiteDatabase db) {

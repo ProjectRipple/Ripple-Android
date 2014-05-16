@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        maven { url 'http://repo1.maven.org/maven2' }
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:0.9.+'
@@ -8,18 +8,12 @@ buildscript {
 }
 apply plugin: 'android'
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     compile files('libs/android-support-v4.jar')
     compile files('libs/achartengine-1.1.0.jar')
     compile files('libs/gson-2.2.4.jar')
     compile project(':google-play-services_lib')
     compile project(':DataDroid')
-
-    compile 'org.zeromq:jeromq:0.3.2'
 }
 
 android {
