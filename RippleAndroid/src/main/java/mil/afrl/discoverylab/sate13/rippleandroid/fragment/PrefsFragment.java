@@ -30,8 +30,8 @@ public class PrefsFragment extends PreferenceFragment {
     public static final String IPV6_REGEX = "\\A(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\\z";
 
     public static final String IP_FROM_PREFS = "ipAddressPref";
-    private static final String PORT_NUM_PREFS = "portNumberPref";
-    private static final String TEXT_PORT_PREFS = "portTexturePref";
+    public static final String PORT_NUM_PREFS = "portNumberPref";
+    public static final String TEXT_PORT_PREFS = "portTexturePref";
 
 
     @Override
@@ -51,6 +51,12 @@ public class PrefsFragment extends PreferenceFragment {
             myEditor.commit();
         }
 
+        if(!prefs.contains(PORT_NUM_PREFS)){
+            Log.d(Common.LOG_TAG, "Setting default port");
+            myEditor = prefs.edit();
+            myEditor.putString(PORT_NUM_PREFS, WSConfig.DEFAULT_PORT);
+            myEditor.commit();
+        }
 
         addPreferencesFromResource(R.layout.fragment_settings);
         ipTextBox = (EditTextPreference) getPreferenceScreen().findPreference(IP_FROM_PREFS);

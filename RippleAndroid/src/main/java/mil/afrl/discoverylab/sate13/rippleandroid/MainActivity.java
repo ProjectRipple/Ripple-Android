@@ -5,12 +5,14 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -29,7 +31,9 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 
+import mil.afrl.discoverylab.sate13.rippleandroid.config.WSConfig;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.Banner;
+import mil.afrl.discoverylab.sate13.rippleandroid.fragment.PrefsFragment;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.patient.PatientLeft;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.scene.SceneLeft;
 import mil.afrl.discoverylab.sate13.rippleandroid.mqtt.MQTTClientService;
@@ -163,6 +167,11 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
             Log.d(Common.LOG_TAG, "Patient id selected: " + pView.getPid());
             this.patLeft.setPatient(pView.getPid());
         }
+    }
+
+    public void startMQTTService(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        this.mqttServiceManager.start(prefs.getString(PrefsFragment.IP_FROM_PREFS, WSConfig.DEFAULT_IP), prefs.getString(PrefsFragment.PORT_NUM_PREFS, WSConfig.DEFAULT_PORT));
     }
 
     private void processPublishedMessage(PublishedMessage msg) {

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import mil.afrl.discoverylab.sate13.ripple.data.model.MultiValueVital;
 import mil.afrl.discoverylab.sate13.ripple.data.model.SubscriptionResponse;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
+import mil.afrl.discoverylab.sate13.rippleandroid.MainActivity;
 import mil.afrl.discoverylab.sate13.rippleandroid.PrefsActivity;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.UdpClient;
@@ -56,6 +57,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     private GraphHelper graphHelper;
     private Handler bannerHandler;
     private Button settingsButton;
+    private Button connectButton;
 
     private Handler handler = new Handler() {
         @Override
@@ -177,6 +179,17 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
                 startActivity(new Intent(getActivity(), PrefsActivity.class));
             }
         });
+
+        this.connectButton = (Button) view.findViewById(R.id.connect_button);
+        this.connectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity)getActivity()).startMQTTService();
+            }
+        });
+
+
+
         return view;
     }
 

@@ -32,5 +32,14 @@
     <string name="invalid_input">Invalid Input</string>
     <string name="ip_error_message">An IP address contains the format of:\n0-255.0-255.0-255.0-255 for IPv4\nOR [0-9,A-F]{1,4}::[0-9,A-F]{1,4} for IPv6 \nPlease try again.</string>
 
+    <string name="port_number_dialog_title">Enter port number</string>
+    <string name="port_number_summary">Enter port number for Broker</string>
+    <string name="port_number_title">Port number</string>
+
+    <string name="patient">Patient</string>
+    <string name="connect">Connect</string>
+    <string name="settings">Settings</string>
+    <string name="broker_settings">Broker Settings</string>
+
 
 </resources>

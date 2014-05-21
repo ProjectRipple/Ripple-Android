@@ -1,298 +1,310 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_weight="0.5"
-              android:background="#FFFFFF">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="0.5"
+    android:background="#FFFFFF"
+    android:orientation="horizontal">
 
     <LinearLayout
-            android:id="@+id/patient_layout"
-            android:orientation="vertical"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+        android:id="@+id/patient_layout"
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <TextView
-                style="@style/headingfontblack"
-                android:id="@+id/patient_tv"
-                android:text="Patient"/>
+            android:id="@+id/patient_tv"
+            style="@style/headingfontblack"
+            android:text="@string/patient" />
 
         <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/holo_blue_dark"/>
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/holo_blue_dark" />
 
         <ImageView
-                android:id="@+id/tagview"
-                android:src="@drawable/tag"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_weight="1"/>
+            android:id="@+id/tagview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:src="@drawable/tag" />
 
-        <Button
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            style="?android:buttonBarStyle"
+            android:background="#000000">
+
+            <Button
                 android:id="@+id/setting_button"
-                android:background="@drawable/ic_settings"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-
+                android:text="@string/settings"
+                style="?android:buttonBarButtonStyle"
+                android:gravity="center"
+                android:layout_weight="1"
                 />
+
+            <Button
+                android:id="@+id/connect_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/connect"
+                style="?android:buttonBarButtonStyle"
+                android:gravity="center"
+                android:layout_weight="1"
+                />
+        </LinearLayout>
+
 
     </LinearLayout>
 
     <View
-            android:layout_width="1dp"
-            android:layout_height="wrap_content"
-            android:background="@android:color/holo_blue_dark"/>
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_dark" />
 
     <LinearLayout
-            android:id="@+id/vital_info"
-            android:orientation="vertical"
-            android:layout_width="0px"
-            android:layout_height="match_parent"
-            android:layout_weight="2">
+        android:id="@+id/vital_info"
+        android:layout_width="0px"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:orientation="vertical">
 
         <TextView
-                style="@style/headingfontblack"
-                android:id="@+id/scene_tv"
-                android:text="Scene"
-                android:layout_gravity="center_horizontal"/>
+            android:id="@+id/scene_tv"
+            style="@style/headingfontblack"
+            android:layout_gravity="center_horizontal"
+            android:text="Scene" />
 
         <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/holo_blue_dark"/>
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/holo_blue_dark" />
 
         <TextView
-                style="@style/bodyfontblack"
-                android:id="@+id/details_tv"
-                android:text="Details"
-                android:textStyle="bold|italic"/>
+            android:id="@+id/details_tv"
+            style="@style/bodyfontblack"
+            android:text="Details"
+            android:textStyle="bold|italic" />
 
         <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/holo_blue_dark"/>
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/holo_blue_dark" />
 
         <HorizontalScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/detailsHorizontalScrollView">
+            android:id="@+id/detailsHorizontalScrollView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
 
             <GridLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <TextView
-                        style="@style/bodyfontblack"
-                        android:id="@+id/name_tv"
-                        android:text="@string/name"
-                        android:layout_row="0"
-                        android:layout_column="0"
-                        />
+                    android:id="@+id/name_tv"
+                    style="@style/bodyfontblack"
+                    android:layout_column="0"
+                    android:layout_row="0"
+                    android:text="@string/name" />
 
                 <TextView
-                        style="@style/bodyfontgray"
-                        android:id="@+id/name_value_tv"
-                        android:text="Matthew McCartney"
-                        android:layout_row="0"
-                        android:layout_column="1"/>
+                    android:id="@+id/name_value_tv"
+                    style="@style/bodyfontgray"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:text="Matthew McCartney" />
 
                 <TextView
-                        style="@style/bodyfontblack"
-                        android:id="@+id/age_tv"
-                        android:text="@string/age"
-                        android:layout_row="0"
-                        android:layout_column="2"/>
+                    android:id="@+id/age_tv"
+                    style="@style/bodyfontblack"
+                    android:layout_column="2"
+                    android:layout_row="0"
+                    android:text="@string/age" />
 
                 <TextView
-                        style="@style/bodyfontgray"
-                        android:id="@+id/age_value_tv"
-                        android:text="N/A"
-                        android:layout_row="0"
-                        android:layout_column="3"/>
+                    android:id="@+id/age_value_tv"
+                    style="@style/bodyfontgray"
+                    android:layout_column="3"
+                    android:layout_row="0"
+                    android:text="N/A" />
 
                 <TextView
-                        style="@style/bodyfontblack"
-                        android:id="@+id/nbc_contamination_tv"
-                        android:text="@string/nbc"
-                        android:layout_row="1"
-                        android:layout_column="0"/>
+                    android:id="@+id/nbc_contamination_tv"
+                    style="@style/bodyfontblack"
+                    android:layout_column="0"
+                    android:layout_row="1"
+                    android:text="@string/nbc" />
 
                 <TextView
-                        style="@style/bodyfontgray"
-                        android:id="@+id/nbc_contamination_value_tv"
-                        android:text="N/A"
-                        android:layout_row="1"
-                        android:layout_column="1"/>
+                    android:id="@+id/nbc_contamination_value_tv"
+                    style="@style/bodyfontgray"
+                    android:layout_column="1"
+                    android:layout_row="1"
+                    android:text="N/A" />
 
                 <TextView
-                        style="@style/bodyfontblack"
-                        android:id="@+id/Sex_tv"
-                        android:text="@string/sex"
-                        android:layout_row="1"
-                        android:layout_column="2"/>
+                    android:id="@+id/Sex_tv"
+                    style="@style/bodyfontblack"
+                    android:layout_column="2"
+                    android:layout_row="1"
+                    android:text="@string/sex" />
 
                 <TextView
-                        style="@style/bodyfontgray"
-                        android:id="@+id/sex_value_tv"
-                        android:text="N/A"
-                        android:layout_row="1"
-                        android:layout_column="3"/>
+                    android:id="@+id/sex_value_tv"
+                    style="@style/bodyfontgray"
+                    android:layout_column="3"
+                    android:layout_row="1"
+                    android:text="N/A" />
 
             </GridLayout>
 
         </HorizontalScrollView>
 
         <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/holo_blue_dark"/>
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/holo_blue_dark" />
 
         <TextView
-                style="@style/bodyfontblack"
-                android:id="@+id/current_tv"
-                android:text="Current"
-                android:textStyle="bold|italic"/>
+            android:id="@+id/current_tv"
+            style="@style/bodyfontblack"
+            android:text="Current"
+            android:textStyle="bold|italic" />
 
         <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/holo_blue_dark"/>
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/holo_blue_dark" />
 
         <HorizontalScrollView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/currentVitalsHorizontalScrollView">
+            android:id="@+id/currentVitalsHorizontalScrollView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
 
             <GridLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    >
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
                 <TextView
-                        style="@style/bodyfontblack"
-                        android:id="@+id/temp_tv"
-                        android:text="@string/temp"
-                        android:layout_row="0"
-                        android:layout_column="0"
-                        />
+                    android:id="@+id/temp_tv"
+                    style="@style/bodyfontblack"
+                    android:layout_column="0"
+                    android:layout_row="0"
+                    android:text="@string/temp" />
 
                 <TextView
-                        style="@style/bodyfontgray"
-                        android:id="@+id/temp_value_tv"
-                        android:text="N/A"
-                        android:layout_row="0"
-                        android:layout_column="1"/>
+                    android:id="@+id/temp_value_tv"
+                    style="@style/bodyfontgray"
+                    android:layout_column="1"
+                    android:layout_row="0"
+                    android:text="N/A" />
 
                 <TextView
-                        style="@style/bodyfontblack"
-                        android:id="@+id/pulse_tv"
-                        android:text="@string/pulse"
-                        android:layout_row="0"
-                        android:layout_column="2"
-                        />
+                    android:id="@+id/pulse_tv"
+                    style="@style/bodyfontblack"
+                    android:layout_column="2"
+                    android:layout_row="0"
+                    android:text="@string/pulse" />
 
                 <TextView
-                        style="@style/bodyfontgray"
-                        android:id="@+id/pulse_value_tv"
-                        android:text="N/A"
-                        android:layout_row="0"
-                        android:layout_column="3"/>
+                    android:id="@+id/pulse_value_tv"
+                    style="@style/bodyfontgray"
+                    android:layout_column="3"
+                    android:layout_row="0"
+                    android:text="N/A" />
 
                 <TextView
-                        style="@style/bodyfontblack"
-                        android:id="@+id/o2_tv"
-                        android:text="@string/o2"
-                        android:layout_row="0"
-                        android:layout_column="4"
-                        />
+                    android:id="@+id/o2_tv"
+                    style="@style/bodyfontblack"
+                    android:layout_column="4"
+                    android:layout_row="0"
+                    android:text="@string/o2" />
 
                 <TextView
-                        style="@style/bodyfontgray"
-                        android:id="@+id/o2_value_tv"
-                        android:text="N/A"
-                        android:layout_row="0"
-                        android:layout_column="5"/>
+                    android:id="@+id/o2_value_tv"
+                    style="@style/bodyfontgray"
+                    android:layout_column="5"
+                    android:layout_row="0"
+                    android:text="N/A" />
 
                 <TextView
-                        style="@style/bodyfontblack"
-                        android:id="@+id/bp_tv"
-                        android:text="@string/bp"
-                        android:layout_row="1"
-                        android:layout_column="0"
-                        />
+                    android:id="@+id/bp_tv"
+                    style="@style/bodyfontblack"
+                    android:layout_column="0"
+                    android:layout_row="1"
+                    android:text="@string/bp" />
 
                 <TextView
-                        style="@style/bodyfontgray"
-                        android:id="@+id/bp_value_tv"
-                        android:text="N/A"
-                        android:layout_row="1"
-                        android:layout_column="1"/>
+                    android:id="@+id/bp_value_tv"
+                    style="@style/bodyfontgray"
+                    android:layout_column="1"
+                    android:layout_row="1"
+                    android:text="N/A" />
 
                 <TextView
-                        style="@style/bodyfontblack"
-                        android:id="@+id/resp_tv"
-                        android:text="@string/resp"
-                        android:layout_row="1"
-                        android:layout_column="2"
-                        />
+                    android:id="@+id/resp_tv"
+                    style="@style/bodyfontblack"
+                    android:layout_column="2"
+                    android:layout_row="1"
+                    android:text="@string/resp" />
 
                 <TextView
-                        style="@style/bodyfontgray"
-                        android:id="@+id/resp_value_tv"
-                        android:text="N/A"
-                        android:layout_row="1"
-                        android:layout_column="3"/>
+                    android:id="@+id/resp_value_tv"
+                    style="@style/bodyfontgray"
+                    android:layout_column="3"
+                    android:layout_row="1"
+                    android:text="N/A" />
 
                 <TextView
-                        style="@style/bodyfontblack"
-                        android:id="@+id/pain_tv"
-                        android:text="@string/pain"
-                        android:layout_row="1"
-                        android:layout_column="4"
-                        />
+                    android:id="@+id/pain_tv"
+                    style="@style/bodyfontblack"
+                    android:layout_column="4"
+                    android:layout_row="1"
+                    android:text="@string/pain" />
 
                 <TextView
-                        style="@style/bodyfontgray"
-                        android:id="@+id/pain_value_tv"
-                        android:text="N/A"
-                        android:layout_row="1"
-                        android:layout_column="5"/>
+                    android:id="@+id/pain_value_tv"
+                    style="@style/bodyfontgray"
+                    android:layout_column="5"
+                    android:layout_row="1"
+                    android:text="N/A" />
 
             </GridLayout>
 
         </HorizontalScrollView>
 
         <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/holo_blue_dark"/>
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/holo_blue_dark" />
 
         <TextView
-                style="@style/bodyfontblack"
-                android:id="@+id/history_tv"
-                android:text="History"
-                android:textStyle="bold|italic"/>
+            android:id="@+id/history_tv"
+            style="@style/bodyfontblack"
+            android:text="History"
+            android:textStyle="bold|italic" />
 
         <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/holo_blue_dark"/>
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/holo_blue_dark" />
 
         <LinearLayout
-                android:id="@+id/chart"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1"
-                android:background="#FFFFFF">
-        </LinearLayout>
+            android:id="@+id/chart"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="1"
+            android:background="#FFFFFF"
+            android:orientation="vertical"></LinearLayout>
 
     </LinearLayout>
 
