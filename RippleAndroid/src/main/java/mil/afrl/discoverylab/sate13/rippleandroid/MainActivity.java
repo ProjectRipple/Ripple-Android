@@ -176,6 +176,14 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         this.mqttServiceManager.start(prefs.getString(PrefsFragment.IP_FROM_PREFS, WSConfig.DEFAULT_IP), prefs.getString(PrefsFragment.PORT_NUM_PREFS, WSConfig.DEFAULT_PORT));
     }
 
+    public void stopMQTTService(){
+        this.mqttServiceManager.stop();
+    }
+
+    public boolean isMQTTServiceRunning(){
+        return this.mqttServiceManager.isServiceRunning();
+    }
+
     private void processPublishedMessage(PublishedMessage msg) {
         String topic = msg.getTopic();
         if(topic.equals(Common.MQTT_TOPIC_RECORD)){

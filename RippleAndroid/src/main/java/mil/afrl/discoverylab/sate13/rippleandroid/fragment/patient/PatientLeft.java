@@ -45,6 +45,7 @@ import mil.afrl.discoverylab.sate13.rippleandroid.view.FingerPaint;
 public class PatientLeft extends Fragment implements View.OnClickListener, RequestManager.RequestListener {
 
     private static final String SAVED_STATE_REQUEST_LIST = "savedStateRequestList";
+    private static final String SAVED_STATE_PATIENT_SRC = "savedStatePatientSrc";
     //private static UdpClient udpc = new UdpClient();
     private int curPatient = -1;
     private String curPatientSrc = "";
@@ -195,11 +196,21 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         this.connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity)getActivity()).startMQTTService();
+                if(connectButton.getText().equals(getActivity().getString(R.string.connect))) {
+                    ((MainActivity) getActivity()).startMQTTService();
+                    connectButton.setText(R.string.disconnect);
+                } else if (connectButton.getText().equals(getActivity().getString(R.string.disconnect))){
+                    ((MainActivity) getActivity()).stopMQTTService();
+                    connectButton.setText(R.string.connect);
+                }
             }
         });
 
 
+        if(savedInstanceState != null)
+        {
+            this.setPatientSrc(savedInstanceState.getString(SAVED_STATE_PATIENT_SRC));
+        }
 
         return view;
     }
@@ -209,6 +220,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         super.onSaveInstanceState(outState);
         graphHelper.save(outState);
         outState.putParcelableArrayList(SAVED_STATE_REQUEST_LIST, mRequestList);
+        outState.putString(SAVED_STATE_PATIENT_SRC, this.curPatientSrc);
     }
 
     @Override
@@ -221,6 +233,10 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
 
         } else {
             mRequestList = new ArrayList<Request>();
+        }
+
+        if(((MainActivity) getActivity()).isMQTTServiceRunning()){
+            this.connectButton.setText(R.string.disconnect);
         }
     }
 
