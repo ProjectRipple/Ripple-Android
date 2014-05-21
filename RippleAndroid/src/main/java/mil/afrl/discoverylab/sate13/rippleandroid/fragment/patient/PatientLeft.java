@@ -43,7 +43,7 @@ import mil.afrl.discoverylab.sate13.rippleandroid.view.FingerPaint;
 public class PatientLeft extends Fragment implements View.OnClickListener, RequestManager.RequestListener {
 
     private static final String SAVED_STATE_REQUEST_LIST = "savedStateRequestList";
-    private static UdpClient udpc = new UdpClient();
+    //private static UdpClient udpc = new UdpClient();
     private int curPatient = -1;
     //private int curVital;
     protected RippleRequestManager mRequestManager;
@@ -104,7 +104,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Need to recreate client since it is disconnected on destroy
-        udpc = new UdpClient();
+        //udpc = new UdpClient();
     }
 
     /**
@@ -271,8 +271,8 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     public void onDestroy() {
         super.onDestroy();
         callSubscriptionWS(curPatient, "unsubscribe");
-        udpc.removehandler(handler);
-        udpc.disconnect();
+        //udpc.removehandler(handler);
+        //udpc.disconnect();
         graphHelper.stopPlotter();
         graphHelper.clearGraph();
     }
@@ -293,18 +293,19 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             callSubscriptionWS(pid, "subscribe");
 
             // Connect to UdpStream
+            /*
             if (!udpc.isListening()) {
                 udpc.connect(WSConfig.UDP_VITALS_STREAM_HOST, WSConfig.UDP_VITALS_STREAM_PORT);
             }
 
             udpc.addHandler(handler);
-
+            */
             curPatient = pid;
 
             // TODO: may need settext on UI thread
             patientName.setText("Dummy Patient(" + curPatient + ")");
         } else {
-            udpc.removehandler(handler);
+            //udpc.removehandler(handler);
 
             callSubscriptionWS(curPatient, "unsubscribe");
 

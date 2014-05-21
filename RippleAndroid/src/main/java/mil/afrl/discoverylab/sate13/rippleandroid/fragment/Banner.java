@@ -51,7 +51,7 @@ public class Banner extends Fragment {
     private List<Patient> mPatients;
     private final Object patientLock = new Object();
     private Context mContext;
-    private MulticastClient multicastClient;
+    //private MulticastClient multicastClient;
 
     private Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
     private TableRow tableRow;
@@ -197,6 +197,7 @@ public class Banner extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        /*
         if (this.multicastClient == null) {
             this.multicastClient = new MulticastClient();
         }
@@ -206,11 +207,13 @@ public class Banner extends Fragment {
         } catch (UnknownHostException e) {
             Log.e(Common.LOG_TAG, "Unknown Host " + Common.MCAST_GROUP, e);
         }
+        */
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        /*
         if (this.multicastClient != null) {
             this.multicastClient.removeHandler(this.mHandler);
             try {
@@ -219,6 +222,7 @@ public class Banner extends Fragment {
                 Log.e(Common.LOG_TAG, "Unknown Host " + Common.MCAST_GROUP, e);
             }
         }
+        */
 
     }
 
@@ -256,12 +260,14 @@ public class Banner extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        /*
         // Stop client
         if (this.multicastClient != null) {
             this.multicastClient.removeHandler(this.mHandler);
             this.multicastClient.disconnect();
             this.multicastClient = null;
         }
+        */
     }
 
     @Override
