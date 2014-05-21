@@ -52,6 +52,7 @@ public class PatientView extends View {
         return this.mPatient.getPid();
     }
 
+    public String getPatientSrc() { return this.mPatient.getSrc();}
 
     private void init() {
         // Setup paints

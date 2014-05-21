@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.foxykeep.datadroid.requestmanager.Request;
 import com.foxykeep.datadroid.requestmanager.RequestManager;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
@@ -46,6 +47,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     private static final String SAVED_STATE_REQUEST_LIST = "savedStateRequestList";
     //private static UdpClient udpc = new UdpClient();
     private int curPatient = -1;
+    private String curPatientSrc = "";
     //private int curVital;
     protected RippleRequestManager mRequestManager;
     protected ArrayList<Request> mRequestList;
@@ -81,6 +83,15 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
                     bloodOx.setText(Integer.toString(msg.arg1));
                     break;
                 }
+                case Common.RIPPLE_MSG_RECORD:
+                    JsonObject recordJson = (JsonObject) msg.obj;
+                    String src = recordJson.get(Common.RECORD_SOURCE).getAsString();
+                    if(curPatientSrc != "" && src.equals(curPatientSrc)){
+                        temperature.setText(recordJson.get(Common.RECORD_TEMPERATURE).getAsString());
+                        pulse.setText(recordJson.get(Common.RECORD_HEART_RATE).getAsString());
+                        bloodOx.setText(recordJson.get(Common.RECORD_BLOOD_OX).getAsString());
+                    }
+                    break;
                 default:
                     Log.e(Common.LOG_TAG, "Unknown Message type: " + msg.what);
             }
@@ -288,6 +299,35 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         graphHelper.clearGraph();
     }
 
+    public void setPatientSrc(String patientSrc){
+
+        graphHelper.clearGraph();
+
+        if(this.curPatientSrc.equals(patientSrc)){
+            // unsubscribe
+
+            graphHelper.stopPlotter();
+
+            this.curPatientSrc = "";
+
+            patientName.setText("N/A");
+            temperature.setText("N/A");
+            bloodOx.setText("N/A");
+            pulse.setText("N/A");
+
+        } else {
+
+            // unsubscribe from old patient stream (if any)
+
+            graphHelper.startPlotter();
+
+            // subscribe to new patient
+            this.curPatientSrc = patientSrc;
+
+            patientName.setText(curPatientSrc);
+        }
+    }
+
     public void setPatient(int pid) {
 
         graphHelper.clearGraph();
@@ -301,7 +341,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             graphHelper.startPlotter();
 
             // Subscribe
-            callSubscriptionWS(pid, "subscribe");
+            //callSubscriptionWS(pid, "subscribe");
 
             // Connect to UdpStream
             /*
@@ -318,7 +358,8 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         } else {
             //udpc.removehandler(handler);
 
-            callSubscriptionWS(curPatient, "unsubscribe");
+            // unsubscribe
+            //callSubscriptionWS(curPatient, "unsubscribe");
 
             graphHelper.stopPlotter();
 
@@ -330,4 +371,6 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     public void setBannerHandler(Handler bannerHandler) {
         this.bannerHandler = bannerHandler;
     }
+
+    public Handler getHandler(){ return this.handler;}
 }

@@ -164,8 +164,10 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         if(view instanceof PatientView)
         {
             PatientView pView = (PatientView)view;
-            Log.d(Common.LOG_TAG, "Patient id selected: " + pView.getPid());
-            this.patLeft.setPatient(pView.getPid());
+            //Log.d(Common.LOG_TAG, "Patient id selected: " + pView.getPid());
+            //this.patLeft.setPatient(pView.getPid());
+            Log.d(Common.LOG_TAG, "Patient src selected: " + pView.getPatientSrc());
+            this.patLeft.setPatientSrc(pView.getPatientSrc());
         }
     }
 
@@ -179,6 +181,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         if(topic.equals(Common.MQTT_TOPIC_RECORD)){
             JsonObject recordJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
             this.banner.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
+            this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
         } else {
             Log.d(Common.LOG_TAG, "Unknown MQTT topic recieved:" + topic);
         }
