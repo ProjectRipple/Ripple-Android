@@ -9,21 +9,33 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
+
+import java.lang.ref.WeakReference;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.Banner;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.patient.PatientLeft;
 import mil.afrl.discoverylab.sate13.rippleandroid.fragment.scene.SceneLeft;
+import mil.afrl.discoverylab.sate13.rippleandroid.mqtt.MQTTClientService;
+import mil.afrl.discoverylab.sate13.rippleandroid.mqtt.MQTTServiceConstants;
+import mil.afrl.discoverylab.sate13.rippleandroid.mqtt.MQTTServiceManager;
+import mil.afrl.discoverylab.sate13.rippleandroid.mqtt.PublishedMessage;
 
 
 public class MainActivity extends Activity implements ActivityClickInterface, LocationSource.OnLocationChangedListener, View.OnClickListener {
@@ -36,6 +48,9 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
     /*Mapping Vars*/
     private GoogleMap map;
     private LocationManager lm;
+
+    // MQTT
+    private MQTTServiceManager mqttServiceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +78,8 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         patLeft.setBannerHandler(banner.getHandler());
 
         initMap();
+
+        mqttServiceManager = new MQTTServiceManager(this, MQTTClientService.class, new MQTTHandler(this));
     }
 
     private void initMap() {
@@ -86,6 +103,21 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()){
+            this.mqttServiceManager.unbind();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()){
+            this.mqttServiceManager.bind();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -132,4 +164,47 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
             this.patLeft.setPatient(pView.getPid());
         }
     }
+
+    private void processPublishedMessage(PublishedMessage msg) {
+        String topic = msg.getTopic();
+        if(topic.equals(Common.MQTT_TOPIC_RECORD)){
+            JsonObject recordJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
+            this.banner.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
+        } else {
+            Log.d(Common.LOG_TAG, "Unknown MQTT topic recieved:" + topic);
+        }
+    }
+
+    /**
+     * Class to handle messages from MQTT client
+     */
+    private static class MQTTHandler extends Handler {
+        private WeakReference<MainActivity> activityReference;
+
+        public MQTTHandler(MainActivity activity){
+            this.activityReference = new WeakReference<MainActivity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            MainActivity activity = activityReference.get();
+            if(activity != null){
+                switch (msg.what){
+                    case MQTTServiceConstants.MSG_CONNECTED:
+                        Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show();
+                        break;
+                    case MQTTServiceConstants.MSG_CANT_CONNECT:
+                        Toast.makeText(activity, "Unable to connect", Toast.LENGTH_SHORT).show();
+                        break;
+                    case MQTTServiceConstants.MSG_PUBLISHED_MESSAGE:
+                        activity.processPublishedMessage((PublishedMessage)msg.obj);
+                        break;
+                    default:
+                        Log.d(Common.LOG_TAG, "Unknown message type :"+msg.what);
+                        break;
+                }
+            }
+        }
+    }
+
 }

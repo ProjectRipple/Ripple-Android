@@ -46,10 +46,24 @@ public final class Common {
     public static final int RIPPLE_MSG_VITALS_PULSE = 55;
     public static final int RIPPLE_MSG_VITALS_BLOOD_OX = 66;
     public static final int RIPPLE_MSG_BITMAP = 99;
+    public static final int RIPPLE_MSG_RECORD = 77;
 
     // Fudge Values
     public static final double SIM_BASELINE_GUESS = 1858.077626;
 
+    // MQTT topics
+    public static final String MQTT_TOPIC_RECORD = "record";
+
+    // Record topic payload values
+    public static final String RECORD_SOURCE = "src";
+    public static final String RECORD_SEQUENCE = "seq";
+    public static final String RECORD_AGE = "age";
+    public static final String RECORD_HOPS = "hops";
+    public static final String RECORD_HEART_RATE = "hr";
+    public static final String RECORD_BLOOD_OX = "sp02";
+    public static final String RECORD_RESP_PER_MIN = "resp";
+    public static final String RECORD_TEMPERATURE = "temp";
+    public static final String RECORD_STATUS = "stat";
 
     //ECG Vitals Streaming
     //public static final int

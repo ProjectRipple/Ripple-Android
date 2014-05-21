@@ -64,9 +64,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
 
             switch (msg.what) {
                 case Common.RIPPLE_MSG_VITALS_STREAM: {
-
                     graphHelper.offerVitals((MultiValueVital[]) msg.obj);
-
                     break;
                 }
                 case Common.RIPPLE_MSG_VITALS_TEMPERATURE: {

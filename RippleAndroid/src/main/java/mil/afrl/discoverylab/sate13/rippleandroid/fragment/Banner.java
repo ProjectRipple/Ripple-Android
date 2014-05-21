@@ -20,8 +20,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import java.net.Inet6Address;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,7 +30,6 @@ import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.PatientView;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
-import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.MulticastClient;
 import mil.afrl.discoverylab.sate13.rippleandroid.object.Patient;
 
 import static mil.afrl.discoverylab.sate13.rippleandroid.Common.VITAL_TYPES.VITAL_BLOOD_OX;
@@ -61,8 +58,11 @@ public class Banner extends Fragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
+            boolean patientFound = false;
+            Patient curPatient = null;
+
             switch (msg.what) {
-                case Common.RIPPLE_MSG_MCAST: {
+                case Common.RIPPLE_MSG_MCAST:
                     if (mPatients == null || msg.obj == null) {
                         // No patients to update or no message
                         return;
@@ -73,8 +73,8 @@ public class Banner extends Fragment {
                     int patientId = json.getAsJsonPrimitive("pid").getAsInt();
                     JsonArray vitals = json.getAsJsonArray("vitals");
 
-                    boolean patientFound = false;
-                    Patient curPatient = null;
+                    patientFound = false;
+                    curPatient = null;
                     // find patient
                     synchronized (patientLock) {
                         for (Patient p : mPatients) {
@@ -114,9 +114,9 @@ public class Banner extends Fragment {
 
 
                     break;
-                }
+
                 case Common.RIPPLE_MSG_BITMAP:
-                    boolean patientFound = false;
+                    patientFound = false;
                     for (int i = 0; i < tableRow.getVirtualChildCount(); i++) {
                         PatientView p = (PatientView) tableRow.getVirtualChildAt(i);
                         if (p.getPid() == msg.arg1) {
@@ -129,6 +129,47 @@ public class Banner extends Fragment {
                     if(!patientFound){
                         ((Bitmap) msg.obj).recycle();
                     }
+                    break;
+                case Common.RIPPLE_MSG_RECORD:
+                    if (mPatients == null || msg.obj == null) {
+                        // No patients to update or no message
+                        return;
+                    }
+
+                    JsonObject recordJson = (JsonObject) msg.obj;
+
+                    patientFound = false;
+                    curPatient = null;
+                    String src = recordJson.get(Common.RECORD_SOURCE).getAsString();
+                    int hr = recordJson.get(Common.RECORD_HEART_RATE).getAsInt();
+                    int spO2 = recordJson.get(Common.RECORD_BLOOD_OX).getAsInt();
+                    int temperature = recordJson.get(Common.RECORD_TEMPERATURE).getAsInt();
+                    int resp_pm = recordJson.get(Common.RECORD_RESP_PER_MIN).getAsInt();
+
+                    // find patient
+                    synchronized (patientLock) {
+                        for (Patient p : mPatients) {
+                            if (p.getSrc().equals(src)) {
+                                patientFound = true;
+                                curPatient = p;
+                                break;
+                            }
+                        }
+                        if (!patientFound) {
+                            // Add patient
+                            curPatient = new Patient();
+                            curPatient.setSrc(src);
+                            mPatients.add(curPatient);
+                            curPatient.setColor(Color.CYAN);
+                            createPatientView(curPatient);
+                        }
+                    }
+                    // Update patient values
+                    curPatient.setO2(spO2);
+                    curPatient.setBpm(hr);
+                    curPatient.setTemperature(temperature);
+                    curPatient.setRpm(resp_pm);
+
                     break;
             }
         }

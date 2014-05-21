@@ -21,7 +21,13 @@ public class Patient implements Parcelable{
     private int temperature;
 
     private Boolean nbcContam;
-    private String fName, lName, ssn, sex, type, ipaddr;
+    private String fName;
+    private String lName;
+    private String ssn;
+    private String sex;
+    private String type;
+    private String ipaddr;
+    private String src;
 
     public Patient(){
         this.nbcContam = false;
@@ -46,6 +52,7 @@ public class Patient implements Parcelable{
         this.sex = in.readString();
         this.type = in.readString();
         this.ipaddr = in.readString();
+        this.src = in.readString();
     }
 
     @Override
@@ -67,6 +74,7 @@ public class Patient implements Parcelable{
         parcel.writeString(this.sex);
         parcel.writeString(this.type);
         parcel.writeString(this.ipaddr);
+        parcel.writeString(this.src);
     }
 
     public int getPid() {
@@ -178,6 +186,14 @@ public class Patient implements Parcelable{
 
     public void setO2(int o2) {
         this.o2 = o2;
+    }
+
+    public String getSrc() {
+        return src;
+    }
+
+    public void setSrc(String src) {
+        this.src = src;
     }
 
     @Override
