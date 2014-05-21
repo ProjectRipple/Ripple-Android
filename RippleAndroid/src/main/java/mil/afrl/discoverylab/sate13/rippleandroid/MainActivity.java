@@ -184,6 +184,19 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         return this.mqttServiceManager.isServiceRunning();
     }
 
+    public void subscribeToTopic(String topicName){
+        Message msg = Message.obtain(null, MQTTServiceConstants.MSG_SUBSCRIBE);
+        Bundle bundle = new Bundle();
+        bundle.putString(MQTTServiceConstants.MQTT_TOPIC, topicName);
+        msg.setData(bundle);
+        try {
+            this.mqttServiceManager.send(msg);
+            Toast.makeText(this, "Subscribed for: " + topicName, Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void processPublishedMessage(PublishedMessage msg) {
         String topic = msg.getTopic();
         if(topic.equals(Common.MQTT_TOPIC_RECORD)){
