@@ -87,7 +87,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
                 case Common.RIPPLE_MSG_RECORD:
                     JsonObject recordJson = (JsonObject) msg.obj;
                     String src = recordJson.get(Common.RECORD_SOURCE).getAsString();
-                    if(curPatientSrc != "" && src.equals(curPatientSrc)){
+                    if(!curPatientSrc.equals("") && src.equals(curPatientSrc)){
                         temperature.setText(recordJson.get(Common.RECORD_TEMPERATURE).getAsString());
                         pulse.setText(recordJson.get(Common.RECORD_HEART_RATE).getAsString());
                         bloodOx.setText(recordJson.get(Common.RECORD_BLOOD_OX).getAsString());
@@ -198,8 +198,6 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             public void onClick(View v) {
                 if(connectButton.getText().equals(getActivity().getString(R.string.connect))) {
                     ((MainActivity) getActivity()).startMQTTService();
-                    // TODO: need to resubscribe elsewhere?
-                    ((MainActivity) getActivity()).subscribeToTopic(Common.MQTT_TOPIC_RECORD);
                     connectButton.setText(R.string.disconnect);
                 } else if (connectButton.getText().equals(getActivity().getString(R.string.disconnect))){
                     ((MainActivity) getActivity()).stopMQTTService();

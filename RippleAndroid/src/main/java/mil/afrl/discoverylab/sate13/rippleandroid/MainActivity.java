@@ -224,6 +224,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
             if(activity != null){
                 switch (msg.what){
                     case MQTTServiceConstants.MSG_CONNECTED:
+                        activity.subscribeToTopic(Common.MQTT_TOPIC_RECORD);
                         Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show();
                         break;
                     case MQTTServiceConstants.MSG_CANT_CONNECT:
