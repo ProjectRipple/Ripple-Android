@@ -32,16 +32,22 @@ public class RippleApp extends Application {
         SharedPreferences.Editor myEditor = prefs.edit();
 
         // Load ip from preferences
-        String proxyIP = prefs.getString(PrefsFragment.IP_FROM_PREFS, WSConfig.DEFAULT_IP);
+        String brokerIP = prefs.getString(PrefsFragment.IP_FROM_PREFS, WSConfig.DEFAULT_IP);
 
-        boolean validIPv6 = proxyIP.matches(PrefsFragment.IPV6_HEXCOMPRESSED_REGEX) || proxyIP.matches(PrefsFragment.IPV6_REGEX);
-        if (validIPv6) {
-            myEditor.putString(PrefsFragment.IP_FROM_PREFS, proxyIP);
+        boolean validIPv4 = brokerIP.matches(PrefsFragment.IP_REG_EXPRESSION);
+        boolean validIPv6 = brokerIP.matches(PrefsFragment.IPV6_HEXCOMPRESSED_REGEX) || brokerIP.matches(PrefsFragment.IPV6_REGEX);
+        if (validIPv4) {
+            myEditor.putString(PrefsFragment.IP_FROM_PREFS, brokerIP);
             myEditor.commit();
-
-            //TODO: ADD JeroMQ handshake
+            WSConfig.ROOT_URL = "http://" + brokerIP + ":" + WSConfig.BROKER_PORT + "/" + WSConfig.BROKER_ROOT + "/";
+            WSConfig.WS_QUERY_URL = WSConfig.ROOT_URL + "Query";
+        } else if (validIPv6) {
+            myEditor.putString(PrefsFragment.IP_FROM_PREFS, brokerIP);
+            myEditor.commit();
+            WSConfig.ROOT_URL = "http://[" + brokerIP + "]:" + WSConfig.BROKER_PORT + "/" + WSConfig.BROKER_ROOT + "/";
+            WSConfig.WS_QUERY_URL = WSConfig.ROOT_URL + "Query";
         } else {
-            Log.d(Common.LOG_TAG, this.getClass().getName() + " -- Invalid ip loaded from preferences:" + proxyIP);
+            Log.d(Common.LOG_TAG, this.getClass().getName() + " -- Invalid ip loaded from preferences:" + brokerIP);
         }
 
         // load port
