@@ -177,7 +177,9 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
     }
 
     public void stopMQTTService(){
-        this.mqttServiceManager.stop();
+        if(this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()){
+            this.mqttServiceManager.stop();
+        }
     }
 
     public boolean isMQTTServiceRunning(){
