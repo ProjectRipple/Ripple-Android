@@ -32,33 +32,31 @@
             android:src="@drawable/tag" />
 
         <LinearLayout
+            style="?android:buttonBarStyle"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:orientation="horizontal"
             android:layout_gravity="center"
-            style="?android:buttonBarStyle"
-            android:background="#000000">
+            android:background="#000000"
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/setting_button"
+                style="?android:buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:text="@string/settings"
-                style="?android:buttonBarButtonStyle"
-                android:gravity="center"
                 android:layout_weight="1"
-                />
+                android:gravity="center"
+                android:text="@string/settings" />
 
             <Button
                 android:id="@+id/connect_button"
+                style="?android:buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="@string/connect"
-                style="?android:buttonBarButtonStyle"
-                android:gravity="center"
                 android:layout_weight="1"
-                />
+                android:gravity="center"
+                android:text="@string/connect" />
         </LinearLayout>
 
 
@@ -287,11 +285,28 @@
             android:layout_height="1dp"
             android:background="@android:color/holo_blue_dark" />
 
-        <TextView
-            android:id="@+id/history_tv"
-            style="@style/bodyfontblack"
-            android:text="History"
-            android:textStyle="bold|italic" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/history_tv"
+                style="@style/bodyfontblack"
+                android:text="History"
+                android:textStyle="bold|italic" />
+
+            <Button
+                android:id="@+id/ecg_request_btn"
+                style="@style/bodyfontblack"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/ecgrequest"
+                android:layout_margin="0dp"
+                />
+
+        </LinearLayout>
+
 
         <View
             android:layout_width="match_parent"

@@ -61,6 +61,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     private Handler bannerHandler;
     private Button settingsButton;
     private Button connectButton;
+    private Button ecgRequestButton;
 
     private Handler handler = new Handler() {
         @Override
@@ -206,6 +207,15 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             }
         });
 
+        this.ecgRequestButton = (Button) view.findViewById(R.id.ecg_request_btn);
+        this.ecgRequestButton.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
 
         if(savedInstanceState != null)
         {
@@ -308,7 +318,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     @Override
     public void onDestroy() {
         super.onDestroy();
-        callSubscriptionWS(curPatient, "unsubscribe");
+        //callSubscriptionWS(curPatient, "unsubscribe");
         //udpc.removehandler(handler);
         //udpc.disconnect();
         graphHelper.stopPlotter();
@@ -349,11 +359,11 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         graphHelper.clearGraph();
 
         if (curPatient != pid) {
-
+            /*
             if (curPatient >= 0) {
                 callSubscriptionWS(curPatient, "unsubscribe");
             }
-
+            */
             graphHelper.startPlotter();
 
             // Subscribe

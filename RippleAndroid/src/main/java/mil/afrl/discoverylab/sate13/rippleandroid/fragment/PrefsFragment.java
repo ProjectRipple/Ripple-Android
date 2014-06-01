@@ -20,7 +20,7 @@ public class PrefsFragment extends PreferenceFragment {
 
     private SharedPreferences prefs;
     private Editor myEditor;
-    private EditTextPreference ipTextBox, portNumTextBox, textPortNumTextBox;
+    private EditTextPreference ipTextBox, portNumMqttTextBox, PortNumRestTextBox;
     public static final String IP_REG_EXPRESSION = "^((1\\d{2}|2[0-4]\\d|25[0-5]|\\d?\\d)\\.){3}(?:1\\d{2}|2[0-4]\\d|25[0-5]|\\d?\\d)$";
     private static final String IPV6_REG_EXPRESSION = "^([\\dA-F]{1,4}:|((?=.*(::))(?!.*\\3.+\\3))\\3?)([\\dA-F]{1,4}(\\3|:\\b)|\\2){5}(([\\dA-F]{1,4}(\\3|:\\b|$)|\\2){2}|(((2[0-4]|1\\d|[1-9])?\\d|25[0-5])\\.?\\b){4})\\z";
 
@@ -30,8 +30,8 @@ public class PrefsFragment extends PreferenceFragment {
     public static final String IPV6_REGEX = "\\A(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\\z";
 
     public static final String IP_FROM_PREFS = "ipAddressPref";
-    public static final String PORT_NUM_PREFS = "portNumberPref";
-    public static final String TEXT_PORT_PREFS = "portTexturePref";
+    public static final String PORT_NUM_MQTT_PREFS = "portNumberMQTTPref";
+    public static final String PORT_NUM_REST_PREFS = "portNumberRESTPref";
 
 
     @Override
@@ -51,17 +51,24 @@ public class PrefsFragment extends PreferenceFragment {
             myEditor.commit();
         }
 
-        if(!prefs.contains(PORT_NUM_PREFS)){
-            Log.d(Common.LOG_TAG, "Setting default port");
+        if(!prefs.contains(PORT_NUM_MQTT_PREFS)){
+            Log.d(Common.LOG_TAG, "Setting default MQTT port");
             myEditor = prefs.edit();
-            myEditor.putString(PORT_NUM_PREFS, WSConfig.DEFAULT_PORT);
+            myEditor.putString(PORT_NUM_MQTT_PREFS, WSConfig.DEFAULT_MQTT_PORT);
+            myEditor.commit();
+        }
+
+        if(!prefs.contains(PORT_NUM_REST_PREFS)){
+            Log.d(Common.LOG_TAG, "Setting default REST port.");
+            myEditor = prefs.edit();
+            myEditor.putString(PORT_NUM_REST_PREFS, WSConfig.DEFAULT_REST_PORT);
             myEditor.commit();
         }
 
         addPreferencesFromResource(R.layout.fragment_settings);
         ipTextBox = (EditTextPreference) getPreferenceScreen().findPreference(IP_FROM_PREFS);
-        portNumTextBox = (EditTextPreference) getPreferenceScreen().findPreference(PORT_NUM_PREFS);
-        textPortNumTextBox = (EditTextPreference) getPreferenceScreen().findPreference(TEXT_PORT_PREFS);
+        portNumMqttTextBox = (EditTextPreference) getPreferenceScreen().findPreference(PORT_NUM_MQTT_PREFS);
+        PortNumRestTextBox = (EditTextPreference) getPreferenceScreen().findPreference(PORT_NUM_REST_PREFS);
 
 
         ipTextBox.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {

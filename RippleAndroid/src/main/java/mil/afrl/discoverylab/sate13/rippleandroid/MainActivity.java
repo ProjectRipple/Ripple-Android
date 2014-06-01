@@ -27,8 +27,6 @@ import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonObject;
 
-import org.json.JSONObject;
-
 import java.lang.ref.WeakReference;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.config.WSConfig;
@@ -173,7 +171,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
 
     public void startMQTTService(){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        this.mqttServiceManager.start(prefs.getString(PrefsFragment.IP_FROM_PREFS, WSConfig.DEFAULT_IP), prefs.getString(PrefsFragment.PORT_NUM_PREFS, WSConfig.DEFAULT_PORT));
+        this.mqttServiceManager.start(prefs.getString(PrefsFragment.IP_FROM_PREFS, WSConfig.DEFAULT_IP), prefs.getString(PrefsFragment.PORT_NUM_MQTT_PREFS, WSConfig.DEFAULT_MQTT_PORT));
     }
 
     public void stopMQTTService(){
@@ -201,7 +199,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
 
     private void processPublishedMessage(PublishedMessage msg) {
         String topic = msg.getTopic();
-        if(topic.equals(Common.MQTT_TOPIC_RECORD)){
+        if(topic.equals(Common.MQTT_TOPIC_VITALPROP)){
             JsonObject recordJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
             this.banner.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
             this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
@@ -226,7 +224,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
             if(activity != null){
                 switch (msg.what){
                     case MQTTServiceConstants.MSG_CONNECTED:
-                        activity.subscribeToTopic(Common.MQTT_TOPIC_RECORD);
+                        activity.subscribeToTopic(Common.MQTT_TOPIC_VITALPROP);
                         Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show();
                         break;
                     case MQTTServiceConstants.MSG_CANT_CONNECT:

@@ -55,9 +55,8 @@ public class MQTTClient implements MqttSimpleCallback{
             public void run() {
                 try {
                     mqttClient.connect(clientID, mqttCleanStart, mqttKeepAlive);
-                    Thread.sleep(25); // to endasure the handler will send the below message
+                    Thread.sleep(25); // to ensure the handler will send the below message
                     handler.sendEmptyMessage(MQTTCLIENT_CONNECTION_ESTABLISHED);
-                    //subscribeToTopic("hello/world");
                 } catch (MqttException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
@@ -88,7 +87,7 @@ public class MQTTClient implements MqttSimpleCallback{
 
     public void  subscribeToTopic(String topicName) throws MqttException {
         if (mqttClient == null || mqttClient.isConnected() == false) {
-            Log.d(TAG, "Connection status: " + mqttClient.isConnected() + "");
+            //Log.d(TAG, "Connection status: " + mqttClient.isConnected() + "");
             handler.sendEmptyMessage(MQTTCLIENT_CONNECTION_LOST);
             if (DEBUG) {
                 Log.d(TAG, "Connection error: no connection");

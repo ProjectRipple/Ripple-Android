@@ -26,6 +26,8 @@
     <string name="resp"><u>Resp:</u></string>
     <string name="pain"><u>Pain:</u></string>
 
+    <string name="ecgrequest">Request ECG Snapshot</string>
+
     <string name="ip_address_summary">Enter IP address for Broker</string>
     <string name="ip_address_title">IP address</string>
     <string name="ip_address_dialog_title">Enter IP address</string>
@@ -33,7 +35,8 @@
     <string name="ip_error_message">An IP address contains the format of:\n0-255.0-255.0-255.0-255 for IPv4\nOR [0-9,A-F]{1,4}::[0-9,A-F]{1,4} for IPv6 \nPlease try again.</string>
 
     <string name="port_number_dialog_title">Enter port number</string>
-    <string name="port_number_summary">Enter port number for Broker</string>
+    <string name="port_number_mqtt_summary">Enter port number for Broker's MQTT service</string>
+    <string name="port_number_rest_summary">Enter port number for Broker's REST service</string>
     <string name="port_number_title">Port number</string>
 
     <string name="patient">Patient</string>

@@ -52,7 +52,9 @@ public final class Common {
     public static final double SIM_BASELINE_GUESS = 1858.077626;
 
     // MQTT topics
-    public static final String MQTT_TOPIC_RECORD = "record";
+    public static final String MQTT_TOPIC_VITALPROP = "P_Stats/vitalprop";
+    public static final String MQTT_TOPIC_ID_STRING = "[PID]";
+    public static final String MQTT_TOPIC_ECG_STREAM = "P_Stream/"+MQTT_TOPIC_ID_STRING+"/ecg";
 
     // Record topic payload values
     public static final String RECORD_SOURCE = "src";

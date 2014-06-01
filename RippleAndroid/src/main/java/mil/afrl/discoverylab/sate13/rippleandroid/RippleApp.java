@@ -50,9 +50,13 @@ public class RippleApp extends Application {
             Log.d(Common.LOG_TAG, this.getClass().getName() + " -- Invalid ip loaded from preferences:" + brokerIP);
         }
 
-        // load port
-        String portNum = prefs.getString(PrefsFragment.PORT_NUM_PREFS, WSConfig.DEFAULT_PORT);
-        myEditor.putString(PrefsFragment.PORT_NUM_PREFS, portNum);
+        // load ports
+        String portNumMqtt = prefs.getString(PrefsFragment.PORT_NUM_MQTT_PREFS, WSConfig.DEFAULT_MQTT_PORT);
+        myEditor.putString(PrefsFragment.PORT_NUM_MQTT_PREFS, portNumMqtt);
+        myEditor.commit();
+
+        String portNumRest = prefs.getString(PrefsFragment.PORT_NUM_REST_PREFS, WSConfig.DEFAULT_REST_PORT);
+        myEditor.putString(PrefsFragment.PORT_NUM_REST_PREFS, portNumRest);
         myEditor.commit();
 
         /*DatabaseAdapter.getInstance(this.getApplicationContext());

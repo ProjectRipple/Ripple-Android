@@ -8,13 +8,13 @@ public final class WSConfig {
         // No public constructor
     }
 
-    //public static final String ROOT_URL = "http://24.123.68.123/ripple/www/"; // Delta
     //public static final String ROOT_URL = "http://10.0.3.181:8080/RippleBroker/"; // Ripple
     //public static final String ROOT_URL = "http://192.168.0.200:8080/RippleBroker/"; // Ripple
     public static final int BROKER_PORT = 8080;
     public static final String BROKER_ROOT = "RippleBroker";
     public static final String DEFAULT_IP = "192.168.1.200";//"abcd::222:19FF:FEF8:8FA7";
-    public static final String DEFAULT_PORT = "1883";
+    public static final String DEFAULT_MQTT_PORT = "1883";
+    public static final String DEFAULT_REST_PORT = "9113";
     public static String ROOT_URL = "http://["+DEFAULT_IP+"]:"+BROKER_PORT+"/"+BROKER_ROOT+"/"; // James
     public static String WS_QUERY_URL = ROOT_URL + "Query";
     public static final String WS_VITAL_LIST_URL_JSON = ROOT_URL + "Query?QueryType=VITAL&pid=1&vidi=0&limit=50";
