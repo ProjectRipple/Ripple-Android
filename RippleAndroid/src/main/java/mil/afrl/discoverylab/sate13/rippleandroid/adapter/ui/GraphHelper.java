@@ -16,14 +16,13 @@ import org.achartengine.renderer.XYSeriesRenderer;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import mil.afrl.discoverylab.sate13.ripple.data.model.MultiValueVital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 
 public class GraphHelper {
 
     private boolean plotting = false;
 
-    private Queue<MultiValueVital[]> vitalsQ = new LinkedList<MultiValueVital[]>();
+    private Queue<Integer> vitalsQ = new LinkedList<Integer>();
 
     private static final Long DEFAULT_MAX_X_RANGE = 1000L;
 
@@ -132,20 +131,12 @@ public class GraphHelper {
     public boolean isVitalsQEmpty() {
         return vitalsQ.isEmpty();
     }
-//
-//    public Vital[] vitalsQRemove() {
-//        return vitalsQ.remove();
-//    }
 
-    public MultiValueVital[] vitalsQRemove() {
+    public Integer vitalsQRemove() {
         return vitalsQ.remove();
     }
 
-//    public boolean offerVitals(Vital[] vitals) {
-//        return vitalsQ.offer(vitals);
-//    }
-
-    public boolean offerVitals(MultiValueVital[] vitals) {
+    public boolean offerVitals(Integer vitals) {
         return vitalsQ.offer(vitals);
     }
 
@@ -228,35 +219,8 @@ public class GraphHelper {
 
                 if (!isVitalsQEmpty()) {
 
-                    for (MultiValueVital v : vitalsQRemove()) {
-                        long timestamp = v.sensor_timestamp;
-                        int period = v.period_ms;
-
-                        if (v.value_type == Common.VITAL_TYPES.VITAL_ECG.getValue()) {// && v.pid == curPatient) {
-
-//                            if (addVitalsPoint((double) v.sensor_timestamp, v.value)) {
-//                                getChartView().repaint();
-//                            }
-                            int vitalCount = v.values.length;
-                            for (int counter = 0; counter < vitalCount; counter++) {
-                                if (addVitalsPoint(timestamp, v.values[counter])) {
-                                    getChartView().repaint();
-                                }
-                                // increment time and counter
-                                timestamp += period;
-                            }
-
-                        } else if (v.value_type == Common.VITAL_TYPES.VITAL_TEMPERATURE.getValue()) {
-                            patientHandler.sendMessage(patientHandler.obtainMessage(Common.RIPPLE_MSG_VITALS_TEMPERATURE, v.values[0], 0));
-                        } else if (v.value_type == Common.VITAL_TYPES.VITAL_PULSE.getValue()) {
-                            patientHandler.sendMessage(patientHandler.obtainMessage(Common.RIPPLE_MSG_VITALS_PULSE, v.values[0], 0));
-                        } else if (v.value_type == Common.VITAL_TYPES.VITAL_BLOOD_OX.getValue()) {
-                            patientHandler.sendMessage(patientHandler.obtainMessage(Common.RIPPLE_MSG_VITALS_BLOOD_OX, v.values[0], 0));
-                        } else {
-                            Log.d(Common.LOG_TAG, "Unknown value / sensor type: " + v.value_type + " / " + v.sensor_timestamp);
-                        }
-
-                    }
+                    //TODO: process queue rather than clear
+                    vitalsQ.clear();
 
                 } else {
                     Thread.yield();

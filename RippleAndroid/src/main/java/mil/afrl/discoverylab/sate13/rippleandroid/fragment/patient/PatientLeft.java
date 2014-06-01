@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.google.gson.JsonObject;
 
-import mil.afrl.discoverylab.sate13.ripple.data.model.MultiValueVital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.MainActivity;
 import mil.afrl.discoverylab.sate13.rippleandroid.PrefsActivity;
@@ -58,22 +57,6 @@ public class PatientLeft extends Fragment {
             super.handleMessage(msg);
 
             switch (msg.what) {
-                case Common.RIPPLE_MSG_VITALS_STREAM: {
-                    graphHelper.offerVitals((MultiValueVital[]) msg.obj);
-                    break;
-                }
-                case Common.RIPPLE_MSG_VITALS_TEMPERATURE: {
-                    temperature.setText(Integer.toString(msg.arg1));
-                    break;
-                }
-                case Common.RIPPLE_MSG_VITALS_PULSE: {
-                    pulse.setText(Integer.toString(msg.arg1));
-                    break;
-                }
-                case Common.RIPPLE_MSG_VITALS_BLOOD_OX: {
-                    bloodOx.setText(Integer.toString(msg.arg1));
-                    break;
-                }
                 case Common.RIPPLE_MSG_RECORD:
                     JsonObject recordJson = (JsonObject) msg.obj;
                     String src = recordJson.get(Common.RECORD_SOURCE).getAsString();
