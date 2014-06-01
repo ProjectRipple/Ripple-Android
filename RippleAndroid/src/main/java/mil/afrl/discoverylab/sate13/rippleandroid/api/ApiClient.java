@@ -5,6 +5,8 @@ import mil.afrl.discoverylab.sate13.rippleandroid.model.EcgRequestData;
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.http.Body;
+import retrofit.http.Field;
+import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 
 /**
@@ -30,8 +32,9 @@ public class ApiClient {
     }
 
     public interface RippleApiInterface{
+        @FormUrlEncoded
         @POST("/ecgrequest")
-        void requestEcgStream(@Body String id, Callback<EcgRequestData> callback);
+        void requestEcgStream(@Field("id") String id, Callback<EcgRequestData> callback);
     }
 
 }

@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
@@ -24,7 +25,12 @@ import mil.afrl.discoverylab.sate13.rippleandroid.MainActivity;
 import mil.afrl.discoverylab.sate13.rippleandroid.PrefsActivity;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.ui.GraphHelper;
+import mil.afrl.discoverylab.sate13.rippleandroid.api.ApiClient;
+import mil.afrl.discoverylab.sate13.rippleandroid.model.EcgRequestData;
 import mil.afrl.discoverylab.sate13.rippleandroid.view.FingerPaint;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 /**
@@ -51,6 +57,7 @@ public class PatientLeft extends Fragment {
     private Button connectButton;
     private Button ecgRequestButton;
 
+    private boolean ecgRequestInProgress = false;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(final Message msg) {
@@ -72,7 +79,6 @@ public class PatientLeft extends Fragment {
 
         }
     };
-
 
 
     @Override
@@ -166,7 +172,7 @@ public class PatientLeft extends Fragment {
 
             @Override
             public void onClick(View v) {
-
+                requestEcgStream();
             }
         });
 
@@ -218,6 +224,27 @@ public class PatientLeft extends Fragment {
         super.onDestroy();
         graphHelper.stopPlotter();
         graphHelper.clearGraph();
+    }
+
+    private void requestEcgStream(){
+        if(!ecgRequestInProgress && !curPatientSrc.equals("")){
+            ecgRequestInProgress = true;
+            //TODO: subscribe to ecg stream for this patient
+
+            ApiClient.getRippleApiClient().requestEcgStream(curPatientSrc, new Callback<EcgRequestData>() {
+                @Override
+                public void success(EcgRequestData ecgRequestData, Response response) {
+                    ecgRequestInProgress = false;
+                    Toast.makeText(getActivity(), ecgRequestData.getMsg(), Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void failure(RetrofitError retrofitError) {
+                    ecgRequestInProgress = false;
+                    Toast.makeText(getActivity(), "Request failed. " + retrofitError.getResponse().getStatus() + " Message:" + retrofitError.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     public void setPatientSrc(String patientSrc){
