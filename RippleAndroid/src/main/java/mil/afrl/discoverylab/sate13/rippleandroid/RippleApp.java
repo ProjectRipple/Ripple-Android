@@ -36,19 +36,6 @@ public class RippleApp extends Application {
 
         boolean validIPv4 = brokerIP.matches(PrefsFragment.IP_REG_EXPRESSION);
         boolean validIPv6 = brokerIP.matches(PrefsFragment.IPV6_HEXCOMPRESSED_REGEX) || brokerIP.matches(PrefsFragment.IPV6_REGEX);
-        if (validIPv4) {
-            myEditor.putString(PrefsFragment.IP_FROM_PREFS, brokerIP);
-            myEditor.commit();
-            WSConfig.ROOT_URL = "http://" + brokerIP + ":" + WSConfig.BROKER_PORT + "/" + WSConfig.BROKER_ROOT + "/";
-            WSConfig.WS_QUERY_URL = WSConfig.ROOT_URL + "Query";
-        } else if (validIPv6) {
-            myEditor.putString(PrefsFragment.IP_FROM_PREFS, brokerIP);
-            myEditor.commit();
-            WSConfig.ROOT_URL = "http://[" + brokerIP + "]:" + WSConfig.BROKER_PORT + "/" + WSConfig.BROKER_ROOT + "/";
-            WSConfig.WS_QUERY_URL = WSConfig.ROOT_URL + "Query";
-        } else {
-            Log.d(Common.LOG_TAG, this.getClass().getName() + " -- Invalid ip loaded from preferences:" + brokerIP);
-        }
 
         // load ports
         String portNumMqtt = prefs.getString(PrefsFragment.PORT_NUM_MQTT_PREFS, WSConfig.DEFAULT_MQTT_PORT);
@@ -58,6 +45,22 @@ public class RippleApp extends Application {
         String portNumRest = prefs.getString(PrefsFragment.PORT_NUM_REST_PREFS, WSConfig.DEFAULT_REST_PORT);
         myEditor.putString(PrefsFragment.PORT_NUM_REST_PREFS, portNumRest);
         myEditor.commit();
+
+        if (validIPv4) {
+            myEditor.putString(PrefsFragment.IP_FROM_PREFS, brokerIP);
+            myEditor.commit();
+            WSConfig.ROOT_URL = "http://" + brokerIP + ":" + portNumRest;// + "/" + WSConfig.BROKER_ROOT + "/";
+            WSConfig.WS_QUERY_URL = WSConfig.ROOT_URL + "Query";
+        } else if (validIPv6) {
+            myEditor.putString(PrefsFragment.IP_FROM_PREFS, brokerIP);
+            myEditor.commit();
+            WSConfig.ROOT_URL = "http://[" + brokerIP + "]:" + portNumRest;// + "/" + WSConfig.BROKER_ROOT + "/";
+            WSConfig.WS_QUERY_URL = WSConfig.ROOT_URL + "Query";
+        } else {
+            Log.d(Common.LOG_TAG, this.getClass().getName() + " -- Invalid ip loaded from preferences:" + brokerIP);
+        }
+
+
 
         /*DatabaseAdapter.getInstance(this.getApplicationContext());
         if (DatabaseAdapter.getInstance().isTableEmpty(DatabaseAdapter.TableType.VITAL.name())) {

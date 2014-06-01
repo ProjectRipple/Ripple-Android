@@ -13,6 +13,7 @@ import android.util.Log;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
+import mil.afrl.discoverylab.sate13.rippleandroid.api.ApiClient;
 import mil.afrl.discoverylab.sate13.rippleandroid.config.WSConfig;
 
 
@@ -20,7 +21,7 @@ public class PrefsFragment extends PreferenceFragment {
 
     private SharedPreferences prefs;
     private Editor myEditor;
-    private EditTextPreference ipTextBox, portNumMqttTextBox, PortNumRestTextBox;
+    private EditTextPreference ipTextBox, portNumMqttTextBox, portNumRestTextBox;
     public static final String IP_REG_EXPRESSION = "^((1\\d{2}|2[0-4]\\d|25[0-5]|\\d?\\d)\\.){3}(?:1\\d{2}|2[0-4]\\d|25[0-5]|\\d?\\d)$";
     private static final String IPV6_REG_EXPRESSION = "^([\\dA-F]{1,4}:|((?=.*(::))(?!.*\\3.+\\3))\\3?)([\\dA-F]{1,4}(\\3|:\\b)|\\2){5}(([\\dA-F]{1,4}(\\3|:\\b|$)|\\2){2}|(((2[0-4]|1\\d|[1-9])?\\d|25[0-5])\\.?\\b){4})\\z";
 
@@ -68,7 +69,7 @@ public class PrefsFragment extends PreferenceFragment {
         addPreferencesFromResource(R.layout.fragment_settings);
         ipTextBox = (EditTextPreference) getPreferenceScreen().findPreference(IP_FROM_PREFS);
         portNumMqttTextBox = (EditTextPreference) getPreferenceScreen().findPreference(PORT_NUM_MQTT_PREFS);
-        PortNumRestTextBox = (EditTextPreference) getPreferenceScreen().findPreference(PORT_NUM_REST_PREFS);
+        portNumRestTextBox = (EditTextPreference) getPreferenceScreen().findPreference(PORT_NUM_REST_PREFS);
 
 
         ipTextBox.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -80,16 +81,19 @@ public class PrefsFragment extends PreferenceFragment {
                 String newValueString = newValue.toString();
                 boolean validIPv4 = newValueString.matches(IP_REG_EXPRESSION);
                 boolean validIPv6 = newValueString.matches(IPV6_HEXCOMPRESSED_REGEX) || newValueString.matches(IPV6_REGEX);
+                String portNumRest = prefs.getString(PrefsFragment.PORT_NUM_REST_PREFS, WSConfig.DEFAULT_REST_PORT);
                 if (validIPv4 && newValueString.length() > 0) {
                     myEditor.putString(IP_FROM_PREFS, newValueString);
                     myEditor.commit();
-                    WSConfig.ROOT_URL = "http://" + newValueString + ":" + WSConfig.BROKER_PORT + "/" + WSConfig.BROKER_ROOT + "/";
+                    WSConfig.ROOT_URL = "http://" + newValueString + ":" + portNumRest;// + "/" + WSConfig.BROKER_ROOT + "/";
                     WSConfig.WS_QUERY_URL = WSConfig.ROOT_URL + "Query";
+                    ApiClient.updateEndPoint();
                 } else if (validIPv6 && newValueString.length() > 0) {
                     myEditor.putString(IP_FROM_PREFS, newValueString);
                     myEditor.commit();
-                    WSConfig.ROOT_URL = "http://[" + newValueString + "]:" + WSConfig.BROKER_PORT + "/" + WSConfig.BROKER_ROOT + "/";
+                    WSConfig.ROOT_URL = "http://[" + newValueString + "]:" + portNumRest;// + "/" + WSConfig.BROKER_ROOT + "/";
                     WSConfig.WS_QUERY_URL = WSConfig.ROOT_URL + "Query";
+                    ApiClient.updateEndPoint();
                 } else {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                     builder.setTitle(R.string.invalid_input);
@@ -100,6 +104,32 @@ public class PrefsFragment extends PreferenceFragment {
                 }
                 Log.d(Common.LOG_TAG, "New Root URL:" + WSConfig.ROOT_URL);
                 return rtnval;
+            }
+        });
+
+        portNumRestTextBox.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                myEditor = prefs.edit();
+
+                String newPortNum = newValue.toString();
+                myEditor.putString(PORT_NUM_REST_PREFS, newPortNum);
+                myEditor.commit();
+
+                // update URL
+                String ip = prefs.getString(IP_FROM_PREFS, WSConfig.DEFAULT_IP);
+
+                boolean validIPv4 = ip.matches(IP_REG_EXPRESSION);
+                boolean validIPv6 = ip.matches(IPV6_HEXCOMPRESSED_REGEX) || ip.matches(IPV6_REGEX);
+                if(validIPv4) {
+                    WSConfig.ROOT_URL = "http://" + ip + ":" + newPortNum;
+                    ApiClient.updateEndPoint();
+                } else if(validIPv6){
+                    WSConfig.ROOT_URL = "http://[" + ip + "]:" + newPortNum;
+                    ApiClient.updateEndPoint();
+                }
+
+                return true;
             }
         });
     }
