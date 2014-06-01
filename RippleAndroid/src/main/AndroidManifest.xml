@@ -54,16 +54,9 @@
                 android:theme="@android:style/Theme.Black.NoTitleBar" />
 
         <service
-                android:name=".data.service.RippleRequestService"
-                android:exported="false"/>
-
-        <service
                 android:name=".mqtt.MQTTClientService"
                 android:exported="false"/>
 
-        <provider
-                android:name="mil.afrl.discoverylab.sate13.rippleandroid.data.provider.RippleProvider"
-                android:authorities="mil.afrl.discoverylab.sate13.rippleandroid.data.provider.RippleProvider" />
 
         <!-- API Key -->
         <meta-data

@@ -16,8 +16,6 @@ import android.widget.TableRow;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
@@ -26,13 +24,10 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import mil.afrl.discoverylab.sate13.ripple.data.model.Vital;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.PatientView;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
 import mil.afrl.discoverylab.sate13.rippleandroid.object.Patient;
-
-import static mil.afrl.discoverylab.sate13.rippleandroid.Common.VITAL_TYPES.VITAL_BLOOD_OX;
 
 /**
  * This displays the banner at the top of the display
@@ -62,59 +57,6 @@ public class Banner extends Fragment {
             Patient curPatient = null;
 
             switch (msg.what) {
-                case Common.RIPPLE_MSG_MCAST:
-                    if (mPatients == null || msg.obj == null) {
-                        // No patients to update or no message
-                        return;
-                    }
-//                    Log.d(Common.LOG_TAG, "Banner Handler" + msg.obj);
-
-                    JsonObject json = gson.fromJson(msg.obj.toString(), JsonObject.class);
-                    int patientId = json.getAsJsonPrimitive("pid").getAsInt();
-                    JsonArray vitals = json.getAsJsonArray("vitals");
-
-                    patientFound = false;
-                    curPatient = null;
-                    // find patient
-                    synchronized (patientLock) {
-                        for (Patient p : mPatients) {
-                            if (p.getPid() == patientId) {
-                                patientFound = true;
-                                curPatient = p;
-                                break;
-                            }
-                        }
-                        if (!patientFound) {
-                            // Add patient
-                            curPatient = new Patient();
-                            curPatient.setPid(patientId);
-                            mPatients.add(curPatient);
-                            curPatient.setColor(Color.CYAN);
-                            createPatientView(curPatient);
-                        }
-                    }
-                    // get values from json and set them for patient
-                    for (JsonElement j : vitals) {
-
-                        Vital v = gson.fromJson(j, Vital.class);
-                        try {
-                            if (Integer.valueOf(v.value_type) == VITAL_BLOOD_OX.getValue()) {
-                                curPatient.setO2(v.value);
-                            } else if (Integer.valueOf(v.value_type) == Common.VITAL_TYPES.VITAL_PULSE.getValue()) {
-                                curPatient.setBpm(v.value);
-                            } else if (Integer.valueOf(v.value_type) == Common.VITAL_TYPES.VITAL_TEMPERATURE.getValue()) {
-                                curPatient.setTemperature(v.value);
-                            } else {
-                                //Log.e(Common.LOG_TAG, "Unknown Vital type: " + v.value_type);
-                            }
-                        } catch (NumberFormatException nfe) {
-                            Log.e(Common.LOG_TAG, "Failed to parse value type: " + nfe);
-                        }
-                    }
-
-
-                    break;
-
                 case Common.RIPPLE_MSG_BITMAP:
                     patientFound = false;
                     for (int i = 0; i < tableRow.getVirtualChildCount(); i++) {

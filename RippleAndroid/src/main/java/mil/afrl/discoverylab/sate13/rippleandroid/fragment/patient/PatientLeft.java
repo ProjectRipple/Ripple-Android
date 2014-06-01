@@ -17,24 +17,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.foxykeep.datadroid.requestmanager.Request;
-import com.foxykeep.datadroid.requestmanager.RequestManager;
 import com.google.gson.JsonObject;
 
-import java.util.ArrayList;
-
 import mil.afrl.discoverylab.sate13.ripple.data.model.MultiValueVital;
-import mil.afrl.discoverylab.sate13.ripple.data.model.SubscriptionResponse;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.MainActivity;
 import mil.afrl.discoverylab.sate13.rippleandroid.PrefsActivity;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
-import mil.afrl.discoverylab.sate13.rippleandroid.adapter.network.UdpClient;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.ui.GraphHelper;
-import mil.afrl.discoverylab.sate13.rippleandroid.config.WSConfig;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestFactory;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.requestmanager.RippleRequestManager;
 import mil.afrl.discoverylab.sate13.rippleandroid.view.FingerPaint;
+
 
 /**
  * The left patient fragment is used to display the most recent health data and information
@@ -42,16 +34,13 @@ import mil.afrl.discoverylab.sate13.rippleandroid.view.FingerPaint;
  * <p/>
  * The a chart is added to the bottom left linear layout and is used to display the ecg waveform
  */
-public class PatientLeft extends Fragment implements View.OnClickListener, RequestManager.RequestListener {
+public class PatientLeft extends Fragment {
 
-    private static final String SAVED_STATE_REQUEST_LIST = "savedStateRequestList";
     private static final String SAVED_STATE_PATIENT_SRC = "savedStatePatientSrc";
     //private static UdpClient udpc = new UdpClient();
     private int curPatient = -1;
     private String curPatientSrc = "";
     //private int curVital;
-    protected RippleRequestManager mRequestManager;
-    protected ArrayList<Request> mRequestList;
     private View view;
     private TextView patientName;
     private TextView temperature;
@@ -101,17 +90,7 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         }
     };
 
-    private synchronized void callSubscriptionWS(int pid, String action) {
-        if (pid >= 0) {
-            Log.d(Common.LOG_TAG, action + "ing from " + pid);
-            Request request = RippleRequestFactory.getSubscriptionRequest(
-                    pid,
-                    action,
-                    WSConfig.UDP_VITALS_STREAM_PORT);
-            mRequestManager.execute(request, this);
-            mRequestList.add(request);
-        }
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -173,12 +152,6 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
             }
         });
 
-        mRequestManager = RippleRequestManager.from(getActivity());
-        if (savedInstanceState != null) {
-            mRequestList = savedInstanceState.getParcelableArrayList(SAVED_STATE_REQUEST_LIST);
-        } else {
-            mRequestList = new ArrayList<Request>();
-        }
 
         this.patientName = (TextView) view.findViewById(R.id.name_value_tv);
         this.temperature = (TextView) view.findViewById(R.id.temp_value_tv);
@@ -229,7 +202,6 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         graphHelper.save(outState);
-        outState.putParcelableArrayList(SAVED_STATE_REQUEST_LIST, mRequestList);
         outState.putString(SAVED_STATE_PATIENT_SRC, this.curPatientSrc);
     }
 
@@ -238,11 +210,6 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         super.onActivityCreated(savedState);
         if (savedState != null) {
             graphHelper.restore(savedState);
-            mRequestManager = RippleRequestManager.from(getActivity());
-            mRequestList = savedState.getParcelableArrayList(SAVED_STATE_REQUEST_LIST);
-
-        } else {
-            mRequestList = new ArrayList<Request>();
         }
 
         if(((MainActivity) getActivity()).isMQTTServiceRunning()){
@@ -253,57 +220,11 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     @Override
     public void onResume() {
         super.onResume();
-        for (int i = 0; i < mRequestList.size(); i++) {
-            Request request = mRequestList.get(i);
-            if (mRequestManager.isRequestInProgress(request)) {
-                mRequestManager.addRequestListener(this, request);
-            } else {
-                mRequestManager.callListenerWithCachedData(this, request);
-                i--;
-                mRequestList.remove(request);
-            }
-        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (!mRequestList.isEmpty()) {
-            mRequestManager.removeRequestListener(this);
-        }
-    }
-
-    @Override
-    public void onRequestFinished(final Request request, final Bundle resultData) {
-        SubscriptionResponse response = resultData.getParcelable(RippleRequestFactory.BUNDLE_EXTRA_SUBSCRIPTION);
-        if (response.success) {
-            if (response.action_echo.equals("unsubscribe") && curPatient >= 0) {
-                Log.d(Common.LOG_TAG, "Successfully unsubscribed: " + response.toString());
-            } else if (response.action_echo.equals("subscribe") && response.pid_echo == curPatient) {
-                Log.d(Common.LOG_TAG, "Successfully subscribed: " + response.toString());
-            }
-        } else {
-            Log.e(Common.LOG_TAG, "Negative Subscription Response: " + response.toString());
-        }
-    }
-
-    @Override
-    public void onRequestConnectionError(Request request, int statusCode) {
-        if (mRequestList.contains(request)) {
-            mRequestList.remove(request);
-        }
-    }
-
-    @Override
-    public void onRequestDataError(Request request) {
-        if (mRequestList.contains(request)) {
-            mRequestList.remove(request);
-        }
-    }
-
-    @Override
-    public void onRequestCustomError(Request request, Bundle resultData) {
-        // Never called.
     }
 
     @Override
@@ -312,15 +233,8 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
     }
 
     @Override
-    public void onClick(View view) {
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
-        //callSubscriptionWS(curPatient, "unsubscribe");
-        //udpc.removehandler(handler);
-        //udpc.disconnect();
         graphHelper.stopPlotter();
         graphHelper.clearGraph();
     }
@@ -359,33 +273,18 @@ public class PatientLeft extends Fragment implements View.OnClickListener, Reque
         graphHelper.clearGraph();
 
         if (curPatient != pid) {
-            /*
-            if (curPatient >= 0) {
-                callSubscriptionWS(curPatient, "unsubscribe");
-            }
-            */
+
             graphHelper.startPlotter();
 
             // Subscribe
-            //callSubscriptionWS(pid, "subscribe");
 
-            // Connect to UdpStream
-            /*
-            if (!udpc.isListening()) {
-                udpc.connect(WSConfig.UDP_VITALS_STREAM_HOST, WSConfig.UDP_VITALS_STREAM_PORT);
-            }
-
-            udpc.addHandler(handler);
-            */
             curPatient = pid;
 
-            // TODO: may need settext on UI thread
             patientName.setText("Dummy Patient(" + curPatient + ")");
         } else {
-            //udpc.removehandler(handler);
 
             // unsubscribe
-            //callSubscriptionWS(curPatient, "unsubscribe");
+
 
             graphHelper.stopPlotter();
 

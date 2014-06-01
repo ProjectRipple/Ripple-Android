@@ -18,12 +18,11 @@ dependencies {
     compile files('libs/gson-2.2.4.jar')
     compile files('libs/wmqtt.jar')
     compile project(':google-play-services_lib')
-    compile project(':DataDroid')
 }
 
 android {
     compileSdkVersion 17
-    buildToolsVersion "19.1.0"
+    buildToolsVersion '19.1.0'
 
     defaultConfig {
         minSdkVersion 14

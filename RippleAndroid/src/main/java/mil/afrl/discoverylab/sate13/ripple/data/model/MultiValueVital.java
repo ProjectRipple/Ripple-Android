@@ -1,9 +1,7 @@
 package mil.afrl.discoverylab.sate13.ripple.data.model;
 
-import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -13,7 +11,6 @@ import java.text.ParseException;
 import java.util.Date;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
-import mil.afrl.discoverylab.sate13.rippleandroid.data.provider.RippleContent;
 
 /**
  * Created by burt on 7/3/13.
@@ -91,17 +88,6 @@ public final class MultiValueVital implements Parcelable, Serializable {
         dest.writeIntArray(values);
     }
 
-//    public ContentValues toContentValues() {
-//        ContentValues cv = new ContentValues();
-//        cv.put(RippleContent.db_vital.Columns.VID.getName(), vid);
-//        cv.put(RippleContent.db_vital.Columns.PID.getName(), pid);
-//        cv.put(RippleContent.db_vital.Columns.SERVER_TIMESTAMP.getName(), Common.SIMPLE_DATETIME_FORMAT.format(server_timestamp));
-//        cv.put(RippleContent.db_vital.Columns.SENSOR_TIMESTAMP.getName(), sensor_timestamp);
-//        cv.put(RippleContent.db_vital.Columns.SENSOR_TYPE.getName(), sensor_type);
-//        cv.put(RippleContent.db_vital.Columns.VALUE_TYPE.getName(), value_type);
-//        cv.put(RippleContent.db_vital.Columns.VALUE.getName(), values);
-//        return cv;
-//    }
 
     public static final Creator<MultiValueVital> CREATOR = new Creator<MultiValueVital>() {
         public MultiValueVital createFromParcel(Parcel in) {
