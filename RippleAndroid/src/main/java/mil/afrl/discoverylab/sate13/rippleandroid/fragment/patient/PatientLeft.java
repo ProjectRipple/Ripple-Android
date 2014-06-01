@@ -78,8 +78,6 @@ public class PatientLeft extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Need to recreate client since it is disconnected on destroy
-        //udpc = new UdpClient();
     }
 
     /**
@@ -101,7 +99,7 @@ public class PatientLeft extends Fragment {
         assert view != null;
 
         LinearLayout layout = (LinearLayout) view.findViewById(R.id.chart);
-        graphHelper = new GraphHelper(this.getActivity(), handler);
+        graphHelper = new GraphHelper(this.getActivity());
 
         layout.addView(graphHelper.getChartView(),
                 new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -248,31 +246,6 @@ public class PatientLeft extends Fragment {
             this.curPatientSrc = patientSrc;
 
             patientName.setText(curPatientSrc);
-        }
-    }
-
-    public void setPatient(int pid) {
-
-        graphHelper.clearGraph();
-
-        if (curPatient != pid) {
-
-            graphHelper.startPlotter();
-
-            // Subscribe
-
-            curPatient = pid;
-
-            patientName.setText("Dummy Patient(" + curPatient + ")");
-        } else {
-
-            // unsubscribe
-
-
-            graphHelper.stopPlotter();
-
-            // reset to default id
-            curPatient = -1;
         }
     }
 

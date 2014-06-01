@@ -52,9 +52,7 @@ public class GraphHelper {
      */
     private XYSeries currentSeries;
 
-    private Handler patientHandler;
-
-    public GraphHelper(Activity activity, Handler handler) {
+    public GraphHelper(Activity activity) {
         // set some properties on the main renderer
         chartRenderer.setApplyBackgroundColor(true);
         chartRenderer.setBackgroundColor(Color.argb(255, 238, 237, 240));
@@ -82,8 +80,6 @@ public class GraphHelper {
         chartView = ChartFactory.getLineChartView(activity, chartSeriesSset, chartRenderer);
 
         chartView.repaint();
-
-        patientHandler = handler;
     }
 
     /**
