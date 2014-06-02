@@ -293,16 +293,18 @@
             <TextView
                 android:id="@+id/history_tv"
                 style="@style/bodyfontblack"
+                android:layout_marginRight="20dp"
                 android:text="History"
                 android:textStyle="bold|italic" />
 
             <Button
                 android:id="@+id/ecg_request_btn"
-                style="@style/bodyfontblack"
+                style="?android:buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="@string/ecgrequest"
-                android:layout_margin="0dp"
+                android:textSize="@dimen/text_small"
+                android:background="#010101"
                 />
 
         </LinearLayout>
