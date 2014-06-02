@@ -20,13 +20,19 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.MainActivity;
 import mil.afrl.discoverylab.sate13.rippleandroid.PrefsActivity;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
+import mil.afrl.discoverylab.sate13.rippleandroid.Util;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.ui.GraphHelper;
 import mil.afrl.discoverylab.sate13.rippleandroid.api.ApiClient;
 import mil.afrl.discoverylab.sate13.rippleandroid.model.EcgRequestData;
+import mil.afrl.discoverylab.sate13.rippleandroid.mqtt.PublishedMessage;
 import mil.afrl.discoverylab.sate13.rippleandroid.view.FingerPaint;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -71,6 +77,14 @@ public class PatientLeft extends Fragment {
                         temperature.setText(recordJson.get(Common.RECORD_TEMPERATURE).getAsString());
                         pulse.setText(recordJson.get(Common.RECORD_HEART_RATE).getAsString());
                         bloodOx.setText(recordJson.get(Common.RECORD_BLOOD_OX).getAsString());
+                    }
+                    break;
+                case Common.RIPPLE_MSG_ECG_STREAM:
+                    PublishedMessage ecgMsg = (PublishedMessage) msg.obj;
+                    if(!curPatientSrc.equals("") && ecgMsg.getTopic().contains(curPatientSrc)){
+                        graphHelper.offerVitals(ecgMsg);
+                    } else {
+                        Log.d(Common.LOG_TAG, "Stream not for current patient.");
                     }
                     break;
                 default:
@@ -229,7 +243,7 @@ public class PatientLeft extends Fragment {
     private void requestEcgStream(){
         if(!ecgRequestInProgress && !curPatientSrc.equals("")){
             ecgRequestInProgress = true;
-            //TODO: subscribe to ecg stream for this patient
+            graphHelper.clearGraph();
 
             ApiClient.getRippleApiClient().requestEcgStream(curPatientSrc, new Callback<EcgRequestData>() {
                 @Override

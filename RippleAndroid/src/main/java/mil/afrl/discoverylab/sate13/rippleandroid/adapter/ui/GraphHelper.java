@@ -13,16 +13,21 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
+import mil.afrl.discoverylab.sate13.rippleandroid.Util;
+import mil.afrl.discoverylab.sate13.rippleandroid.mqtt.PublishedMessage;
 
 public class GraphHelper {
 
     private boolean plotting = false;
 
-    private Queue<Integer> vitalsQ = new LinkedList<Integer>();
+    private Queue<PublishedMessage> vitalsQ = new LinkedList<PublishedMessage>();
 
     private static final Long DEFAULT_MAX_X_RANGE = 1000L;
 
@@ -51,6 +56,10 @@ public class GraphHelper {
      * The most recently added series.
      */
     private XYSeries currentSeries;
+    // The last sequence number found (reset when graph is cleared)
+    private long lastEcgSeq = 0;
+    // how much to increment x by between ECG values
+    private final double X_INCREMENT = 1;
 
     public GraphHelper(Activity activity) {
         // set some properties on the main renderer
@@ -68,8 +77,8 @@ public class GraphHelper {
         chartRenderer.setYLabelsColor(0, Color.BLACK);
         chartRenderer.setShowLegend(false);
         chartRenderer.setDisplayValues(false);
-        chartRenderer.setYAxisMin(1000.0);
-        chartRenderer.setYAxisMax(3000.0);
+        chartRenderer.setYAxisMin(0.0);
+        chartRenderer.setYAxisMax(65000.0);
         chartRenderer.setInitialRange(new double[]{0, 1000, 1500.0, 3000.0});
         chartRenderer.setClickEnabled(false);
         chartRenderer.setPanEnabled(false);
@@ -114,6 +123,7 @@ public class GraphHelper {
         currentSeries.clear();
         setupSeries();
         chartView.repaint();
+        lastEcgSeq = 0;
     }
 
     public GraphicalView getChartView() {
@@ -128,11 +138,11 @@ public class GraphHelper {
         return vitalsQ.isEmpty();
     }
 
-    public Integer vitalsQRemove() {
+    public PublishedMessage vitalsQRemove() {
         return vitalsQ.remove();
     }
 
-    public boolean offerVitals(Integer vitals) {
+    public boolean offerVitals(PublishedMessage vitals) {
         return vitalsQ.offer(vitals);
     }
 
@@ -145,6 +155,7 @@ public class GraphHelper {
 
             plotting = true;
             plotter.start();
+            lastEcgSeq = 0;
         }
     }
 
@@ -215,8 +226,30 @@ public class GraphHelper {
 
                 if (!isVitalsQEmpty()) {
 
-                    //TODO: process queue rather than clear
-                    vitalsQ.clear();
+                    PublishedMessage ecgMsg = vitalsQRemove();
+
+                    byte[] streamBytes = Util.hexStringToByteArray(ecgMsg.getPayload());
+                    // TODO: remove hack sequence conversion once sequence "issue" is figured out
+                    long seq = Util.convert4BytesToUIntTemp(Arrays.copyOfRange(streamBytes, 0, 4));
+
+
+                    double x = maxX + X_INCREMENT;
+
+
+                    if(seq > lastEcgSeq) {
+                        lastEcgSeq = seq;
+                        for (int i = 4; i < streamBytes.length; i+=2) {
+                            if(addVitalsPoint(x, Util.convert2BytesToUInt(streamBytes[i], streamBytes[i+1]))){
+                                getChartView().repaint();
+                            }
+                            x += X_INCREMENT;
+                        }
+                    } else {
+                        Log.d(Common.LOG_TAG, "ECG stream out of sequence. Current: " + lastEcgSeq + " got " + seq);
+                        //TODO: how to handle out of sequence messages?
+                        // If # of samples per frame and difference between sequence numbers is known, can calculate skip in graph
+                        // otherwise save all the values somewhere and just insert missing sequence there and redraw
+                    }
 
                 } else {
                     Thread.yield();
