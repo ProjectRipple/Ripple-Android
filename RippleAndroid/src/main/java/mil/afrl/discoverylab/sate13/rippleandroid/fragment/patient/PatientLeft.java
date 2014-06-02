@@ -253,6 +253,10 @@ public class PatientLeft extends Fragment {
 
         if(this.curPatientSrc.equals(patientSrc)){
             // unsubscribe
+            if(!this.curPatientSrc.equals("")){
+                String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_ID_STRING, this.curPatientSrc);
+                ((MainActivity) getActivity()).unsubscribeFromTopic(topic);
+            }
 
             graphHelper.stopPlotter();
 
@@ -266,11 +270,19 @@ public class PatientLeft extends Fragment {
         } else {
 
             // unsubscribe from old patient stream (if any)
-
+            if(!this.curPatientSrc.equals("")){
+                String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_ID_STRING, this.curPatientSrc);
+                ((MainActivity) getActivity()).unsubscribeFromTopic(topic);
+            }
             graphHelper.startPlotter();
 
             // subscribe to new patient
             this.curPatientSrc = patientSrc;
+
+            if(!this.curPatientSrc.equals("")){
+                String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_ID_STRING, this.curPatientSrc);
+                ((MainActivity) getActivity()).subscribeToTopic(topic);
+            }
 
             patientName.setText(curPatientSrc);
         }

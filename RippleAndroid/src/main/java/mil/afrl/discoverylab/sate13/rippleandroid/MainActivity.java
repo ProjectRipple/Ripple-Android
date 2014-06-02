@@ -197,12 +197,27 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         }
     }
 
+    public void unsubscribeFromTopic(String topicName){
+        Message msg = Message.obtain(null, MQTTServiceConstants.MSG_UNSUBSCRIBE);
+        Bundle bundle = new Bundle();
+        bundle.putString(MQTTServiceConstants.MQTT_TOPIC, topicName);
+        msg.setData(bundle);
+        try {
+            this.mqttServiceManager.send(msg);
+            Toast.makeText(this, "Unsubscribed from: " + topicName, Toast.LENGTH_SHORT).show();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     private void processPublishedMessage(PublishedMessage msg) {
         String topic = msg.getTopic();
         if(topic.equals(Common.MQTT_TOPIC_VITALPROP)){
             JsonObject recordJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
             this.banner.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
             this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
+        } else if (topic.matches(Common.MQTT_TOPIC_MATCH_ECG_STREAM)){
+            this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_ECG_STREAM, msg);
         } else {
             Log.d(Common.LOG_TAG, "Unknown MQTT topic recieved:" + topic);
         }
