@@ -255,7 +255,7 @@ public class PatientLeft extends Fragment {
                 @Override
                 public void failure(RetrofitError retrofitError) {
                     ecgRequestInProgress = false;
-                    Toast.makeText(getActivity(), "Request failed. " + retrofitError.getResponse().getStatus() + " Message:" + retrofitError.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), "Request failed. " + " Message:" + retrofitError.getMessage(), Toast.LENGTH_LONG).show();
                 }
             });
         }
