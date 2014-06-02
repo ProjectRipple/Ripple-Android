@@ -217,7 +217,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
             this.banner.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
             this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
         } else if (topic.matches(Common.MQTT_TOPIC_MATCH_ECG_STREAM)){
-            this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_ECG_STREAM, msg);
+            this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_ECG_STREAM, msg).sendToTarget();
         } else {
             Log.d(Common.LOG_TAG, "Unknown MQTT topic recieved:" + topic);
         }
