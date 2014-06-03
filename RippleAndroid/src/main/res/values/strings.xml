@@ -11,7 +11,7 @@
     <string name="underline">This is an<u>underline</u>.
     </string>
 
-    <string name="google_map_api_key">place actual value in keys.xml</string>
+    <!--<string name="google_map_api_key">place actual value in keys.xml</string>-->
 
     <string name="name"><u>Name:</u></string>
     <string name="age"><u>Age:</u></string>
