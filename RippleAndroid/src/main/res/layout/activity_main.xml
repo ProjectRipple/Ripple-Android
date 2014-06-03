@@ -17,7 +17,7 @@
             android:layout_height="fill_parent"
             android:layout_gravity="center"
             android:weightSum="1.0"
-            >
+            android:baselineAligned="false">
 
         <fragment
                 class="mil.afrl.discoverylab.sate13.rippleandroid.fragment.patient.PatientLeft"

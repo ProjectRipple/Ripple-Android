@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="0px"
             android:layout_weight="1"
-            android:text=" Ok Buddy "
+            android:text="@string/paint_ok_btn"
             />
 
 </LinearLayout>

@@ -44,6 +44,14 @@
     <string name="disconnect">Disconnect</string>
     <string name="settings">Settings</string>
     <string name="broker_settings">Broker Settings</string>
+    <string name="n_a">N/A</string>
+    <string name="scene">Scene</string>
+    <string name="details">Details</string>
+    <string name="default_patient_name">Matthew McCartney</string>
+    <string name="current">Current</string>
+    <string name="History">History</string>
+    <string name="patient_tag_view_description">Patient Image</string>
+    <string name="paint_ok_btn">OK</string>
 
 
 </resources>

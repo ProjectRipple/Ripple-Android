@@ -25,6 +25,7 @@
 
         <ImageView
             android:id="@+id/tagview"
+            android:contentDescription="@string/patient_tag_view_description"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_gravity="center"
@@ -78,7 +79,7 @@
             android:id="@+id/scene_tv"
             style="@style/headingfontblack"
             android:layout_gravity="center_horizontal"
-            android:text="Scene" />
+            android:text="@string/scene" />
 
         <View
             android:layout_width="match_parent"
@@ -88,7 +89,7 @@
         <TextView
             android:id="@+id/details_tv"
             style="@style/bodyfontblack"
-            android:text="Details"
+            android:text="@string/details"
             android:textStyle="bold|italic" />
 
         <View
@@ -103,7 +104,7 @@
 
 
             <GridLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent">
 
                 <TextView
@@ -118,7 +119,7 @@
                     style="@style/bodyfontgray"
                     android:layout_column="1"
                     android:layout_row="0"
-                    android:text="Matthew McCartney" />
+                    android:text="@string/default_patient_name" />
 
                 <TextView
                     android:id="@+id/age_tv"
@@ -132,7 +133,7 @@
                     style="@style/bodyfontgray"
                     android:layout_column="3"
                     android:layout_row="0"
-                    android:text="N/A" />
+                    android:text="@string/n_a" />
 
                 <TextView
                     android:id="@+id/nbc_contamination_tv"
@@ -146,7 +147,7 @@
                     style="@style/bodyfontgray"
                     android:layout_column="1"
                     android:layout_row="1"
-                    android:text="N/A" />
+                    android:text="@string/n_a" />
 
                 <TextView
                     android:id="@+id/Sex_tv"
@@ -160,7 +161,7 @@
                     style="@style/bodyfontgray"
                     android:layout_column="3"
                     android:layout_row="1"
-                    android:text="N/A" />
+                    android:text="@string/n_a" />
 
             </GridLayout>
 
@@ -174,7 +175,7 @@
         <TextView
             android:id="@+id/current_tv"
             style="@style/bodyfontblack"
-            android:text="Current"
+            android:text="@string/current"
             android:textStyle="bold|italic" />
 
         <View
@@ -189,7 +190,7 @@
 
 
             <GridLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent">
 
                 <TextView
@@ -204,7 +205,7 @@
                     style="@style/bodyfontgray"
                     android:layout_column="1"
                     android:layout_row="0"
-                    android:text="N/A" />
+                    android:text="@string/n_a" />
 
                 <TextView
                     android:id="@+id/pulse_tv"
@@ -218,7 +219,7 @@
                     style="@style/bodyfontgray"
                     android:layout_column="3"
                     android:layout_row="0"
-                    android:text="N/A" />
+                    android:text="@string/n_a" />
 
                 <TextView
                     android:id="@+id/o2_tv"
@@ -232,7 +233,7 @@
                     style="@style/bodyfontgray"
                     android:layout_column="5"
                     android:layout_row="0"
-                    android:text="N/A" />
+                    android:text="@string/n_a" />
 
                 <TextView
                     android:id="@+id/bp_tv"
@@ -246,7 +247,7 @@
                     style="@style/bodyfontgray"
                     android:layout_column="1"
                     android:layout_row="1"
-                    android:text="N/A" />
+                    android:text="@string/n_a" />
 
                 <TextView
                     android:id="@+id/resp_tv"
@@ -260,7 +261,7 @@
                     style="@style/bodyfontgray"
                     android:layout_column="3"
                     android:layout_row="1"
-                    android:text="N/A" />
+                    android:text="@string/n_a" />
 
                 <TextView
                     android:id="@+id/pain_tv"
@@ -274,7 +275,7 @@
                     style="@style/bodyfontgray"
                     android:layout_column="5"
                     android:layout_row="1"
-                    android:text="N/A" />
+                    android:text="@string/n_a" />
 
             </GridLayout>
 
@@ -285,16 +286,16 @@
             android:layout_height="1dp"
             android:background="@android:color/holo_blue_dark" />
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_height="@dimen/patient_headings_height"
+            android:layout_gravity="center_vertical">
 
             <TextView
                 android:id="@+id/history_tv"
                 style="@style/bodyfontblack"
-                android:layout_marginRight="20dp"
-                android:text="History"
+                android:layout_alignParentLeft="true"
+                android:text="@string/History"
                 android:textStyle="bold|italic" />
 
             <Button
@@ -302,12 +303,12 @@
                 style="?android:buttonBarButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
                 android:text="@string/ecgrequest"
                 android:textSize="@dimen/text_small"
-                android:background="#010101"
-                />
+                android:background="#010101" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
 
         <View
