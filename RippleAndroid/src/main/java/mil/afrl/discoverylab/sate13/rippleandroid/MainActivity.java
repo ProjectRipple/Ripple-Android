@@ -241,6 +241,9 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
                     case MQTTServiceConstants.MSG_CONNECTED:
                         activity.subscribeToTopic(Common.MQTT_TOPIC_VITALPROP);
                         Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show();
+                        // Clear old patient list
+                        activity.banner.clearPatientBanner();
+                        activity.patLeft.setPatientSrc("");
                         break;
                     case MQTTServiceConstants.MSG_CANT_CONNECT:
                         Toast.makeText(activity, "Unable to connect", Toast.LENGTH_SHORT).show();
