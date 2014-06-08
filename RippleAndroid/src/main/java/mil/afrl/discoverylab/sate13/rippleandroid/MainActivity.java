@@ -191,7 +191,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         msg.setData(bundle);
         try {
             this.mqttServiceManager.send(msg);
-            Toast.makeText(this, "Subscribed for: " + topicName, Toast.LENGTH_SHORT).show();
+            Log.d(Common.LOG_TAG, "Subscribed for: " + topicName);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -204,7 +204,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         msg.setData(bundle);
         try {
             this.mqttServiceManager.send(msg);
-            Toast.makeText(this, "Unsubscribed from: " + topicName, Toast.LENGTH_SHORT).show();
+            Log.d(Common.LOG_TAG, "Unsubscribed from: " + topicName);
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -212,7 +212,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
 
     private void processPublishedMessage(PublishedMessage msg) {
         String topic = msg.getTopic();
-        if(topic.equals(Common.MQTT_TOPIC_VITALPROP)){
+        if(topic.equals(Common.MQTT_TOPIC_VITALPROP) || topic.matches(Common.MQTT_TOPIC_MATCH_VITALCAST)){
             JsonObject recordJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
             this.banner.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
             this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();

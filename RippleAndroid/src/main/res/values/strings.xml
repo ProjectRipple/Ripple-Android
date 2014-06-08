@@ -47,7 +47,7 @@
     <string name="n_a">N/A</string>
     <string name="scene">Scene</string>
     <string name="details">Details</string>
-    <string name="default_patient_name">Matthew McCartney</string>
+    <string name="default_patient_name">Patient Name</string>
     <string name="current">Current</string>
     <string name="History">History</string>
     <string name="patient_tag_view_description">Patient Image</string>

@@ -53,8 +53,12 @@ public final class Common {
     public static final double SIM_BASELINE_GUESS = 1858.077626;
 
     // MQTT topics
-    public static final String MQTT_TOPIC_VITALPROP = "P_Stats/vitalprop";
     public static final String MQTT_TOPIC_ID_STRING = "[PID]";
+    public static final String MQTT_TOPIC_WILDCARD_SINGLE_LEVEL = "+";
+    public static final String MQTT_TOPIC_WILDCARD_SUBTREE = "#";
+    public static final String MQTT_TOPIC_VITALPROP = "P_Stats/vitalprop";
+    public static final String MQTT_TOPIC_VITALCAST = "P_Stats/"+MQTT_TOPIC_ID_STRING+"/vitalcast";
+    public static final String MQTT_TOPIC_MATCH_VITALCAST = "P_Stats/.*/vitalcast";
     public static final String MQTT_TOPIC_ECG_STREAM = "P_Stream/"+MQTT_TOPIC_ID_STRING+"/ecg";
     public static final String MQTT_TOPIC_MATCH_ECG_STREAM = "P_Stream/.*/ecg";
 
