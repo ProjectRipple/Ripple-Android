@@ -240,6 +240,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
                 switch (msg.what){
                     case MQTTServiceConstants.MSG_CONNECTED:
                         activity.subscribeToTopic(Common.MQTT_TOPIC_VITALPROP);
+                        activity.subscribeToTopic(Common.MQTT_TOPIC_VITALCAST.replace(Common.MQTT_TOPIC_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
                         Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show();
                         // Clear old patient list
                         activity.banner.clearPatientBanner();
