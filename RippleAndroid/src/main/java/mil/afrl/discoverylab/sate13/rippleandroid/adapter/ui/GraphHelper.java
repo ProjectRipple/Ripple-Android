@@ -60,6 +60,10 @@ public class GraphHelper {
     private long lastEcgSeq = 0;
     // how much to increment x by between ECG values
     private final double X_INCREMENT = 1;
+    // number of ecg readings per packet
+    private final int ECG_SAMPLES_PER_PACKET = 100;
+    // false at start, true after first samples is read to set a baseline for graph to grow from
+    private boolean isBaselineSet = false;
 
     public GraphHelper(Activity activity) {
         // set some properties on the main renderer
@@ -77,13 +81,12 @@ public class GraphHelper {
         chartRenderer.setYLabelsColor(0, Color.BLACK);
         chartRenderer.setShowLegend(false);
         chartRenderer.setDisplayValues(false);
-        chartRenderer.setYAxisMin(0.0);
-        chartRenderer.setYAxisMax(65000.0);
+        chartRenderer.setYAxisMin(1500.0);
+        chartRenderer.setYAxisMax(3000.0);
         chartRenderer.setInitialRange(new double[]{0, 1000, 1500.0, 3000.0});
         chartRenderer.setClickEnabled(false);
         chartRenderer.setPanEnabled(false);
         chartRenderer.setZoomEnabled(false);
-
         setupSeries();
 
         chartView = ChartFactory.getLineChartView(activity, chartSeriesSset, chartRenderer);
@@ -124,6 +127,7 @@ public class GraphHelper {
         setupSeries();
         chartView.repaint();
         lastEcgSeq = 0;
+        isBaselineSet = false;
     }
 
     public GraphicalView getChartView() {
@@ -148,6 +152,9 @@ public class GraphHelper {
 
     public void startPlotter() {
         if (plotter == null) {
+
+            // reset may y
+            chartRenderer.setYAxisMax(3000.0);
 
             plotter = new Thread(new PlottingThread());
             plotter.setName("Plotter Thread");
@@ -188,18 +195,29 @@ public class GraphHelper {
     synchronized private boolean addVitalsPoint(double x, Integer y) {
         if (x > maxX) {
 
-            if (maxX != 0) {
-                while ((x - maxX) > 25) {
-                    maxX += 5.0;
-                    //Log.d(Common.LOG_TAG, "Adding (" + maxX + ", 0.0)");
-                    currentSeries.add(maxX, Common.SIM_BASELINE_GUESS);
-                }
+            if(!isBaselineSet && y > 25){
+                chartRenderer.setYAxisMax((double)(y+25));
+                chartRenderer.setYAxisMin((double)(y-25));
+                isBaselineSet = true;
             }
+//            if (maxX != 0) {
+//                while ((x - maxX) > 25) {
+//                    maxX += 5.0;
+//                    //Log.d(Common.LOG_TAG, "Adding (" + maxX + ", 0.0)");
+//                    currentSeries.add(maxX, Common.SIM_BASELINE_GUESS);
+//                }
+//            }
 
             while ((x - currentSeries.getMinX()) > DEFAULT_MAX_X_RANGE && currentSeries.getItemCount() > 0) {
                 currentSeries.remove(0);
             }
 
+            if(y > chartRenderer.getYAxisMax() && y != 0){
+                chartRenderer.setYAxisMax((double)(y+25));
+            }
+            if(y < chartRenderer.getYAxisMin() && y > 25){
+                chartRenderer.setYAxisMin((double)(y-25));
+            }
             //Log.d(Common.LOG_TAG, "Adding (" + x + ", " + y + ")");
             currentSeries.add(x, (double) y);
 
@@ -229,16 +247,24 @@ public class GraphHelper {
                     PublishedMessage ecgMsg = vitalsQRemove();
 
                     byte[] streamBytes = Util.hexStringToByteArray(ecgMsg.getPayload());
-                    // TODO: remove hack sequence conversion once sequence "issue" is figured out
-                    long seq = Util.convert4BytesToUIntTemp(Arrays.copyOfRange(streamBytes, 0, 4));
+                    long seq = Util.convert4BytesToUInt(Arrays.copyOfRange(streamBytes, 0, 4));
 
 
                     double x = maxX + X_INCREMENT;
 
 
                     if(seq > lastEcgSeq) {
+                        if(seq != lastEcgSeq+1 && lastEcgSeq != 0){
+                            Log.d(Common.LOG_TAG, "Missing sequence number between " + lastEcgSeq + " and " + seq);
+                            // Missed stream messages
+                            long missedSeq = seq - (lastEcgSeq+1);
+                            addVitalsPoint(maxX, 0);
+                            addVitalsPoint(maxX+(ECG_SAMPLES_PER_PACKET*missedSeq), 0);
+                            x = maxX + X_INCREMENT;
+                        }
                         lastEcgSeq = seq;
-                        for (int i = 4; i < streamBytes.length; i+=2) {
+                        // start at 6 instead of 4 because of 2 extra 0 bytes at start of stream data
+                        for (int i = 6; i < streamBytes.length; i+=2) {
                             if(addVitalsPoint(x, Util.convert2BytesToUInt(streamBytes[i], streamBytes[i+1]))){
                                 getChartView().repaint();
                             }
