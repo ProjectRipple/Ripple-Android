@@ -12,6 +12,15 @@
             android:background="#000000">
         <TableRow
             android:id="@+id/bannerTableRow"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
             />
+        <TableRow>
+            <View
+                android:layout_span="100000"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/holo_blue_dark" />
+        </TableRow>
     </TableLayout>
 </HorizontalScrollView>

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TableRow;
 
 import com.google.gson.Gson;
@@ -27,6 +28,7 @@ import java.util.TimerTask;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.PatientView;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
+import mil.afrl.discoverylab.sate13.rippleandroid.RandomPatient;
 import mil.afrl.discoverylab.sate13.rippleandroid.object.Patient;
 
 /**
@@ -137,12 +139,19 @@ public class Banner extends Fragment {
         this.autoUpdateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                // Update views
-                for (int i = 0; i < tableRow.getVirtualChildCount(); i++) {
-                    PatientView p = (PatientView) tableRow.getVirtualChildAt(i);
-                    p.postInvalidate();
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Update views
+                        for (int i = 0; i < tableRow.getVirtualChildCount(); i++) {
+                            PatientView p = (PatientView) tableRow.getVirtualChildAt(i);
+                            p.updateViewFields();
+                            p.postInvalidate();
 
-                }
+                        }
+                    }
+                });
+
             }
         }, 0, TIMER_PERIOD_MS);
 
@@ -180,33 +189,11 @@ public class Banner extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        /*
-        if (this.multicastClient == null) {
-            this.multicastClient = new MulticastClient();
-        }
-        this.multicastClient.addHandler(this.mHandler);
-        try {
-            this.multicastClient.joinGroup(Inet6Address.getByName(Common.MCAST_GROUP), Common.MCAST_PORT);
-        } catch (UnknownHostException e) {
-            Log.e(Common.LOG_TAG, "Unknown Host " + Common.MCAST_GROUP, e);
-        }
-        */
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        /*
-        if (this.multicastClient != null) {
-            this.multicastClient.removeHandler(this.mHandler);
-            try {
-                this.multicastClient.leaveGroup(Inet6Address.getByName(Common.MCAST_GROUP), Common.MCAST_PORT);
-            } catch (UnknownHostException e) {
-                Log.e(Common.LOG_TAG, "Unknown Host " + Common.MCAST_GROUP, e);
-            }
-        }
-        */
-
     }
 
     @Override
@@ -243,14 +230,6 @@ public class Banner extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        /*
-        // Stop client
-        if (this.multicastClient != null) {
-            this.multicastClient.removeHandler(this.mHandler);
-            this.multicastClient.disconnect();
-            this.multicastClient = null;
-        }
-        */
     }
 
     @Override
@@ -273,10 +252,9 @@ public class Banner extends Fragment {
         }
     }
 
-    private void createPatientView(Patient patient) {
-        PatientView v = new PatientView(this.mContext, patient, patient.getPid());
-        v.setMinimumHeight(100);
-        v.setMinimumWidth(200);
+    public void createPatientView(Patient patient) {
+        PatientView v = new PatientView(this.mContext);
+        v.setPatient(patient);
         if (mContext instanceof View.OnClickListener) {
             v.setOnClickListener((View.OnClickListener) this.mContext);
         }

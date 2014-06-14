@@ -2,12 +2,16 @@ package mil.afrl.discoverylab.sate13.rippleandroid;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.GradientDrawable;
+import android.util.AttributeSet;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.object.Patient;
 
@@ -15,7 +19,7 @@ import mil.afrl.discoverylab.sate13.rippleandroid.object.Patient;
  * This class draws the patient view inside of the horizontal scrolling bar.
  * Created by harmonbc on 6/19/13.
  */
-public class PatientView extends View {
+public class PatientView extends RelativeLayout {
 
     //Border for each grid square
     private static final int BORDER = 5;
@@ -27,24 +31,44 @@ public class PatientView extends View {
     // rectangle for drawing
     RectF mRect = new RectF();
     // Colors
-    private Paint mPaintBG, mPaintText, mPaintStatus;
-    private static final Paint mPaintRed = new Paint();
-    private static final Paint mPaintYellow = new Paint();
-    private static final Paint mPaintGreen = new Paint();
-    private static final Paint mBMPaint = new Paint(Paint.DITHER_FLAG);
+    private int colorRed;
+    private int colorYellow;
+    private int colorGreen;
+
     // Id
     private int mRowOrder;
     private Bitmap mBitmap = null;
+    // text views
+    private TextView temperatureText;
+    private TextView heartRateText;
+    private TextView bloodOxText;
+    private TextView idText;
+    private View patientViewLayout;
 
     private enum DataFields {
-        RESP_PM, PULSE_OX, BEATS_PM, TEMPERATURE
+        RESP_PM, BLOOD_OX, BEATS_PM, TEMPERATURE
     }
 
-    public PatientView(Context context, Patient patient, int i) {
+    public PatientView(Context context, AttributeSet attrs, int defStyle){
+        super(context, attrs, defStyle);
+        mContext = context;
+        init();
+    }
+
+    public PatientView(Context context, AttributeSet attrs){
+        super(context, attrs);
+        mContext = context;
+        init();
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+    }
+
+    public PatientView(Context context) {
         super(context);
         mContext = context;
-        mPatient = patient;
-        mRowOrder = i;
         init();
     }
 
@@ -54,157 +78,156 @@ public class PatientView extends View {
 
     public String getPatientSrc() { return this.mPatient.getSrc();}
 
-    private void init() {
-        // Setup paints
-        mPaintBG = new Paint();
-        mPaintText = new Paint();
-        mPaintStatus = new Paint();
-
-        mPaintText.setStyle(Paint.Style.STROKE);
-        mPaintBG.setStyle(Paint.Style.FILL);
-        mPaintStatus.setStyle(Paint.Style.FILL);
-
-        mPaintRed.setStyle(Paint.Style.FILL);
-        mPaintYellow.setStyle(Paint.Style.FILL);
-        mPaintGreen.setStyle(Paint.Style.FILL);
-
-        mPaintYellow.setStrokeWidth(3);
-        mPaintRed.setStrokeWidth(3);
-        mPaintGreen.setStrokeWidth(3);
-
-        mPaintStatus.setColor(mPatient.getColor());
-
-        mPaintText.setColor(Color.BLACK);
-        mPaintText.setTextSize(20);
-        mPaintText.setFakeBoldText(true);
-
-        mPaintYellow.setTextSize(20);
-        mPaintYellow.setFakeBoldText(true);
-
-        mPaintBG.setColor(Color.BLACK);
-
-
-        mPaintRed.setColor(Color.RED);
-        mPaintYellow.setColor(Color.YELLOW);
-        mPaintGreen.setColor(Color.GREEN);
-
+    public void setPatient(Patient patient){
+        mPatient = patient;
+        String id = getPatientSrc();
+        if(id != null && id.length() >= 4) {
+            this.idText.setText(id.substring(id.length()-4));
+        }
+        this.updateViewFields();
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-//        Log.d(Common.LOG_TAG, "Patient view draw");
-        // get view height and width
-        int vWidth = getWidth();
-        int vHeight = getHeight();
-        // get size for value rectangles
-        int statHeight = (vHeight - 10) / 3;
-        int statWidth = (int) (vWidth * .6);
+    private void init() {
+        // get colors from resources
+        this.colorRed = getResources().getColor(R.color.red);
+        this.colorYellow = getResources().getColor(R.color.yellow);
+        this.colorGreen = getResources().getColor(R.color.win8_green);
 
-        // Draw border color
-        mRect.set(0, 0, vWidth - 2, vHeight);
-        canvas.drawRoundRect(mRect, 10, 10, mPaintStatus);
+        View v = inflate(this.mContext, R.layout.patient_view, this);
 
-        // Draw inner background
-        mRect.set(BORDER, BORDER - 1, vWidth - (BORDER * 2), vHeight - (BORDER * 2) + 1);
-        canvas.drawRoundRect(mRect, 10, 10, mPaintBG);
+        //this.patientViewLayout = v.findViewById(R.id.patient_view_layout);
+        this.temperatureText = (TextView) v.findViewById(R.id.patient_view_temperature);
+        this.heartRateText = (TextView) v.findViewById(R.id.patient_view_heart_rate);
+        this.bloodOxText = (TextView) v.findViewById(R.id.patient_view_sp02);
+        this.idText = (TextView) v.findViewById(R.id.patient_view_id);
+        this.setBackgroundResource(R.drawable.patient_border);
 
-        // Draw rectangle for temperature, formally respiration value
-        mRect.set(BORDER * 2, BORDER * 2, statWidth, (statHeight) - BORDER);
-        //canvas.drawRoundRect(rect, 10, 10, getColor(DataFields.RESP_PM));
-        canvas.drawRoundRect(mRect, 10, 10, getColor(DataFields.TEMPERATURE));
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        // set padding so patient vitals do not cover border
+        int padding = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, metrics);
+        this.setPadding(padding,padding,padding,padding);
 
-        // Draw rectangle for pulse value
-        mRect.set(BORDER * 2, statHeight + BORDER * 2, statWidth, statHeight * 2 - BORDER);
-        canvas.drawRoundRect(mRect, 10, 10, getColor(DataFields.BEATS_PM));
+        // set width and height of layout
+        int minHeight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 99, metrics);
+        this.setMinimumHeight(minHeight);
 
-        // Draw rectangle for blood oxygen value
-        mRect.set(BORDER * 2, statHeight * 2 + BORDER * 2, statWidth, statHeight * 3 - BORDER);
-        canvas.drawRoundRect(mRect, 10, 10, getColor(DataFields.PULSE_OX));
+        int minWidth = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 110, metrics);
+        this.setMinimumWidth(minWidth);
 
-        //canvas.drawRect(statWidth, BORDER,vWidth-BORDER, vHeight-(BORDER*2), mPaintBG);
+        // set margin on right to add a little separation between patient views
+        int marginRight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, metrics);
+        // need layout params of parent view type
+        TableRow.LayoutParams params = (TableRow.LayoutParams) this.getLayoutParams();
+        if(params == null){
+            params = new TableRow.LayoutParams(minWidth, minHeight);
+        }
+        params.setMargins(0,0,marginRight,0);
+        this.setLayoutParams(params);
+    }
 
-        // Draw temperature (formally respiration), pulse, and blood oxygen
-        //canvas.drawText(mPatient.getRpm() + "", statWidth / 2, BORDER * 2 + statHeight / 2, mPaintText);
-        canvas.drawText("Temp: "+mPatient.getTemperature() + "", statWidth / 6, BORDER * 2 + statHeight / 2, mPaintText);
-        canvas.drawText("  HR: "+mPatient.getBpm() + "", statWidth / 6, BORDER * 2 + statHeight + statHeight / 2, mPaintText);
-        canvas.drawText("SpO2: "+mPatient.getO2() + "", statWidth / 6, BORDER * 2 + (statHeight * 2) + statHeight / 2, mPaintText);
-        // Draw id
-        if (this.mBitmap == null) {
-            canvas.drawText(mRowOrder + "", statWidth + ((vWidth - statWidth - (BORDER * 2)) / 2), vHeight / 2, mPaintYellow);
-        } else {
-            // left, top, right, bottom
-            mRect.set(statWidth + BORDER, BORDER, vWidth - BORDER, vHeight - (BORDER*2));
-            canvas.drawBitmap(mBitmap, null,
-                    //new Rect(vHeight - BORDER, statWidth - BORDER, vWidth - BORDER, BORDER),
-                    mRect,
-                    mBMPaint);
+    public void updateViewFields(){
+        // update temperature field
+        int temp = this.mPatient.getTemperature();
+        String tempString = "T: " + temp;
+        if(temp > 999){
+            // too high
+            tempString = "T: ---";
+        }
+        this.temperatureText.setText(tempString);
+        this.temperatureText.setBackgroundColor(this.getColor(DataFields.TEMPERATURE));
+
+        // update heart rate field
+        int heartRate = this.mPatient.getBpm();
+        String hrString = "HR: " + heartRate;
+        if(heartRate >= 250){
+            // no reading
+            hrString = "HR: ---";
+        }
+        this.heartRateText.setText(hrString);
+        this.heartRateText.setBackgroundColor(this.getColor(DataFields.BEATS_PM));
+
+        // update blood ox field
+        int bloodOx = this.mPatient.getO2();
+        String bloodOxString = "02: " + bloodOx;
+        if(bloodOx >= 125){
+            // no reading
+            bloodOxString = "O2: ---";
+        }
+        this.bloodOxText.setText(bloodOxString);
+        this.bloodOxText.setBackgroundColor(this.getColor(DataFields.BLOOD_OX));
+
+        // update patient color
+        GradientDrawable bgDrawable = (GradientDrawable) this.getBackground();
+        if(bgDrawable != null) {
+            bgDrawable.setStroke(5, mPatient.getColor());
         }
     }
 
-    private Paint getColor(DataFields type) {
-        Paint paint = null;
+
+
+    private int getColor(DataFields type) {
+        int paint = Color.WHITE;
 
         switch (type) {
-            case PULSE_OX:
-                paint = getPulseOxPaint();
+            case BLOOD_OX:
+                paint = getBloodOxBGColor();
                 break;
             case BEATS_PM:
-                paint = getBeatsPMPaint();
+                paint = getBeatsPMBGColor();
                 break;
             case RESP_PM:
-                paint = getRespPMPaint();
+                paint = getRespPMBGColor();
                 break;
             case TEMPERATURE:
-                paint = getTemperaturePaint();
+                paint = getTemperatureBGColor();
                 break;
         }
 
         return paint;
     }
 
-    private Paint getRespPMPaint() {
+    private int getRespPMBGColor() {
         int val = mPatient.getRpm();
         if (val < 26 && val > 11) {
-            return mPaintGreen;
+            return this.colorGreen;
         } else if (val < 30 && val > 9) {
-            return mPaintYellow;
+            return this.colorYellow;
         } else {
-            return mPaintRed;
+            return this.colorRed;
         }
     }
 
-    private Paint getTemperaturePaint() {
+    private int getTemperatureBGColor() {
         int val = mPatient.getTemperature();
         if (val <= 99 && val >= 97) {
-            return mPaintGreen;
+            return this.colorGreen;
         } else if (val < 101 && val > 90) {
-            return mPaintYellow;
+            return this.colorYellow;
         } else {
-            return mPaintRed;
+            return this.colorRed;
         }
     }
 
-    private Paint getBeatsPMPaint() {
+    private int getBeatsPMBGColor() {
         int val = mPatient.getBpm();
         if (val < 120 && val > 60) {
-            return mPaintGreen;
+            return this.colorGreen;
         } else if (val < 150 && val > 40) {
-            return mPaintYellow;
+            return this.colorYellow;
         } else {
-            return mPaintRed;
+            return this.colorRed;
         }
     }
 
-    private Paint getPulseOxPaint() {
+    private int getBloodOxBGColor() {
         int val = mPatient.getO2();
-        if (val > 92) {
-            return mPaintGreen;
+        if (val > 92 && val <=100) {
+            return this.colorGreen;
         }
-        if (val > 88) {
-            return mPaintYellow;
+        if (val > 88 && val <=100) {
+            return this.colorYellow;
         } else {
-            return mPaintRed;
+            return this.colorRed;
         }
     }
 

@@ -3,6 +3,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="text_small">14sp</dimen>
+    <dimen name="text_medium">18sp</dimen>
+    <dimen name="text_large">22sp</dimen>
 
     <dimen name="patient_headings_height">28dp</dimen>
+    <dimen name="body_font_margin_right">10dp</dimen>
 </resources>

@@ -10,6 +10,10 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
 
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
@@ -132,5 +136,18 @@ public class PrefsFragment extends PreferenceFragment {
                 return true;
             }
         });
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        if(v != null){
+            ListView lv = (ListView) v.findViewById(android.R.id.list);
+            lv.setPadding(0,0,0,0);
+            ViewGroup parent = (ViewGroup)lv.getParent();
+            parent.setPadding(0,0,0,0);
+            v.setBackgroundColor(getResources().getColor(R.color.black));
+        }
+        return v;
     }
 }

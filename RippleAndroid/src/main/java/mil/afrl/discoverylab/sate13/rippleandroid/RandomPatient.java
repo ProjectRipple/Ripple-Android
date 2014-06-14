@@ -33,6 +33,7 @@ public class RandomPatient {
         patient.setBpm(new Random().nextInt(80)+20);
         patient.setO2(new Random().nextInt(30)+70);
         patient.setRpm(new Random().nextInt(24));
+        patient.setSrc(ssn[new Random().nextInt(ssn.length)]);
         return patient;
     }
 }
