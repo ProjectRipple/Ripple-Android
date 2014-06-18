@@ -123,7 +123,6 @@ public class Banner extends Fragment {
                     break;
 
                 case Common.RIPPLE_MSG_SELECT_PATIENT:
-                    // TODO: do we need to send this again after rotate?
                     if (mPatients == null || msg.obj == null) {
                         // No patients to update or no message
                         return;
