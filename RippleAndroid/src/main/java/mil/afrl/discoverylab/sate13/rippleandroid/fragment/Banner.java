@@ -12,11 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TableRow;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
@@ -28,7 +25,6 @@ import java.util.TimerTask;
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.PatientView;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
-import mil.afrl.discoverylab.sate13.rippleandroid.RandomPatient;
 import mil.afrl.discoverylab.sate13.rippleandroid.object.Patient;
 
 /**
@@ -51,7 +47,7 @@ public class Banner extends Fragment {
     private Context mContext;
     // Table row of Banner
     private TableRow tableRow;
-    // Reference to the currently selected Patient's View
+    // Reference to the currently selected Patient
     public Patient selectedPatient;
     // Handler for messages to Banner
     private Handler mHandler = new Handler() {
@@ -61,8 +57,8 @@ public class Banner extends Fragment {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
-            boolean patientFound = false;
-            Patient curPatient = null;
+            boolean patientFound;
+            Patient curPatient;
 
             switch (msg.what) {
                 case Common.RIPPLE_MSG_BITMAP:

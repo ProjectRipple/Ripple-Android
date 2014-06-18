@@ -20,15 +20,10 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import mil.afrl.discoverylab.sate13.rippleandroid.Common;
 import mil.afrl.discoverylab.sate13.rippleandroid.MainActivity;
 import mil.afrl.discoverylab.sate13.rippleandroid.PrefsActivity;
 import mil.afrl.discoverylab.sate13.rippleandroid.R;
-import mil.afrl.discoverylab.sate13.rippleandroid.Util;
 import mil.afrl.discoverylab.sate13.rippleandroid.adapter.ui.GraphHelper;
 import mil.afrl.discoverylab.sate13.rippleandroid.api.ApiClient;
 import mil.afrl.discoverylab.sate13.rippleandroid.model.EcgRequestData;
@@ -48,11 +43,8 @@ import retrofit.client.Response;
 public class PatientLeft extends Fragment {
 
     private static final String SAVED_STATE_PATIENT_SRC = "savedStatePatientSrc";
-    //private static UdpClient udpc = new UdpClient();
     private int curPatient = -1;
     private String curPatientSrc = "";
-    //private int curVital;
-    private View view;
     private TextView patientName;
     private TextView temperature;
     private TextView pulse;
@@ -109,21 +101,16 @@ public class PatientLeft extends Fragment {
     }
 
     /**
-     * TODO: Query the content provider for a list of available patients,
-     * otherwise wait for a notification from the Banner
-     * <p/>
-     * TODO: on addition of a new patient query the content provider for existing vitals
-     * and update the curVital
      *
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
+     * @param inflater Inflator for view
+     * @param container Container for view
+     * @param savedInstanceState previously saved instance
+     * @return view
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.patient_left, container, false);
+        final View view = inflater.inflate(R.layout.patient_left, container, false);
         assert view != null;
 
         LinearLayout layout = (LinearLayout) view.findViewById(R.id.chart);
@@ -252,8 +239,6 @@ public class PatientLeft extends Fragment {
      * Send request for ECG stream to the Broker.
      */
     private void requestEcgStream() {
-
-
         if (!ecgRequestInProgress && !curPatientSrc.equals("") && isMQTTConnected()) {
             ecgRequestInProgress = true;
             graphHelper.clearGraph();

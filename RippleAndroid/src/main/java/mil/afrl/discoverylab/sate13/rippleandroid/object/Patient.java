@@ -1,6 +1,5 @@
 package mil.afrl.discoverylab.sate13.rippleandroid.object;
 
-import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 

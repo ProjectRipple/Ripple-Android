@@ -3,7 +3,6 @@ package mil.afrl.discoverylab.sate13.rippleandroid;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
@@ -22,29 +21,27 @@ import mil.afrl.discoverylab.sate13.rippleandroid.object.Patient;
  */
 public class PatientView extends RelativeLayout {
 
-    //Border for each grid square
-    private static final int BORDER = 5;
+    // View params in dp
+    private static final int VIEW_PADDING = 10;
+    private static final int VIEW_HEIGHT = 99;
+    private static final int VIEW_WIDTH = 110;
 
     // Reference to patient
     private Patient mPatient;
     // Reference to context
     private Context mContext;
-    // rectangle for drawing
-    RectF mRect = new RectF();
     // Colors
     private int colorRed;
     private int colorYellow;
     private int colorGreen;
 
     // Id
-    private int mRowOrder;
     private Bitmap mBitmap = null;
     // text views
     private TextView temperatureText;
     private TextView heartRateText;
     private TextView bloodOxText;
     private TextView idText;
-    private View patientViewLayout;
 
     private enum DataFields {
         RESP_PM, BLOOD_OX, BEATS_PM, TEMPERATURE
@@ -107,14 +104,14 @@ public class PatientView extends RelativeLayout {
 
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         // set padding so patient vitals do not cover border
-        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, metrics);
+        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, VIEW_PADDING, metrics);
         this.setPadding(padding, padding, padding, padding);
 
         // set width and height of layout
-        int minHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 99, metrics);
+        int minHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, VIEW_HEIGHT, metrics);
         this.setMinimumHeight(minHeight);
 
-        int minWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 110, metrics);
+        int minWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, VIEW_WIDTH, metrics);
         this.setMinimumWidth(minWidth);
 
         // set margin on right to add a little separation between patient views
@@ -171,7 +168,7 @@ public class PatientView extends RelativeLayout {
             this.idText.setTypeface(this.idText.getTypeface(), Typeface.BOLD);
         } else {
             this.idText.setTextColor(getResources().getColor(R.color.white));
-            this.idText.setTypeface(null, Typeface.NORMAL);;
+            this.idText.setTypeface(null, Typeface.NORMAL);
         }
     }
 
