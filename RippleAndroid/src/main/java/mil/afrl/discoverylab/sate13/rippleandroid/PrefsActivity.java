@@ -15,14 +15,13 @@ public class PrefsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState == null)
-        {
+        if (savedInstanceState == null) {
             // First run of activity, need to add fragment
             this.prefFragment = new PrefsFragment();
             getFragmentManager().beginTransaction().replace(android.R.id.content, this.prefFragment).commit();
         } else {
 
-            this.prefFragment = (PrefsFragment)getFragmentManager().findFragmentById(android.R.id.content);
+            this.prefFragment = (PrefsFragment) getFragmentManager().findFragmentById(android.R.id.content);
         }
     }
 }

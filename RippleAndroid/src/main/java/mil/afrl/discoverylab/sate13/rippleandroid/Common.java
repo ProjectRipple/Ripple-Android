@@ -48,6 +48,7 @@ public final class Common {
     public static final int RIPPLE_MSG_BITMAP = 99;
     public static final int RIPPLE_MSG_RECORD = 77;
     public static final int RIPPLE_MSG_ECG_STREAM = 88;
+    public static final int RIPPLE_MSG_SELECT_PATIENT = 11;
 
     // Fudge Values
     public static final double SIM_BASELINE_GUESS = 1858.077626;
@@ -57,9 +58,9 @@ public final class Common {
     public static final String MQTT_TOPIC_WILDCARD_SINGLE_LEVEL = "+";
     public static final String MQTT_TOPIC_WILDCARD_SUBTREE = "#";
     public static final String MQTT_TOPIC_VITALPROP = "P_Stats/vitalprop";
-    public static final String MQTT_TOPIC_VITALCAST = "P_Stats/"+MQTT_TOPIC_ID_STRING+"/vitalcast";
+    public static final String MQTT_TOPIC_VITALCAST = "P_Stats/" + MQTT_TOPIC_ID_STRING + "/vitalcast";
     public static final String MQTT_TOPIC_MATCH_VITALCAST = "P_Stats/.*/vitalcast";
-    public static final String MQTT_TOPIC_ECG_STREAM = "P_Stream/"+MQTT_TOPIC_ID_STRING+"/ecg";
+    public static final String MQTT_TOPIC_ECG_STREAM = "P_Stream/" + MQTT_TOPIC_ID_STRING + "/ecg";
     public static final String MQTT_TOPIC_MATCH_ECG_STREAM = "P_Stream/.*/ecg";
 
     // Record topic payload values

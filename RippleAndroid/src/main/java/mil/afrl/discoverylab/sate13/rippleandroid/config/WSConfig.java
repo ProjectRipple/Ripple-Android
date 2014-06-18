@@ -3,7 +3,6 @@ package mil.afrl.discoverylab.sate13.rippleandroid.config;
 public final class WSConfig {
 
 
-
     private WSConfig() {
         // No public constructor
     }
@@ -14,7 +13,7 @@ public final class WSConfig {
     public static final String DEFAULT_IP = "192.168.1.200";//"abcd::222:19FF:FEF8:8FA7";
     public static final String DEFAULT_MQTT_PORT = "1883";
     public static final String DEFAULT_REST_PORT = "9113";
-    public static String ROOT_URL = "http://["+DEFAULT_IP+"]:"+DEFAULT_REST_PORT;//+"/"+BROKER_ROOT+"/";
+    public static String ROOT_URL = "http://[" + DEFAULT_IP + "]:" + DEFAULT_REST_PORT;//+"/"+BROKER_ROOT+"/";
     public static String WS_QUERY_URL = ROOT_URL + "Query";
     public static final String WS_VITAL_LIST_URL_JSON = ROOT_URL + "Query?QueryType=VITAL&pid=1&vidi=0&limit=50";
     //public static final String WS_PATIENT_LIST_URL_JSON = ROOT_URL + "patientListJson.php";

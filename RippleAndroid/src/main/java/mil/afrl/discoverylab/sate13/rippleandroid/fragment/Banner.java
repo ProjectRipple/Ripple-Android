@@ -70,7 +70,7 @@ public class Banner extends Fragment {
                             break;
                         }
                     }
-                    if(!patientFound){
+                    if (!patientFound) {
                         ((Bitmap) msg.obj).recycle();
                     }
                     break;
@@ -113,6 +113,12 @@ public class Banner extends Fragment {
                     curPatient.setBpm(hr);
                     curPatient.setTemperature(temperature);
                     curPatient.setRpm(resp_pm);
+
+                    break;
+
+                case Common.RIPPLE_MSG_SELECT_PATIENT:
+
+                    String patientId = (String) msg.obj;
 
                     break;
             }
@@ -238,7 +244,7 @@ public class Banner extends Fragment {
         mContext = activity;
     }
 
-    public void clearPatientBanner(){
+    public void clearPatientBanner() {
         // make sure all PatientView bitmaps are recycled
         for (int i = 0; i < tableRow.getVirtualChildCount(); i++) {
             PatientView p = (PatientView) tableRow.getVirtualChildAt(i);

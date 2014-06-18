@@ -48,7 +48,7 @@ public class PrefsFragment extends PreferenceFragment {
         super.onCreate(savedInstanceState);
 
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        if(!prefs.contains(IP_FROM_PREFS)){
+        if (!prefs.contains(IP_FROM_PREFS)) {
             // set preference if not already there
             Log.d(Common.LOG_TAG, "Setting default ip");
             myEditor = prefs.edit();
@@ -56,14 +56,14 @@ public class PrefsFragment extends PreferenceFragment {
             myEditor.commit();
         }
 
-        if(!prefs.contains(PORT_NUM_MQTT_PREFS)){
+        if (!prefs.contains(PORT_NUM_MQTT_PREFS)) {
             Log.d(Common.LOG_TAG, "Setting default MQTT port");
             myEditor = prefs.edit();
             myEditor.putString(PORT_NUM_MQTT_PREFS, WSConfig.DEFAULT_MQTT_PORT);
             myEditor.commit();
         }
 
-        if(!prefs.contains(PORT_NUM_REST_PREFS)){
+        if (!prefs.contains(PORT_NUM_REST_PREFS)) {
             Log.d(Common.LOG_TAG, "Setting default REST port.");
             myEditor = prefs.edit();
             myEditor.putString(PORT_NUM_REST_PREFS, WSConfig.DEFAULT_REST_PORT);
@@ -125,10 +125,10 @@ public class PrefsFragment extends PreferenceFragment {
 
                 boolean validIPv4 = ip.matches(IP_REG_EXPRESSION);
                 boolean validIPv6 = ip.matches(IPV6_HEXCOMPRESSED_REGEX) || ip.matches(IPV6_REGEX);
-                if(validIPv4) {
+                if (validIPv4) {
                     WSConfig.ROOT_URL = "http://" + ip + ":" + newPortNum;
                     ApiClient.updateEndPoint();
-                } else if(validIPv6){
+                } else if (validIPv6) {
                     WSConfig.ROOT_URL = "http://[" + ip + "]:" + newPortNum;
                     ApiClient.updateEndPoint();
                 }
@@ -141,11 +141,11 @@ public class PrefsFragment extends PreferenceFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-        if(v != null){
+        if (v != null) {
             ListView lv = (ListView) v.findViewById(android.R.id.list);
-            lv.setPadding(0,0,0,0);
-            ViewGroup parent = (ViewGroup)lv.getParent();
-            parent.setPadding(0,0,0,0);
+            lv.setPadding(0, 0, 0, 0);
+            ViewGroup parent = (ViewGroup) lv.getParent();
+            parent.setPadding(0, 0, 0, 0);
             v.setBackgroundColor(getResources().getColor(R.color.black));
         }
         return v;

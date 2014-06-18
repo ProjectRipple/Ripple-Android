@@ -17,12 +17,11 @@ public class Util {
         return (long) (bytes[2] & 0xFF) << 24 | (bytes[3] & 0xFF) << 16 | (bytes[0] & 0xFF) << 8 | (bytes[1] & 0xFF);
     }
 
-    public static int convert2BytesToUInt(byte[] bytes){
+    public static int convert2BytesToUInt(byte[] bytes) {
         return (bytes[0] & 0xFF) << 8 | (bytes[1] & 0xFF);
     }
 
-    public static int convert2BytesToUInt (byte b2, byte b1)
-    {
+    public static int convert2BytesToUInt(byte b2, byte b1) {
         return (b2 & 0xFF) << 8 | (b1 & 0xFF);
     }
 
@@ -32,7 +31,7 @@ public class Util {
         byte[] data = new byte[len / 2];
         for (int i = 0; i < len; i += 2) {
             data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i+1), 16));
+                    + Character.digit(s.charAt(i + 1), 16));
         }
         return data;
     }

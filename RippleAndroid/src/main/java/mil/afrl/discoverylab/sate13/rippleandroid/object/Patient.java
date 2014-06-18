@@ -6,10 +6,10 @@ import android.os.Parcelable;
 
 /**
  * Defines the patient.
- *
+ * <p/>
  * Created by harmonbc on 6/19/13.
  */
-public class Patient implements Parcelable{
+public class Patient implements Parcelable {
 
     private int age;
     private int color;
@@ -29,11 +29,11 @@ public class Patient implements Parcelable{
     private String ipaddr;
     private String src;
 
-    public Patient(){
+    public Patient() {
         this.nbcContam = false;
     }
 
-    public Patient(Parcel in){
+    public Patient(Parcel in) {
         // Make sure this ordering matches the order of writes for writeToParcel
 
         this.pid = in.readInt();
@@ -80,6 +80,7 @@ public class Patient implements Parcelable{
     public int getPid() {
         return pid;
     }
+
     public void setPid(int pid) {
         this.pid = pid;
     }
@@ -201,8 +202,7 @@ public class Patient implements Parcelable{
         return 0;
     }
 
-    public static final Creator<Patient> CREATOR = new Creator<Patient>()
-    {
+    public static final Creator<Patient> CREATOR = new Creator<Patient>() {
         @Override
         public Patient createFromParcel(Parcel parcel) {
             return new Patient(parcel);

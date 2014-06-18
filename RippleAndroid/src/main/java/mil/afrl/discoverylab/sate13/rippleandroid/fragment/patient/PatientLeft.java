@@ -73,7 +73,7 @@ public class PatientLeft extends Fragment {
                 case Common.RIPPLE_MSG_RECORD:
                     JsonObject recordJson = (JsonObject) msg.obj;
                     String src = recordJson.get(Common.RECORD_SOURCE).getAsString();
-                    if(!curPatientSrc.equals("") && src.equals(curPatientSrc)){
+                    if (!curPatientSrc.equals("") && src.equals(curPatientSrc)) {
                         temperature.setText(recordJson.get(Common.RECORD_TEMPERATURE).getAsString());
                         pulse.setText(recordJson.get(Common.RECORD_HEART_RATE).getAsString());
                         bloodOx.setText(recordJson.get(Common.RECORD_BLOOD_OX).getAsString());
@@ -81,7 +81,7 @@ public class PatientLeft extends Fragment {
                     break;
                 case Common.RIPPLE_MSG_ECG_STREAM:
                     PublishedMessage ecgMsg = (PublishedMessage) msg.obj;
-                    if(!curPatientSrc.equals("") && ecgMsg.getTopic().contains(curPatientSrc)){
+                    if (!curPatientSrc.equals("") && ecgMsg.getTopic().contains(curPatientSrc)) {
                         graphHelper.offerVitals(ecgMsg);
                     } else {
                         Log.d(Common.LOG_TAG, "Stream not for current patient.");
@@ -123,7 +123,8 @@ public class PatientLeft extends Fragment {
 
         layout.addView(graphHelper.getChartView(),
                 new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT));
+                        LinearLayout.LayoutParams.MATCH_PARENT)
+        );
 
         ImageView tagview = (ImageView) view.findViewById(R.id.tagview);
         assert tagview != null;
@@ -171,10 +172,10 @@ public class PatientLeft extends Fragment {
         this.connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(connectButton.getText().equals(getActivity().getString(R.string.connect))) {
+                if (connectButton.getText().equals(getActivity().getString(R.string.connect))) {
                     ((MainActivity) getActivity()).startMQTTService();
                     connectButton.setText(R.string.disconnect);
-                } else if (connectButton.getText().equals(getActivity().getString(R.string.disconnect))){
+                } else if (connectButton.getText().equals(getActivity().getString(R.string.disconnect))) {
                     ((MainActivity) getActivity()).stopMQTTService();
                     connectButton.setText(R.string.connect);
                 }
@@ -182,7 +183,7 @@ public class PatientLeft extends Fragment {
         });
 
         this.ecgRequestButton = (Button) view.findViewById(R.id.ecg_request_btn);
-        this.ecgRequestButton.setOnClickListener(new View.OnClickListener(){
+        this.ecgRequestButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -191,8 +192,7 @@ public class PatientLeft extends Fragment {
         });
 
 
-        if(savedInstanceState != null)
-        {
+        if (savedInstanceState != null) {
             this.setPatientSrc(savedInstanceState.getString(SAVED_STATE_PATIENT_SRC));
         }
 
@@ -213,7 +213,7 @@ public class PatientLeft extends Fragment {
             graphHelper.restore(savedState);
         }
 
-        if(isMQTTConnected()){
+        if (isMQTTConnected()) {
             this.connectButton.setText(R.string.disconnect);
         }
     }
@@ -240,10 +240,13 @@ public class PatientLeft extends Fragment {
         graphHelper.clearGraph();
     }
 
-    private void requestEcgStream(){
+    /**
+     * Send request for ECG stream to the Broker.
+     */
+    private void requestEcgStream() {
 
 
-        if(!ecgRequestInProgress && !curPatientSrc.equals("") && isMQTTConnected()){
+        if (!ecgRequestInProgress && !curPatientSrc.equals("") && isMQTTConnected()) {
             ecgRequestInProgress = true;
             graphHelper.clearGraph();
 
@@ -265,13 +268,17 @@ public class PatientLeft extends Fragment {
         }
     }
 
-    public void setPatientSrc(String patientSrc){
+    /**
+     * Set the current patient by ID
+     * @param patientSrc Patient ID of select patient
+     */
+    public void setPatientSrc(String patientSrc) {
 
         graphHelper.clearGraph();
 
-        if(this.curPatientSrc.equals(patientSrc) || patientSrc.equals("")){
+        if (this.curPatientSrc.equals(patientSrc) || patientSrc.equals("")) {
             // unsubscribe
-            if(!this.curPatientSrc.equals("") && isMQTTConnected()){
+            if (!this.curPatientSrc.equals("") && isMQTTConnected()) {
                 String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_ID_STRING, this.curPatientSrc);
                 ((MainActivity) getActivity()).unsubscribeFromTopic(topic);
             }
@@ -288,7 +295,7 @@ public class PatientLeft extends Fragment {
         } else {
 
             // unsubscribe from old patient stream (if any)
-            if(!this.curPatientSrc.equals("") && isMQTTConnected()){
+            if (!this.curPatientSrc.equals("") && isMQTTConnected()) {
                 String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_ID_STRING, this.curPatientSrc);
                 ((MainActivity) getActivity()).unsubscribeFromTopic(topic);
             }
@@ -297,7 +304,7 @@ public class PatientLeft extends Fragment {
             // subscribe to new patient
             this.curPatientSrc = patientSrc;
 
-            if(!this.curPatientSrc.equals("") && isMQTTConnected()){
+            if (!this.curPatientSrc.equals("") && isMQTTConnected()) {
                 String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_ID_STRING, this.curPatientSrc);
                 ((MainActivity) getActivity()).subscribeToTopic(topic);
             }
@@ -306,10 +313,10 @@ public class PatientLeft extends Fragment {
         }
     }
 
-    private boolean isMQTTConnected(){
+    private boolean isMQTTConnected() {
         // TODO: make a better connection check as service running does not always mean MQTT is connected
         Activity activity = getActivity();
-        if(activity != null && activity instanceof MainActivity) {
+        if (activity != null && activity instanceof MainActivity) {
             return ((MainActivity) getActivity()).isMQTTServiceRunning();
         } else {
             return false;
@@ -320,5 +327,7 @@ public class PatientLeft extends Fragment {
         this.bannerHandler = bannerHandler;
     }
 
-    public Handler getHandler(){ return this.handler;}
+    public Handler getHandler() {
+        return this.handler;
+    }
 }

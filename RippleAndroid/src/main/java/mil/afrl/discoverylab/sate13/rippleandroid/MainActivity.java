@@ -64,15 +64,14 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
 
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-        if(savedInstanceState == null)
-        {
+        if (savedInstanceState == null) {
             // First run of activity, need to add banner
             banner = new Banner();
             transaction.add(R.id.top_frag, banner);
             transaction.commit();
         } else {
             // Banner already exists from first run, just need to grab it.
-            banner = (Banner)fragmentManager.findFragmentById(R.id.top_frag);
+            banner = (Banner) fragmentManager.findFragmentById(R.id.top_frag);
         }
 
 
@@ -88,10 +87,10 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
 
         MapFragment fm = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         // Map is only there for larger screens
-        if(fm != null){
+        if (fm != null) {
             map = fm.getMap();
             // map may be null if tablet is rotated from landscape to portrait, which will remove the map fragment from user's view
-            if(map != null){
+            if (map != null) {
                 map.setMyLocationEnabled(true);
             }
         }
@@ -108,7 +107,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
     @Override
     protected void onPause() {
         super.onPause();
-        if(this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()){
+        if (this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()) {
             this.mqttServiceManager.unbind();
         }
     }
@@ -116,7 +115,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
     @Override
     protected void onResume() {
         super.onResume();
-        if(this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()){
+        if (this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()) {
             this.mqttServiceManager.bind();
         }
     }
@@ -149,8 +148,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         // Creating a LatLng object for the current location
         LatLng latLng = new LatLng(latitude, longitude);
         // map may be null for smaller devices
-        if(map != null)
-        {
+        if (map != null) {
             // Showing the current location in Google Map
             map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
             map.animateCamera(CameraUpdateFactory.zoomTo(15));
@@ -159,9 +157,8 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
 
     @Override
     public void onClick(View view) {
-        if(view instanceof PatientView)
-        {
-            PatientView pView = (PatientView)view;
+        if (view instanceof PatientView) {
+            PatientView pView = (PatientView) view;
             //Log.d(Common.LOG_TAG, "Patient id selected: " + pView.getPid());
             //this.patLeft.setPatient(pView.getPid());
             Log.d(Common.LOG_TAG, "Patient src selected: " + pView.getPatientSrc());
@@ -169,22 +166,22 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         }
     }
 
-    public void startMQTTService(){
+    public void startMQTTService() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         this.mqttServiceManager.start(prefs.getString(PrefsFragment.IP_FROM_PREFS, WSConfig.DEFAULT_IP), prefs.getString(PrefsFragment.PORT_NUM_MQTT_PREFS, WSConfig.DEFAULT_MQTT_PORT));
     }
 
-    public void stopMQTTService(){
-        if(this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()){
+    public void stopMQTTService() {
+        if (this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()) {
             this.mqttServiceManager.stop();
         }
     }
 
-    public boolean isMQTTServiceRunning(){
+    public boolean isMQTTServiceRunning() {
         return this.mqttServiceManager.isServiceRunning();
     }
 
-    public void subscribeToTopic(String topicName){
+    public void subscribeToTopic(String topicName) {
         Message msg = Message.obtain(null, MQTTServiceConstants.MSG_SUBSCRIBE);
         Bundle bundle = new Bundle();
         bundle.putString(MQTTServiceConstants.MQTT_TOPIC, topicName);
@@ -197,7 +194,7 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         }
     }
 
-    public void unsubscribeFromTopic(String topicName){
+    public void unsubscribeFromTopic(String topicName) {
         Message msg = Message.obtain(null, MQTTServiceConstants.MSG_UNSUBSCRIBE);
         Bundle bundle = new Bundle();
         bundle.putString(MQTTServiceConstants.MQTT_TOPIC, topicName);
@@ -205,18 +202,18 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         try {
             this.mqttServiceManager.send(msg);
             Log.d(Common.LOG_TAG, "Unsubscribed from: " + topicName);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void processPublishedMessage(PublishedMessage msg) {
         String topic = msg.getTopic();
-        if(topic.equals(Common.MQTT_TOPIC_VITALPROP) || topic.matches(Common.MQTT_TOPIC_MATCH_VITALCAST)){
+        if (topic.equals(Common.MQTT_TOPIC_VITALPROP) || topic.matches(Common.MQTT_TOPIC_MATCH_VITALCAST)) {
             JsonObject recordJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
             this.banner.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
             this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
-        } else if (topic.matches(Common.MQTT_TOPIC_MATCH_ECG_STREAM)){
+        } else if (topic.matches(Common.MQTT_TOPIC_MATCH_ECG_STREAM)) {
             this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_ECG_STREAM, msg).sendToTarget();
         } else {
             Log.d(Common.LOG_TAG, "Unknown MQTT topic recieved:" + topic);
@@ -229,15 +226,15 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
     private static class MQTTHandler extends Handler {
         private WeakReference<MainActivity> activityReference;
 
-        public MQTTHandler(MainActivity activity){
+        public MQTTHandler(MainActivity activity) {
             this.activityReference = new WeakReference<MainActivity>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
             MainActivity activity = activityReference.get();
-            if(activity != null){
-                switch (msg.what){
+            if (activity != null) {
+                switch (msg.what) {
                     case MQTTServiceConstants.MSG_CONNECTED:
                         activity.subscribeToTopic(Common.MQTT_TOPIC_VITALPROP);
                         activity.subscribeToTopic(Common.MQTT_TOPIC_VITALCAST.replace(Common.MQTT_TOPIC_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
@@ -250,10 +247,10 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
                         Toast.makeText(activity, "Unable to connect", Toast.LENGTH_SHORT).show();
                         break;
                     case MQTTServiceConstants.MSG_PUBLISHED_MESSAGE:
-                        activity.processPublishedMessage((PublishedMessage)msg.obj);
+                        activity.processPublishedMessage((PublishedMessage) msg.obj);
                         break;
                     default:
-                        Log.d(Common.LOG_TAG, "Unknown message type :"+msg.what);
+                        Log.d(Common.LOG_TAG, "Unknown message type :" + msg.what);
                         break;
                 }
             }

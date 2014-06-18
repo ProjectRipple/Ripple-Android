@@ -16,8 +16,8 @@ public class ApiClient {
 
     private static RippleApiInterface interfaceInstance;
 
-    public static RippleApiInterface getRippleApiClient(){
-        if(interfaceInstance == null){
+    public static RippleApiInterface getRippleApiClient() {
+        if (interfaceInstance == null) {
             RestAdapter restAdapter = new RestAdapter.Builder().setEndpoint(WSConfig.ROOT_URL).build();
 
             interfaceInstance = restAdapter.create(RippleApiInterface.class);
@@ -26,12 +26,12 @@ public class ApiClient {
         return interfaceInstance;
     }
 
-    public static void updateEndPoint(){
+    public static void updateEndPoint() {
         // reset interface so new requests use new endpoint
         interfaceInstance = null;
     }
 
-    public interface RippleApiInterface{
+    public interface RippleApiInterface {
         @FormUrlEncoded
         @POST("/ecgrequest")
         void requestEcgStream(@Field("id") String id, Callback<EcgRequestData> callback);

@@ -49,13 +49,13 @@ public class PatientView extends RelativeLayout {
         RESP_PM, BLOOD_OX, BEATS_PM, TEMPERATURE
     }
 
-    public PatientView(Context context, AttributeSet attrs, int defStyle){
+    public PatientView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mContext = context;
         init();
     }
 
-    public PatientView(Context context, AttributeSet attrs){
+    public PatientView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         init();
@@ -76,13 +76,15 @@ public class PatientView extends RelativeLayout {
         return this.mPatient.getPid();
     }
 
-    public String getPatientSrc() { return this.mPatient.getSrc();}
+    public String getPatientSrc() {
+        return this.mPatient.getSrc();
+    }
 
-    public void setPatient(Patient patient){
+    public void setPatient(Patient patient) {
         mPatient = patient;
         String id = getPatientSrc();
-        if(id != null && id.length() >= 4) {
-            this.idText.setText(id.substring(id.length()-4));
+        if (id != null && id.length() >= 4) {
+            this.idText.setText(id.substring(id.length() - 4));
         }
         this.updateViewFields();
     }
@@ -104,32 +106,32 @@ public class PatientView extends RelativeLayout {
 
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         // set padding so patient vitals do not cover border
-        int padding = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, metrics);
-        this.setPadding(padding,padding,padding,padding);
+        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 10, metrics);
+        this.setPadding(padding, padding, padding, padding);
 
         // set width and height of layout
-        int minHeight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 99, metrics);
+        int minHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 99, metrics);
         this.setMinimumHeight(minHeight);
 
-        int minWidth = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 110, metrics);
+        int minWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 110, metrics);
         this.setMinimumWidth(minWidth);
 
         // set margin on right to add a little separation between patient views
-        int marginRight = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, metrics);
+        int marginRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, metrics);
         // need layout params of parent view type
         TableRow.LayoutParams params = (TableRow.LayoutParams) this.getLayoutParams();
-        if(params == null){
+        if (params == null) {
             params = new TableRow.LayoutParams(minWidth, minHeight);
         }
-        params.setMargins(0,0,marginRight,0);
+        params.setMargins(0, 0, marginRight, 0);
         this.setLayoutParams(params);
     }
 
-    public void updateViewFields(){
+    public void updateViewFields() {
         // update temperature field
         int temp = this.mPatient.getTemperature();
         String tempString = "T: " + temp;
-        if(temp > 999){
+        if (temp > 999) {
             // too high
             tempString = "T: ---";
         }
@@ -139,7 +141,7 @@ public class PatientView extends RelativeLayout {
         // update heart rate field
         int heartRate = this.mPatient.getBpm();
         String hrString = "HR: " + heartRate;
-        if(heartRate >= 250){
+        if (heartRate >= 250) {
             // no reading
             hrString = "HR: ---";
         }
@@ -149,7 +151,7 @@ public class PatientView extends RelativeLayout {
         // update blood ox field
         int bloodOx = this.mPatient.getO2();
         String bloodOxString = "02: " + bloodOx;
-        if(bloodOx >= 125){
+        if (bloodOx >= 125) {
             // no reading
             bloodOxString = "O2: ---";
         }
@@ -158,11 +160,10 @@ public class PatientView extends RelativeLayout {
 
         // update patient color
         GradientDrawable bgDrawable = (GradientDrawable) this.getBackground();
-        if(bgDrawable != null) {
+        if (bgDrawable != null) {
             bgDrawable.setStroke(5, mPatient.getColor());
         }
     }
-
 
 
     private int getColor(DataFields type) {
@@ -221,10 +222,10 @@ public class PatientView extends RelativeLayout {
 
     private int getBloodOxBGColor() {
         int val = mPatient.getO2();
-        if (val > 92 && val <=100) {
+        if (val > 92 && val <= 100) {
             return this.colorGreen;
         }
-        if (val > 88 && val <=100) {
+        if (val > 88 && val <= 100) {
             return this.colorYellow;
         } else {
             return this.colorRed;
@@ -232,7 +233,7 @@ public class PatientView extends RelativeLayout {
     }
 
     public void setmBitmap(Bitmap mBitmap) {
-        if(this.mBitmap != null){
+        if (this.mBitmap != null) {
             this.mBitmap.recycle();
         }
         this.mBitmap = mBitmap;
