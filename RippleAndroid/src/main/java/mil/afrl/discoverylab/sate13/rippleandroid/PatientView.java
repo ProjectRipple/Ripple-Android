@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -162,6 +163,15 @@ public class PatientView extends RelativeLayout {
         GradientDrawable bgDrawable = (GradientDrawable) this.getBackground();
         if (bgDrawable != null) {
             bgDrawable.setStroke(5, mPatient.getColor());
+        }
+
+        // check if patient is selected
+        if(mPatient.isSelected()){
+            this.idText.setTextColor(this.colorYellow);
+            this.idText.setTypeface(this.idText.getTypeface(), Typeface.BOLD);
+        } else {
+            this.idText.setTextColor(getResources().getColor(R.color.white));
+            this.idText.setTypeface(null, Typeface.NORMAL);;
         }
     }
 

@@ -38,18 +38,24 @@ import mil.afrl.discoverylab.sate13.rippleandroid.object.Patient;
  */
 public class Banner extends Fragment {
 
+    // Time between updates of banner views
     private static final int TIMER_PERIOD_MS = 5000;
+    // Strings for saving object states
     private static final String PATIENT_LIST = "patient_list";
     private static final String SAVE_STATE = "save_state";
 
+    // List of patient objects
     private List<Patient> mPatients;
+    // Lock for patient list
     private final Object patientLock = new Object();
     private Context mContext;
-    //private MulticastClient multicastClient;
-
-    private Gson gson = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
+    // Table row of Banner
     private TableRow tableRow;
+    // Reference to the currently selected Patient's View
+    public Patient selectedPatient;
+    // Handler for messages to Banner
     private Handler mHandler = new Handler() {
+
 
         @Override
         public void handleMessage(Message msg) {
@@ -117,9 +123,51 @@ public class Banner extends Fragment {
                     break;
 
                 case Common.RIPPLE_MSG_SELECT_PATIENT:
+                    // TODO: do we need to send this again after rotate?
+                    if (mPatients == null || msg.obj == null) {
+                        // No patients to update or no message
+                        return;
+                    }
+                    patientFound = false;
+                    curPatient = null;
 
                     String patientId = (String) msg.obj;
+                    if (patientId.equals("")) {
+                        // no patient selected
+                        if (selectedPatient != null) {
+                            selectedPatient.setSelected(false);
+                            selectedPatient = null;
+                        }
+                    } else {
+                        // find patient
+                        synchronized (patientLock) {
+                            for (Patient p : mPatients) {
+                                if (p.getSrc().equals(patientId)) {
+                                    patientFound = true;
+                                    curPatient = p;
+                                    break;
+                                }
+                            }
+                        }
 
+                        if (patientFound) {
+                            // remove old selected patient
+                            if (selectedPatient != null) {
+                                selectedPatient.setSelected(false);
+                                selectedPatient = null;
+                            }
+                            selectedPatient = curPatient;
+                            selectedPatient.setSelected(true);
+
+                        }
+                    }
+                    // Update views now
+                    for (int i = 0; i < tableRow.getVirtualChildCount(); i++) {
+                        PatientView p = (PatientView) tableRow.getVirtualChildAt(i);
+                        p.updateViewFields();
+                        p.invalidate();
+
+                    }
                     break;
             }
         }
@@ -245,6 +293,7 @@ public class Banner extends Fragment {
     }
 
     public void clearPatientBanner() {
+        this.selectedPatient = null;
         // make sure all PatientView bitmaps are recycled
         for (int i = 0; i < tableRow.getVirtualChildCount(); i++) {
             PatientView p = (PatientView) tableRow.getVirtualChildAt(i);

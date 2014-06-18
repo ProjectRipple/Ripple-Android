@@ -75,8 +75,16 @@ public class PatientLeft extends Fragment {
                     String src = recordJson.get(Common.RECORD_SOURCE).getAsString();
                     if (!curPatientSrc.equals("") && src.equals(curPatientSrc)) {
                         temperature.setText(recordJson.get(Common.RECORD_TEMPERATURE).getAsString());
-                        pulse.setText(recordJson.get(Common.RECORD_HEART_RATE).getAsString());
-                        bloodOx.setText(recordJson.get(Common.RECORD_BLOOD_OX).getAsString());
+                        if (recordJson.get(Common.RECORD_HEART_RATE).getAsInt() < 250) {
+                            pulse.setText(recordJson.get(Common.RECORD_HEART_RATE).getAsString());
+                        } else {
+                            pulse.setText("---");
+                        }
+                        if (recordJson.get(Common.RECORD_BLOOD_OX).getAsInt() < 120) {
+                            bloodOx.setText(recordJson.get(Common.RECORD_BLOOD_OX).getAsString());
+                        } else {
+                            bloodOx.setText("---");
+                        }
                     }
                     break;
                 case Common.RIPPLE_MSG_ECG_STREAM:
@@ -270,6 +278,7 @@ public class PatientLeft extends Fragment {
 
     /**
      * Set the current patient by ID
+     *
      * @param patientSrc Patient ID of select patient
      */
     public void setPatientSrc(String patientSrc) {
@@ -310,6 +319,10 @@ public class PatientLeft extends Fragment {
             }
 
             patientName.setText(curPatientSrc);
+        }
+
+        if(this.bannerHandler != null){
+            this.bannerHandler.obtainMessage(Common.RIPPLE_MSG_SELECT_PATIENT, this.curPatientSrc).sendToTarget();
         }
     }
 

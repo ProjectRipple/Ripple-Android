@@ -28,10 +28,13 @@ public class Patient implements Parcelable {
     private String type;
     private String ipaddr;
     private String src;
+    // is the patient selected by the user
+    private boolean isSelected = false;
 
     public Patient() {
         this.nbcContam = false;
     }
+
 
     public Patient(Parcel in) {
         // Make sure this ordering matches the order of writes for writeToParcel
@@ -53,6 +56,7 @@ public class Patient implements Parcelable {
         this.type = in.readString();
         this.ipaddr = in.readString();
         this.src = in.readString();
+        this.isSelected = (in.readByte() == 1);
     }
 
     @Override
@@ -75,6 +79,7 @@ public class Patient implements Parcelable {
         parcel.writeString(this.type);
         parcel.writeString(this.ipaddr);
         parcel.writeString(this.src);
+        parcel.writeByte((byte) (this.isSelected ? 1 : 0));
     }
 
     public int getPid() {
@@ -195,6 +200,14 @@ public class Patient implements Parcelable {
 
     public void setSrc(String src) {
         this.src = src;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean isSelected) {
+        this.isSelected = isSelected;
     }
 
     @Override
