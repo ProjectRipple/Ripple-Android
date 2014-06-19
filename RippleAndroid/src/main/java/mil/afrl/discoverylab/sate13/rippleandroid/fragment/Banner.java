@@ -302,6 +302,12 @@ public class Banner extends Fragment {
         }
     }
 
+    // TODO: remove debug method
+    public void addPatient(Patient patient){
+        this.mPatients.add(patient);
+        this.createPatientView(patient);
+    }
+
     public void createPatientView(Patient patient) {
         PatientView v = new PatientView(this.mContext);
         v.setPatient(patient);

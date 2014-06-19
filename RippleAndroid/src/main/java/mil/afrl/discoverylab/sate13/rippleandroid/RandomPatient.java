@@ -1,7 +1,5 @@
 package mil.afrl.discoverylab.sate13.rippleandroid;
 
-import android.*;
-import android.R;
 import android.graphics.Color;
 
 import java.util.Random;
@@ -17,9 +15,12 @@ public class RandomPatient {
     private static String[] fNames = {"Bill", "Tom", "Will", "James"};
     private static String[] lNames = {"Doe", "Nye", "Brady", "Smith", "Bacon"};
     private static String[] ssn = {"999-99-9999", "888-88-8888", "777-77-7777", "666-66-6666"};
+    private static String[] src = {"0012740400040404", "0012740400040303", "0012740400065303","0012740406740303","0012723400040303","0012740400120303","0012740457876303","0012740428176303","0012740457476303"};
     private static String[] sex = {"Male", "Female"};
     private static String[] type = {"US Mil", "US Civ", "Foreign Civ", "E-POW"};
     private static String[] ipAddr = {"127.0.0.2", "127.0.0.3", "192.168.0.3", "10.0.0.2", "10.3.2.1", "10.4.3.2", "10.5.4.3"};
+    private static int lastSrc = 0;
+    public static final int MAX_UNIQUE_PATIENTS = src.length+1;
 
     public static Patient getRandomPatient() {
         Patient patient = new Patient();
@@ -33,7 +34,13 @@ public class RandomPatient {
         patient.setBpm(new Random().nextInt(80) + 20);
         patient.setO2(new Random().nextInt(30) + 70);
         patient.setRpm(new Random().nextInt(24));
-        patient.setSrc(ssn[new Random().nextInt(ssn.length)]);
+        patient.setSrc(src[lastSrc]);
+        lastSrc++;
+        if(lastSrc == src.length){
+            // reset
+            lastSrc = 0;
+        }
+        patient.setTemperature(new Random().nextInt(10) + 90);
         return patient;
     }
 }

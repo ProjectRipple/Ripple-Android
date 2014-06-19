@@ -54,6 +54,9 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
     // MQTT
     private MQTTServiceManager mqttServiceManager;
 
+    // Set to true to fill banner with fake patients on start
+    private boolean createFakePatients = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +120,12 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
         super.onResume();
         if (this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()) {
             this.mqttServiceManager.bind();
+        }
+        if(createFakePatients){
+            for(int i = 0; i < RandomPatient.MAX_UNIQUE_PATIENTS; i++){
+                this.banner.addPatient(RandomPatient.getRandomPatient());
+            }
+            createFakePatients = false;
         }
     }
 
