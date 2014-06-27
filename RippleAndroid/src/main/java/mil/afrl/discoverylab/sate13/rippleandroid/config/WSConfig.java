@@ -10,7 +10,7 @@ public final class WSConfig {
     //public static final String ROOT_URL = "http://10.0.3.181:8080/RippleBroker/"; // Ripple
     //public static final String ROOT_URL = "http://192.168.0.200:8080/RippleBroker/"; // Ripple
     public static final String BROKER_ROOT = "RippleBroker";
-    public static final String DEFAULT_IP = "192.168.0.200";//"abcd::222:19FF:FEF8:8FA7";
+    public static final String DEFAULT_IP = "192.168.0.220";//"abcd::222:19FF:FEF8:8FA7";
     public static final String DEFAULT_MQTT_PORT = "1883";
     public static final String DEFAULT_REST_PORT = "9113";
     public static String ROOT_URL = "http://[" + DEFAULT_IP + "]:" + DEFAULT_REST_PORT;//+"/"+BROKER_ROOT+"/";
