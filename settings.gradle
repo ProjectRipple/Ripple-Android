@@ -1,2 +1,2 @@
-include ':RippleAndroid',':google-play-services_lib'
+include ':RippleAndroid'
 
