@@ -10,12 +10,12 @@
 
     <TextView
         android:id="@+id/patient_view_temperature"
-        android:layout_width="45dp"
-        android:layout_height="23dp"
+        android:layout_width="@dimen/patient_view_vitals_width"
+        android:layout_height="@dimen/patient_view_vitals_height"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:background="@color/red"
-        android:textSize="12sp"
+        android:textSize="@dimen/patient_view_text_size"
         android:text="T: ---"
         android:layout_marginBottom="5dp"
         android:gravity="center"
@@ -24,12 +24,12 @@
 
     <TextView
         android:id="@+id/patient_view_heart_rate"
-        android:layout_width="45dp"
-        android:layout_height="23dp"
+        android:layout_width="@dimen/patient_view_vitals_width"
+        android:layout_height="@dimen/patient_view_vitals_height"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/patient_view_temperature"
         android:background="@color/yellow"
-        android:textSize="12sp"
+        android:textSize="@dimen/patient_view_text_size"
         android:text="HR: ---"
         android:layout_marginBottom="5dp"
         android:gravity="center"
@@ -38,12 +38,12 @@
 
     <TextView
         android:id="@+id/patient_view_sp02"
-        android:layout_width="45dp"
-        android:layout_height="23dp"
+        android:layout_width="@dimen/patient_view_vitals_width"
+        android:layout_height="@dimen/patient_view_vitals_height"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/patient_view_heart_rate"
         android:background="@color/win8_green"
-        android:textSize="12sp"
+        android:textSize="@dimen/patient_view_text_size"
         android:text="O2: ---"
         android:gravity="center"
         android:textColor="@android:color/black"
@@ -51,11 +51,11 @@
 
     <TextView
         android:id="@+id/patient_view_id"
-        android:layout_width="35dp"
-        android:layout_height="23dp"
+        android:layout_width="@dimen/patient_view_id_width"
+        android:layout_height="@dimen/patient_view_id_height"
         android:layout_alignParentRight="true"
         android:layout_alignTop="@+id/patient_view_heart_rate"
-        android:textSize="12sp"
+        android:textSize="@dimen/patient_view_text_size"
         android:text="01de"
         android:gravity="center"
         android:textColor="@android:color/white"

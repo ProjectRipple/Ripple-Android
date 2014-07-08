@@ -3,12 +3,12 @@
 <HorizontalScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="@dimen/patient_banner_layout_height">
 
     <TableLayout
             android:id="@+id/bannerTableLayout"
             android:layout_width="fill_parent"
-            android:layout_height="100dp"
+            android:layout_height="@dimen/patient_banner_table_layout_height"
             android:background="#000000">
         <TableRow
             android:id="@+id/bannerTableRow"

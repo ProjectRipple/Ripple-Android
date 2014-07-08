@@ -2,10 +2,23 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+
+    <!-- Text sizes -->
     <dimen name="text_small">14sp</dimen>
     <dimen name="text_medium">18sp</dimen>
     <dimen name="text_large">22sp</dimen>
 
     <dimen name="patient_headings_height">28dp</dimen>
     <dimen name="body_font_margin_right">10dp</dimen>
+
+    <!-- Patient banner dimens -->
+
+    <dimen name="patient_banner_layout_height">100dp</dimen>
+    <dimen name="patient_banner_table_layout_height">100dp</dimen>
+    <dimen name="patient_border_width">5dp</dimen>
+    <dimen name="patient_view_vitals_width">45dp</dimen>
+    <dimen name="patient_view_vitals_height">23dp</dimen>
+    <dimen name="patient_view_text_size">12sp</dimen>
+    <dimen name="patient_view_id_width">35dp</dimen>
+    <dimen name="patient_view_id_height">23dp</dimen>
 </resources>
