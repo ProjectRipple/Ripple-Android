@@ -6,7 +6,7 @@
               android:layout_height="match_parent">
 
     <view
-            class="mil.afrl.discoverylab.sate13.rippleandroid.view.FingerPaint"
+            class="com.discoverylab.ripple.android.view.FingerPaint"
             android:id="@+id/fingerpaint"
             android:layout_width="match_parent"
             android:layout_height="0px"

@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">RippleAndroid
-    </string>
-    <string name="action_settings">Settings
-    </string>
-    <string name="hello_world">Hello world!
-    </string>
+    <string name="app_name">Ripple</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
 
-    <string name="underline">This is an<u>underline</u>.
-    </string>
+    <string name="underline">This is an<u>underline</u>.</string>
 
     <!--<string name="google_map_api_key">place actual value in keys.xml</string>-->
+
+    <!-- Patient fragment strings -->
 
     <string name="name"><u>Name:</u></string>
     <string name="age"><u>Age:</u></string>
@@ -28,6 +26,8 @@
 
     <string name="ecgrequest">Request ECG Snapshot</string>
 
+    <!-- Settings strings -->
+
     <string name="ip_address_summary">Enter IP address for Broker</string>
     <string name="ip_address_title">IP address</string>
     <string name="ip_address_dialog_title">Enter IP address</string>
@@ -38,6 +38,8 @@
     <string name="port_number_mqtt_summary">Enter port number for Broker\'s MQTT service</string>
     <string name="port_number_rest_summary">Enter port number for Broker\'s REST service</string>
     <string name="port_number_title">Port number</string>
+
+    <!-- Other strings -->
 
     <string name="patient">Patient</string>
     <string name="connect">Connect</string>

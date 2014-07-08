@@ -20,7 +20,7 @@
             android:baselineAligned="false">
 
         <fragment
-                class="mil.afrl.discoverylab.sate13.rippleandroid.fragment.patient.PatientLeft"
+                class="com.discoverylab.ripple.android.fragment.patient.PatientLeft"
                 android:id="@+id/bottomleft"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
