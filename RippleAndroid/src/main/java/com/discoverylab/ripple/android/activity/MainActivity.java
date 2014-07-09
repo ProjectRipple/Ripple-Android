@@ -53,6 +53,8 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
     /*Mapping Vars*/
     private GoogleMap map;
     private LocationManager lm;
+    // Center of contiguous USA land
+    public static final LatLng CONTIGUOUS_USA_CENTER = new LatLng(39.830000, -98.580000);
 
     // MQTT
     private MQTTServiceManager mqttServiceManager;
@@ -116,6 +118,9 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
 
         if (location != null) {
             onLocationChanged(location);
+        } else if (map != null) {
+            // zoom to USA
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(CONTIGUOUS_USA_CENTER, (float)4.0));
         }
     }
 
