@@ -32,7 +32,6 @@ public final class Common {
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     // Messaging What Constants
-    public static final int RIPPLE_MSG_BITMAP = 99;
     public static final int RIPPLE_MSG_RECORD = 77;
     public static final int RIPPLE_MSG_ECG_STREAM = 88;
     public static final int RIPPLE_MSG_SELECT_PATIENT = 11;

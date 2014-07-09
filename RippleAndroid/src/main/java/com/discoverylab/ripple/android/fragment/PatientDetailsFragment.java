@@ -139,10 +139,6 @@ public class PatientDetailsFragment extends Fragment {
                 dialogButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        bannerHandler.sendMessage(bannerHandler.obtainMessage(Common.RIPPLE_MSG_BITMAP,
-                                curPatient,
-                                0,
-                                ((FingerPaint) dialog.findViewById(R.id.fingerpaint)).getmBitmap()));
                         dialog.dismiss();
                     }
                 });

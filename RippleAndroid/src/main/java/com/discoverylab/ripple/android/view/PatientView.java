@@ -36,8 +36,6 @@ public class PatientView extends RelativeLayout {
     private int colorYellow;
     private int colorGreen;
 
-    // Id
-    private Bitmap mBitmap = null;
     // text views
     private TextView temperatureText;
     private TextView heartRateText;
@@ -271,10 +269,4 @@ public class PatientView extends RelativeLayout {
         }
     }
 
-    public void setmBitmap(Bitmap mBitmap) {
-        if (this.mBitmap != null) {
-            this.mBitmap.recycle();
-        }
-        this.mBitmap = mBitmap;
-    }
 }

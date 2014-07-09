@@ -183,11 +183,6 @@ public class Banner extends Fragment {
      */
     public void clearPatientBanner() {
         this.selectedPatient = null;
-        // make sure all PatientView bitmaps are recycled
-        for (int i = 0; i < tableRow.getVirtualChildCount(); i++) {
-            PatientView p = (PatientView) tableRow.getVirtualChildAt(i);
-            p.setmBitmap(null);
-        }
         // remove all patient views
         this.tableRow.removeAllViews();
         // remove all patient objects
@@ -233,22 +228,6 @@ public class Banner extends Fragment {
             Patient curPatient;
 
             switch (msg.what) {
-                case Common.RIPPLE_MSG_BITMAP:
-                    //
-                    patientFound = false;
-                    for (int i = 0; i < tableRow.getVirtualChildCount(); i++) {
-                        PatientView p = (PatientView) tableRow.getVirtualChildAt(i);
-                        if (p.getPid() == msg.arg1) {
-                            patientFound = true;
-                            p.setmBitmap((Bitmap) msg.obj);
-                            p.postInvalidate();
-                            break;
-                        }
-                    }
-                    if (!patientFound) {
-                        ((Bitmap) msg.obj).recycle();
-                    }
-                    break;
                 case Common.RIPPLE_MSG_RECORD:
                     if (mPatients == null || msg.obj == null) {
                         // No patients to update or no message
