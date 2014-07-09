@@ -21,7 +21,7 @@
             >
 
         <fragment
-                class="com.discoverylab.ripple.android.fragment.patient.PatientLeft"
+                class="com.discoverylab.ripple.android.fragment.PatientDetailsFragment"
                 android:id="@+id/bottomleft"
                 android:layout_width="0px"
                 android:layout_height="match_parent"

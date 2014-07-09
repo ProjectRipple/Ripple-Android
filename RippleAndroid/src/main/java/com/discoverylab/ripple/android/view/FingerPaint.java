@@ -25,6 +25,9 @@ public class FingerPaint extends View {
     private Path   mPath;
     private Paint  mBitmapPaint;
 
+    private float mX, mY;
+    private static final float TOUCH_TOLERANCE = 4;
+
     public FingerPaint(Context c, AttributeSet attrs) {
         super(c, attrs);
         mPaint = new Paint();
@@ -56,9 +59,6 @@ public class FingerPaint extends View {
 
         canvas.drawPath(mPath, mPaint);
     }
-
-    private float mX, mY;
-    private static final float TOUCH_TOLERANCE = 4;
 
     private void touch_start(float x, float y) {
         mPath.reset();

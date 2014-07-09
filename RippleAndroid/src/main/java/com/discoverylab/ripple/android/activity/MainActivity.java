@@ -20,6 +20,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.fragment.PatientDetailsFragment;
 import com.discoverylab.ripple.android.util.RandomPatient;
 import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.view.PatientView;
@@ -35,7 +36,6 @@ import java.lang.ref.WeakReference;
 import com.discoverylab.ripple.android.config.WSConfig;
 import com.discoverylab.ripple.android.fragment.Banner;
 import com.discoverylab.ripple.android.fragment.PrefsFragment;
-import com.discoverylab.ripple.android.fragment.patient.PatientLeft;
 import com.discoverylab.ripple.android.mqtt.MQTTClientService;
 import com.discoverylab.ripple.android.mqtt.MQTTServiceConstants;
 import com.discoverylab.ripple.android.mqtt.MQTTServiceManager;
@@ -47,7 +47,7 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
     /*Inter-Fragment MGMT*/
     private boolean isPatient = true;
     private Banner banner;
-    private PatientLeft patLeft;
+    private PatientDetailsFragment patLeft;
 
     /*Mapping Vars*/
     private GoogleMap map;
@@ -80,7 +80,7 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
         }
 
 
-        patLeft = (PatientLeft) fragmentManager.findFragmentById(R.id.bottomleft);
+        patLeft = (PatientDetailsFragment) fragmentManager.findFragmentById(R.id.bottomleft);
         patLeft.setBannerHandler(banner.getHandler());
 
         initMap();

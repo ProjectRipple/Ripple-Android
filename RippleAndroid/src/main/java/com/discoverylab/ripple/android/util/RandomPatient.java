@@ -7,9 +7,10 @@ import java.util.Random;
 import com.discoverylab.ripple.android.object.Patient;
 
 /**
+ * RandomPatient allows creation of random patient objects for testing
  * Created by harmonbc on 6/24/13.
  */
-public class RandomPatient {
+public final class RandomPatient {
 
     private static int[] colors = {Color.RED, Color.GREEN, Color.YELLOW};
     private static String[] fNames = {"Bill", "Tom", "Will", "James"};
@@ -21,6 +22,8 @@ public class RandomPatient {
     private static String[] ipAddr = {"127.0.0.2", "127.0.0.3", "192.168.0.3", "10.0.0.2", "10.3.2.1", "10.4.3.2", "10.5.4.3"};
     private static int lastSrc = 0;
     public static final int MAX_UNIQUE_PATIENTS = src.length+1;
+
+    private RandomPatient(){}
 
     public static Patient getRandomPatient() {
         Patient patient = new Patient();

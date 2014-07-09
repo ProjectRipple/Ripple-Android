@@ -83,6 +83,7 @@ public class PatientView extends RelativeLayout {
         mPatient = patient;
         String id = getPatientSrc();
         if (id != null && id.length() >= 4) {
+            // Set ID text with last four characters of id string
             this.idText.setText(id.substring(id.length() - 4));
         }
         this.updateViewFields();
@@ -97,8 +98,10 @@ public class PatientView extends RelativeLayout {
         this.colorYellow = getResources().getColor(R.color.yellow);
         this.colorGreen = getResources().getColor(R.color.win8_green);
 
+        // inflate view and attach to this object
         View v = inflate(this.mContext, R.layout.patient_view, this);
 
+        // get text views
         this.temperatureText = (TextView) v.findViewById(R.id.patient_view_temperature);
         this.heartRateText = (TextView) v.findViewById(R.id.patient_view_heart_rate);
         this.bloodOxText = (TextView) v.findViewById(R.id.patient_view_sp02);

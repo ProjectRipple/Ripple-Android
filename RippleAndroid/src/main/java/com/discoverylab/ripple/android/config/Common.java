@@ -24,7 +24,6 @@ public final class Common {
 
     // Parsing
     public static final String CSV_DELIMITER = ";";
-    public static final int ECG_CSV = R.raw.model;
 
     // Package Name
     public static final String PACKAGE_NAMESPACE = "com.discoverylab.ripple.android";

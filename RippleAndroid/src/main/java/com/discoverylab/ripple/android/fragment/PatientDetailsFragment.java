@@ -1,4 +1,4 @@
-package com.discoverylab.ripple.android.fragment.patient;
+package com.discoverylab.ripple.android.fragment;
 
 
 import android.app.Activity;
@@ -36,12 +36,12 @@ import retrofit.client.Response;
 
 
 /**
- * The left patient fragment is used to display the most recent health data and information
+ * The patient fragment is used to display the most recent health data and information
  * for the patient
  * <p/>
  * The a chart is added to the bottom left linear layout and is used to display the ecg waveform
  */
-public class PatientLeft extends Fragment {
+public class PatientDetailsFragment extends Fragment {
 
     private static final String SAVED_STATE_PATIENT_SRC = "savedStatePatientSrc";
     private int curPatient = -1;

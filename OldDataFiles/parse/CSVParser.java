@@ -1,4 +1,4 @@
-package com.discoverylab.ripple.android.Parse;
+package com.discoverylab.ripple.android.parse;
 
 import android.content.Context;
 import android.util.Log;
