@@ -23,7 +23,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.discoverylab.ripple.android.util.Common;
-import com.discoverylab.ripple.android.PatientView;
+import com.discoverylab.ripple.android.view.PatientView;
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.object.Patient;
 

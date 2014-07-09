@@ -1,4 +1,4 @@
-package com.discoverylab.ripple.android;
+package com.discoverylab.ripple.android.util;
 
 import android.graphics.Color;
 

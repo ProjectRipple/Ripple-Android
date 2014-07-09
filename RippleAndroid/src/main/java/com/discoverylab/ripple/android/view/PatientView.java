@@ -1,4 +1,4 @@
-package com.discoverylab.ripple.android;
+package com.discoverylab.ripple.android.view;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.object.Patient;
 
 /**
@@ -87,6 +88,9 @@ public class PatientView extends RelativeLayout {
         this.updateViewFields();
     }
 
+    /**
+     * Initialize View parameters
+     */
     private void init() {
         // get colors from resources
         this.colorRed = getResources().getColor(R.color.red);
@@ -95,7 +99,6 @@ public class PatientView extends RelativeLayout {
 
         View v = inflate(this.mContext, R.layout.patient_view, this);
 
-        //this.patientViewLayout = v.findViewById(R.id.patient_view_layout);
         this.temperatureText = (TextView) v.findViewById(R.id.patient_view_temperature);
         this.heartRateText = (TextView) v.findViewById(R.id.patient_view_heart_rate);
         this.bloodOxText = (TextView) v.findViewById(R.id.patient_view_sp02);
@@ -116,15 +119,20 @@ public class PatientView extends RelativeLayout {
 
         // set margin on right to add a little separation between patient views
         int marginRight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, metrics);
+
         // need layout params of parent view type
         TableRow.LayoutParams params = (TableRow.LayoutParams) this.getLayoutParams();
         if (params == null) {
             params = new TableRow.LayoutParams(minWidth, minHeight);
         }
+        // Add margin for spacing between views
         params.setMargins(0, 0, marginRight, 0);
         this.setLayoutParams(params);
     }
 
+    /**
+     * Force update of all view fields. Must be called by UI thread!
+     */
     public void updateViewFields() {
         // update temperature field
         int temp = this.mPatient.getTemperature();
@@ -140,7 +148,7 @@ public class PatientView extends RelativeLayout {
         int heartRate = this.mPatient.getBpm();
         String hrString = "HR: " + heartRate;
         if (heartRate >= 250) {
-            // no reading
+            // no reading if HR == 255
             hrString = "HR: ---";
         }
         this.heartRateText.setText(hrString);
@@ -149,8 +157,8 @@ public class PatientView extends RelativeLayout {
         // update blood ox field
         int bloodOx = this.mPatient.getO2();
         String bloodOxString = "02: " + bloodOx;
-        if (bloodOx >= 125) {
-            // no reading
+        if (bloodOx > 100) {
+            // no reading if value is == 127
             bloodOxString = "O2: ---";
         }
         this.bloodOxText.setText(bloodOxString);
@@ -167,12 +175,17 @@ public class PatientView extends RelativeLayout {
             this.idText.setTextColor(this.colorYellow);
             this.idText.setTypeface(this.idText.getTypeface(), Typeface.BOLD);
         } else {
+            // reset text color
             this.idText.setTextColor(getResources().getColor(R.color.white));
             this.idText.setTypeface(null, Typeface.NORMAL);
         }
     }
 
-
+    /**
+     * Get color for particular data field based on its current value
+     * @param type What data field is color for
+     * @return Status color for specified data field
+     */
     private int getColor(DataFields type) {
         int paint = Color.WHITE;
 
@@ -194,6 +207,10 @@ public class PatientView extends RelativeLayout {
         return paint;
     }
 
+    /**
+     * Get status color(Red, Yellow, or Green) for patient's resparation rate
+     * @return status color for patient's resparation rate
+     */
     private int getRespPMBGColor() {
         int val = mPatient.getRpm();
         if (val < 26 && val > 11) {
@@ -205,6 +222,10 @@ public class PatientView extends RelativeLayout {
         }
     }
 
+    /**
+     * Get status color(Red, Yellow, or Green) for patient's current temperature
+     * @return status color for patient's current temperature
+     */
     private int getTemperatureBGColor() {
         int val = mPatient.getTemperature();
         if (val <= 99 && val >= 97) {
@@ -216,6 +237,10 @@ public class PatientView extends RelativeLayout {
         }
     }
 
+    /**
+     * Get status color(Red, Yellow, or Green) for patient's current heart rate
+     * @return status color for patient's current heart rate
+     */
     private int getBeatsPMBGColor() {
         int val = mPatient.getBpm();
         if (val < 120 && val > 60) {
@@ -227,6 +252,10 @@ public class PatientView extends RelativeLayout {
         }
     }
 
+    /**
+     * Get status color(Red, Yellow, or Green) for patient's current blood oxygen level
+     * @return status color for patient's current blood oxygen level
+     */
     private int getBloodOxBGColor() {
         int val = mPatient.getO2();
         if (val > 92 && val <= 100) {

@@ -1,8 +1,7 @@
-package com.discoverylab.ripple.android;
+package com.discoverylab.ripple.android.activity;
 
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
@@ -20,7 +19,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.util.RandomPatient;
 import com.discoverylab.ripple.android.util.Common;
+import com.discoverylab.ripple.android.view.PatientView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
@@ -34,14 +36,13 @@ import com.discoverylab.ripple.android.config.WSConfig;
 import com.discoverylab.ripple.android.fragment.Banner;
 import com.discoverylab.ripple.android.fragment.PrefsFragment;
 import com.discoverylab.ripple.android.fragment.patient.PatientLeft;
-import com.discoverylab.ripple.android.fragment.scene.SceneLeft;
 import com.discoverylab.ripple.android.mqtt.MQTTClientService;
 import com.discoverylab.ripple.android.mqtt.MQTTServiceConstants;
 import com.discoverylab.ripple.android.mqtt.MQTTServiceManager;
 import com.discoverylab.ripple.android.mqtt.PublishedMessage;
 
 
-public class MainActivity extends Activity implements ActivityClickInterface, LocationSource.OnLocationChangedListener, View.OnClickListener {
+public class MainActivity extends Activity implements LocationSource.OnLocationChangedListener, View.OnClickListener {
 
     /*Inter-Fragment MGMT*/
     private boolean isPatient = true;
@@ -137,17 +138,6 @@ public class MainActivity extends Activity implements ActivityClickInterface, Lo
 //        return true;
         //We don't need menus right now
         return false;
-    }
-
-    @Override
-    public void onClickListener(int id) {
-        Fragment fragment = (isPatient) ? new SceneLeft() : new PatientLeft();
-        FragmentManager fragmentManager = getFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.add(R.id.bottomleft, fragment);
-        transaction.commit();
-
-        isPatient = !isPatient;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.discoverylab.ripple.android;
+package com.discoverylab.ripple.android.activity;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
