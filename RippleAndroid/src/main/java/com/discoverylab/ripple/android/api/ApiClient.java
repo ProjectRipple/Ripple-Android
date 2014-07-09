@@ -10,6 +10,7 @@ import retrofit.http.FormUrlEncoded;
 import retrofit.http.POST;
 
 /**
+ * Client for accessing Broker's REST API
  * Created by James on 6/1/2014.
  */
 public class ApiClient {

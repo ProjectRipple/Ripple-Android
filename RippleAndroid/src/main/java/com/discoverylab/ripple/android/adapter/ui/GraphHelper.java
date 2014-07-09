@@ -20,16 +20,24 @@ import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.util.Util;
 import com.discoverylab.ripple.android.mqtt.PublishedMessage;
 
+/**
+ * Helper class for managing ECG chart
+ */
 public class GraphHelper {
 
+    // true if currently plotting
     private boolean plotting = false;
 
+    // Queue of messages to process
     private Queue<PublishedMessage> vitalsQ = new LinkedList<PublishedMessage>();
 
+    // Default X range
     private static final Long DEFAULT_MAX_X_RANGE = 1000L;
 
+    // Current max x value in series
     private double maxX = 0.0;
 
+    // Thread to handle processing of messages
     private Thread plotter;
 
     /**
@@ -118,6 +126,9 @@ public class GraphHelper {
         }
     }
 
+    /**
+     * Clears graph of any values
+     */
     public void clearGraph() {
         maxX = 0.0;
         currentSeries.clear();
@@ -131,7 +142,7 @@ public class GraphHelper {
         return chartView;
     }
 
-    public boolean getPlotting() {
+    public boolean isPlotting() {
         return plotting;
     }
 
@@ -139,7 +150,7 @@ public class GraphHelper {
         return vitalsQ.isEmpty();
     }
 
-    public PublishedMessage vitalsQRemove() {
+    private PublishedMessage vitalsQRemove() {
         return vitalsQ.remove();
     }
 
@@ -147,22 +158,33 @@ public class GraphHelper {
         return vitalsQ.offer(vitals);
     }
 
+    /**
+     * Start plotter thread
+     */
     public void startPlotter() {
         if (plotter == null) {
 
             // reset may y
             chartRenderer.setYAxisMax(3000.0);
 
+            // create plotter thread
             plotter = new Thread(new PlottingThread());
             plotter.setName("Plotter Thread");
             plotter.setDaemon(true);
 
+            // clear queue for new messages
+            vitalsQ.clear();
+
+            // start plotter thread
             plotting = true;
             plotter.start();
             lastEcgSeq = 0;
         }
     }
 
+    /**
+     * Stop plotter thread
+     */
     public void stopPlotter() {
         if (plotter != null) {
 
@@ -174,6 +196,9 @@ public class GraphHelper {
         }
     }
 
+    /**
+     * Setup chart series
+     */
     private void setupSeries() {
 
         // create a new series of data
@@ -197,13 +222,6 @@ public class GraphHelper {
                 chartRenderer.setYAxisMin((double) (y - 25));
                 isBaselineSet = true;
             }
-//            if (maxX != 0) {
-//                while ((x - maxX) > 25) {
-//                    maxX += 5.0;
-//                    //Log.d(Common.LOG_TAG, "Adding (" + maxX + ", 0.0)");
-//                    currentSeries.add(maxX, Common.SIM_BASELINE_GUESS);
-//                }
-//            }
 
             while ((x - currentSeries.getMinX()) > DEFAULT_MAX_X_RANGE && currentSeries.getItemCount() > 0) {
                 currentSeries.remove(0);
@@ -223,9 +241,6 @@ public class GraphHelper {
             return true;
         } else {
             Log.d(Common.LOG_TAG, "Graph: Out of order x values (" + x + ", " + y + ")");
-            /*vs. ("
-                    + currentSeries.getX(currentSeries.getItemCount() - 1) + ", " +
-                    +currentSeries.getY(currentSeries.getItemCount() - 1) + ")");*/
             return false;
         }
     }
@@ -237,7 +252,7 @@ public class GraphHelper {
 
         @Override
         public void run() {
-            while (getPlotting()) {
+            while (isPlotting()) {
 
                 if (!isVitalsQEmpty()) {
 

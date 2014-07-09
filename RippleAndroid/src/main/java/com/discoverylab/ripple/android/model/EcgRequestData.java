@@ -1,6 +1,7 @@
 package com.discoverylab.ripple.android.model;
 
 /**
+ * Object representing result of an ECG stream request
  * Created by James on 6/1/2014.
  */
 public class EcgRequestData {
