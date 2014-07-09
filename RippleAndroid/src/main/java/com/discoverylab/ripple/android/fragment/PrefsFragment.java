@@ -15,7 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.discoverylab.ripple.android.util.Common;
+import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.api.ApiClient;
 import com.discoverylab.ripple.android.config.WSConfig;
@@ -52,7 +52,7 @@ public class PrefsFragment extends PreferenceFragment {
             // set preference if not already there
             Log.d(Common.LOG_TAG, "Setting default ip");
             myEditor = prefs.edit();
-            myEditor.putString(IP_FROM_PREFS, WSConfig.DEFAULT_IP);
+            myEditor.putString(IP_FROM_PREFS, WSConfig.DEFAULT_BROKER_IP);
             myEditor.commit();
         }
 
@@ -89,14 +89,12 @@ public class PrefsFragment extends PreferenceFragment {
                 if (validIPv4 && newValueString.length() > 0) {
                     myEditor.putString(IP_FROM_PREFS, newValueString);
                     myEditor.commit();
-                    WSConfig.ROOT_URL = "http://" + newValueString + ":" + portNumRest;// + "/" + WSConfig.BROKER_ROOT + "/";
-                    WSConfig.WS_QUERY_URL = WSConfig.ROOT_URL + "Query";
+                    WSConfig.ROOT_URL = "http://" + newValueString + ":" + portNumRest;
                     ApiClient.updateEndPoint();
                 } else if (validIPv6 && newValueString.length() > 0) {
                     myEditor.putString(IP_FROM_PREFS, newValueString);
                     myEditor.commit();
-                    WSConfig.ROOT_URL = "http://[" + newValueString + "]:" + portNumRest;// + "/" + WSConfig.BROKER_ROOT + "/";
-                    WSConfig.WS_QUERY_URL = WSConfig.ROOT_URL + "Query";
+                    WSConfig.ROOT_URL = "http://[" + newValueString + "]:" + portNumRest;
                     ApiClient.updateEndPoint();
                 } else {
                     final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -121,7 +119,7 @@ public class PrefsFragment extends PreferenceFragment {
                 myEditor.commit();
 
                 // update URL
-                String ip = prefs.getString(IP_FROM_PREFS, WSConfig.DEFAULT_IP);
+                String ip = prefs.getString(IP_FROM_PREFS, WSConfig.DEFAULT_BROKER_IP);
 
                 boolean validIPv4 = ip.matches(IP_REG_EXPRESSION);
                 boolean validIPv6 = ip.matches(IPV6_HEXCOMPRESSED_REGEX) || ip.matches(IPV6_REGEX);

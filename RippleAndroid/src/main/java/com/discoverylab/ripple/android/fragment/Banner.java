@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableRow;
 
+import com.discoverylab.ripple.android.config.JSONTag;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.discoverylab.ripple.android.util.Common;
+import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.view.PatientView;
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.object.Patient;
@@ -86,11 +87,11 @@ public class Banner extends Fragment {
 
                     patientFound = false;
                     curPatient = null;
-                    String src = recordJson.get(Common.RECORD_SOURCE).getAsString();
-                    int hr = recordJson.get(Common.RECORD_HEART_RATE).getAsInt();
-                    int spO2 = recordJson.get(Common.RECORD_BLOOD_OX).getAsInt();
-                    int temperature = recordJson.get(Common.RECORD_TEMPERATURE).getAsInt();
-                    int resp_pm = recordJson.get(Common.RECORD_RESP_PER_MIN).getAsInt();
+                    String src = recordJson.get(JSONTag.RECORD_SOURCE).getAsString();
+                    int hr = recordJson.get(JSONTag.RECORD_HEART_RATE).getAsInt();
+                    int spO2 = recordJson.get(JSONTag.RECORD_BLOOD_OX).getAsInt();
+                    int temperature = recordJson.get(JSONTag.RECORD_TEMPERATURE).getAsInt();
+                    int resp_pm = recordJson.get(JSONTag.RECORD_RESP_PER_MIN).getAsInt();
 
                     // find patient
                     synchronized (patientLock) {

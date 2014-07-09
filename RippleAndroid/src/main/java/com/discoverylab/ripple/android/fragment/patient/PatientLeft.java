@@ -18,9 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.discoverylab.ripple.android.config.JSONTag;
 import com.google.gson.JsonObject;
 
-import com.discoverylab.ripple.android.util.Common;
+import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.activity.MainActivity;
 import com.discoverylab.ripple.android.activity.PrefsActivity;
 import com.discoverylab.ripple.android.R;
@@ -64,16 +65,16 @@ public class PatientLeft extends Fragment {
             switch (msg.what) {
                 case Common.RIPPLE_MSG_RECORD:
                     JsonObject recordJson = (JsonObject) msg.obj;
-                    String src = recordJson.get(Common.RECORD_SOURCE).getAsString();
+                    String src = recordJson.get(JSONTag.RECORD_SOURCE).getAsString();
                     if (!curPatientSrc.equals("") && src.equals(curPatientSrc)) {
-                        temperature.setText(recordJson.get(Common.RECORD_TEMPERATURE).getAsString());
-                        if (recordJson.get(Common.RECORD_HEART_RATE).getAsInt() < 250) {
-                            pulse.setText(recordJson.get(Common.RECORD_HEART_RATE).getAsString());
+                        temperature.setText(recordJson.get(JSONTag.RECORD_TEMPERATURE).getAsString());
+                        if (recordJson.get(JSONTag.RECORD_HEART_RATE).getAsInt() < 250) {
+                            pulse.setText(recordJson.get(JSONTag.RECORD_HEART_RATE).getAsString());
                         } else {
                             pulse.setText("---");
                         }
-                        if (recordJson.get(Common.RECORD_BLOOD_OX).getAsInt() < 120) {
-                            bloodOx.setText(recordJson.get(Common.RECORD_BLOOD_OX).getAsString());
+                        if (recordJson.get(JSONTag.RECORD_BLOOD_OX).getAsInt() < 120) {
+                            bloodOx.setText(recordJson.get(JSONTag.RECORD_BLOOD_OX).getAsString());
                         } else {
                             bloodOx.setText("---");
                         }

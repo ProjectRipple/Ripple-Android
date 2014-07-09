@@ -35,6 +35,16 @@ public final class Util {
         return (bytes[0] & 0xFF) << 8 | (bytes[1] & 0xFF);
     }
 
+    /**
+     * Converts 2 bytes into a 2 byte unsigned int(returned as int)
+     * @param b2 MSB of 2 byte value
+     * @param b1 LSB of 2 byte value
+     * @return 2 byte unsigned int as int
+     */
+    public static int convert2BytesToUInt(byte b2, byte b1) {
+        return (b2 & 0xFF) << 8 | (b1 & 0xFF);
+    }
+
 
     /**
      * Convert a String of hexidecimal digits to a byte array

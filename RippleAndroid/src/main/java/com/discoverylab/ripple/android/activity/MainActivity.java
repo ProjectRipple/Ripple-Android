@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.util.RandomPatient;
-import com.discoverylab.ripple.android.util.Common;
+import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.view.PatientView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -168,7 +168,7 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
 
     public void startMQTTService() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        this.mqttServiceManager.start(prefs.getString(PrefsFragment.IP_FROM_PREFS, WSConfig.DEFAULT_IP), prefs.getString(PrefsFragment.PORT_NUM_MQTT_PREFS, WSConfig.DEFAULT_MQTT_PORT));
+        this.mqttServiceManager.start(prefs.getString(PrefsFragment.IP_FROM_PREFS, WSConfig.DEFAULT_BROKER_IP), prefs.getString(PrefsFragment.PORT_NUM_MQTT_PREFS, WSConfig.DEFAULT_MQTT_PORT));
     }
 
     public void stopMQTTService() {

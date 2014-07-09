@@ -1,6 +1,7 @@
 package com.discoverylab.ripple.android.config;
 
 /**
+ * Class to hold all keys for JSON objects used by this application
  * Created by burt on 7/3/13.
  */
 public final class JSONTag {
@@ -8,6 +9,18 @@ public final class JSONTag {
     private JSONTag() {
         // No public constructor
     }
+
+    // Record topic payload values
+    public static final String RECORD_SOURCE = "src";
+    public static final String RECORD_IP_ADDRESS = "ip";
+    public static final String RECORD_SEQUENCE = "seq";
+    public static final String RECORD_AGE = "age";
+    public static final String RECORD_HOPS = "hops";
+    public static final String RECORD_HEART_RATE = "hr";
+    public static final String RECORD_BLOOD_OX = "sp02";
+    public static final String RECORD_RESP_PER_MIN = "resp";
+    public static final String RECORD_TEMPERATURE = "temp";
+    public static final String RECORD_STATUS = "stat";
 
     // PatientList WS tags
     public static final String PATIENTS = "patients";

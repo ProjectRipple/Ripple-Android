@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import com.discoverylab.ripple.android.util.Common;
+import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.util.Util;
 import com.discoverylab.ripple.android.mqtt.PublishedMessage;
 
