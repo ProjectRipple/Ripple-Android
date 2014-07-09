@@ -15,7 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.discoverylab.ripple.android.Common;
+import com.discoverylab.ripple.android.util.Common;
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.api.ApiClient;
 import com.discoverylab.ripple.android.config.WSConfig;

@@ -1,5 +1,6 @@
-package com.discoverylab.ripple.android;
+package com.discoverylab.ripple.android.util;
 
+import com.discoverylab.ripple.android.R;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -32,26 +33,12 @@ public final class Common {
 
     // Date Formatting
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-    public static final SimpleDateFormat SIMPLE_DATETIME_FORMAT = new SimpleDateFormat(DATE_TIME_FORMAT);
-
-    // multicast constants
-    public static final String MCAST_GROUP = "ff02::1";
-    public static final int MCAST_PORT = 1222;
-    public static final String MCAST_INTERFACE = "wlan0";
 
     // Messaging What Constants
-    public static final int RIPPLE_MSG_MCAST = 22;
-    public static final int RIPPLE_MSG_VITALS_STREAM = 44;
-    public static final int RIPPLE_MSG_VITALS_TEMPERATURE = 33;
-    public static final int RIPPLE_MSG_VITALS_PULSE = 55;
-    public static final int RIPPLE_MSG_VITALS_BLOOD_OX = 66;
     public static final int RIPPLE_MSG_BITMAP = 99;
     public static final int RIPPLE_MSG_RECORD = 77;
     public static final int RIPPLE_MSG_ECG_STREAM = 88;
     public static final int RIPPLE_MSG_SELECT_PATIENT = 11;
-
-    // Fudge Values
-    public static final double SIM_BASELINE_GUESS = 1858.077626;
 
     // MQTT topics
     public static final String MQTT_TOPIC_ID_STRING = "[PID]";
@@ -65,6 +52,7 @@ public final class Common {
 
     // Record topic payload values
     public static final String RECORD_SOURCE = "src";
+    public static final String RECORD_IP_ADDRESS = "ip";
     public static final String RECORD_SEQUENCE = "seq";
     public static final String RECORD_AGE = "age";
     public static final String RECORD_HOPS = "hops";
@@ -73,9 +61,6 @@ public final class Common {
     public static final String RECORD_RESP_PER_MIN = "resp";
     public static final String RECORD_TEMPERATURE = "temp";
     public static final String RECORD_STATUS = "stat";
-
-    //ECG Vitals Streaming
-    //public static final int
 
     // Vital constants
     public enum VITAL_TYPES {

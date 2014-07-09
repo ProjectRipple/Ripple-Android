@@ -3,7 +3,6 @@ package com.discoverylab.ripple.android.adapter.ui;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 
 import org.achartengine.ChartFactory;
@@ -13,14 +12,12 @@ import org.achartengine.model.XYSeries;
 import org.achartengine.renderer.XYMultipleSeriesRenderer;
 import org.achartengine.renderer.XYSeriesRenderer;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 
-import com.discoverylab.ripple.android.Common;
-import com.discoverylab.ripple.android.Util;
+import com.discoverylab.ripple.android.util.Common;
+import com.discoverylab.ripple.android.util.Util;
 import com.discoverylab.ripple.android.mqtt.PublishedMessage;
 
 public class GraphHelper {
@@ -247,7 +244,7 @@ public class GraphHelper {
                     PublishedMessage ecgMsg = vitalsQRemove();
 
                     byte[] streamBytes = Util.hexStringToByteArray(ecgMsg.getPayload());
-                    long seq = Util.convert4BytesToUInt(Arrays.copyOfRange(streamBytes, 0, 4));
+                    long seq = Util.convert4BytesToUIntBE(Arrays.copyOfRange(streamBytes, 0, 4));
 
 
                     double x = maxX + X_INCREMENT;

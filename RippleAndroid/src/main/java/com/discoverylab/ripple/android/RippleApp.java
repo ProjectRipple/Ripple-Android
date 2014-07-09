@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.discoverylab.ripple.android.config.WSConfig;
 import com.discoverylab.ripple.android.fragment.PrefsFragment;
+import com.discoverylab.ripple.android.util.Common;
 
 /**
  * RippleApplication object initializes the DatabaseAdapter singleton and stores global variables

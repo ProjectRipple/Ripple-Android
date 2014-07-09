@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
-import com.discoverylab.ripple.android.Common;
+import com.discoverylab.ripple.android.util.Common;
 import com.discoverylab.ripple.android.MainActivity;
 import com.discoverylab.ripple.android.PrefsActivity;
 import com.discoverylab.ripple.android.R;

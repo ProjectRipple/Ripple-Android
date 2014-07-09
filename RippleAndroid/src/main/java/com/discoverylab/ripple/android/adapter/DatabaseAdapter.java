@@ -12,7 +12,7 @@ import org.achartengine.model.XYSeries;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-import com.discoverylab.ripple.android.Common;
+import com.discoverylab.ripple.android.util.Common;
 
 /**
  * Created by Matt on 6/19/13.

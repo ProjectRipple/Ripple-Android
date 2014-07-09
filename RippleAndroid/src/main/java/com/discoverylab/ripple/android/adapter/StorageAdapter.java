@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 
-import com.discoverylab.ripple.android.Common;
+import com.discoverylab.ripple.android.util.Common;
 
 /**
  * Adapter class for accessing external or internal storage.
