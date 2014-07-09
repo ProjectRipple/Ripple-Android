@@ -18,18 +18,17 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.discoverylab.ripple.android.config.JSONTag;
-import com.google.gson.JsonObject;
-
-import com.discoverylab.ripple.android.config.Common;
+import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.activity.MainActivity;
 import com.discoverylab.ripple.android.activity.PrefsActivity;
-import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.adapter.ui.GraphHelper;
 import com.discoverylab.ripple.android.api.ApiClient;
+import com.discoverylab.ripple.android.config.Common;
+import com.discoverylab.ripple.android.config.JSONTag;
 import com.discoverylab.ripple.android.model.EcgRequestData;
 import com.discoverylab.ripple.android.mqtt.PublishedMessage;
-import com.discoverylab.ripple.android.view.FingerPaint;
+import com.google.gson.JsonObject;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -102,9 +101,8 @@ public class PatientDetailsFragment extends Fragment {
     }
 
     /**
-     *
-     * @param inflater Inflator for view
-     * @param container Container for view
+     * @param inflater           Inflator for view
+     * @param container          Container for view
      * @param savedInstanceState previously saved instance
      * @return view
      */
@@ -303,7 +301,7 @@ public class PatientDetailsFragment extends Fragment {
             patientName.setText(curPatientSrc);
         }
 
-        if(this.bannerHandler != null){
+        if (this.bannerHandler != null) {
             this.bannerHandler.obtainMessage(Common.RIPPLE_MSG_SELECT_PATIENT, this.curPatientSrc).sendToTarget();
         }
     }

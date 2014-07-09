@@ -3,18 +3,20 @@ package com.discoverylab.ripple.android.fragment;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableRow;
 
+import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.config.JSONTag;
+import com.discoverylab.ripple.android.object.Patient;
+import com.discoverylab.ripple.android.view.PatientView;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
@@ -22,11 +24,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import com.discoverylab.ripple.android.config.Common;
-import com.discoverylab.ripple.android.view.PatientView;
-import com.discoverylab.ripple.android.R;
-import com.discoverylab.ripple.android.object.Patient;
 
 /**
  * This displays the banner at the top of the display
@@ -199,6 +196,7 @@ public class Banner extends Fragment {
 
     /**
      * Creates a PatientView for the given patient and adds it to the tablerow
+     *
      * @param patient Patient to create view for.
      */
     private void createPatientView(Patient patient) {
@@ -213,6 +211,7 @@ public class Banner extends Fragment {
 
     /**
      * Get handler for banner
+     *
      * @return Banner's Handler
      */
     public Handler getHandler() {
@@ -220,6 +219,9 @@ public class Banner extends Fragment {
     }
 
 
+    /**
+     * Handler for messages to Banner
+     */
     private class BannerHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
