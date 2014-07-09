@@ -42,57 +42,27 @@ import retrofit.client.Response;
  */
 public class PatientDetailsFragment extends Fragment {
 
+    // Key for saving current patient src
     private static final String SAVED_STATE_PATIENT_SRC = "savedStatePatientSrc";
-    private int curPatient = -1;
+    // Current patient src (id)
     private String curPatientSrc = "";
+    // Text views
     private TextView patientName;
     private TextView temperature;
     private TextView pulse;
     private TextView bloodOx;
+    // Helper for ECG graph
     private GraphHelper graphHelper;
+    // Reference to Banner's handler
     private Handler bannerHandler;
+    // Buttons
     private Button settingsButton;
     private Button connectButton;
     private Button ecgRequestButton;
-
+    // Is a ECG request in progress
     private boolean ecgRequestInProgress = false;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(final Message msg) {
-            super.handleMessage(msg);
-
-            switch (msg.what) {
-                case Common.RIPPLE_MSG_RECORD:
-                    JsonObject recordJson = (JsonObject) msg.obj;
-                    String src = recordJson.get(JSONTag.RECORD_SOURCE).getAsString();
-                    if (!curPatientSrc.equals("") && src.equals(curPatientSrc)) {
-                        temperature.setText(recordJson.get(JSONTag.RECORD_TEMPERATURE).getAsString());
-                        if (recordJson.get(JSONTag.RECORD_HEART_RATE).getAsInt() < 250) {
-                            pulse.setText(recordJson.get(JSONTag.RECORD_HEART_RATE).getAsString());
-                        } else {
-                            pulse.setText("---");
-                        }
-                        if (recordJson.get(JSONTag.RECORD_BLOOD_OX).getAsInt() < 120) {
-                            bloodOx.setText(recordJson.get(JSONTag.RECORD_BLOOD_OX).getAsString());
-                        } else {
-                            bloodOx.setText("---");
-                        }
-                    }
-                    break;
-                case Common.RIPPLE_MSG_ECG_STREAM:
-                    PublishedMessage ecgMsg = (PublishedMessage) msg.obj;
-                    if (!curPatientSrc.equals("") && ecgMsg.getTopic().contains(curPatientSrc)) {
-                        graphHelper.offerVitals(ecgMsg);
-                    } else {
-                        Log.d(Common.LOG_TAG, "Stream not for current patient.");
-                    }
-                    break;
-                default:
-                    Log.e(Common.LOG_TAG, "Unknown Message type: " + msg.what);
-            }
-
-        }
-    };
+    // Handler for messages to this fragment
+    private Handler handler = new PatientDetailsHandler();
 
 
     @Override
@@ -109,19 +79,24 @@ public class PatientDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // inflate view
         final View view = inflater.inflate(R.layout.patient_left, container, false);
         assert view != null;
 
+        // Get layout for chart
         LinearLayout layout = (LinearLayout) view.findViewById(R.id.chart);
         graphHelper = new GraphHelper(this.getActivity());
 
+        // add chart to layout
         layout.addView(graphHelper.getChartView(),
                 new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.MATCH_PARENT)
         );
 
+        // get image view of patient tag
         ImageView tagview = (ImageView) view.findViewById(R.id.tagview);
         assert tagview != null;
+
         tagview.setClickable(true);
         tagview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +104,7 @@ public class PatientDetailsFragment extends Fragment {
                 // custom dialog
                 final Dialog dialog = new Dialog(getActivity());
                 dialog.setContentView(R.layout.finger_paint_dialog);
-                dialog.setTitle(" Draw Something Friend ");
+                dialog.setTitle(" Draw Something ");
 
                 // set the custom dialog components - text, image and button
                 Button dialogButton = (Button) dialog.findViewById(R.id.fingerbuttonok);
@@ -144,12 +119,13 @@ public class PatientDetailsFragment extends Fragment {
             }
         });
 
-
+        // Get text views
         this.patientName = (TextView) view.findViewById(R.id.name_value_tv);
         this.temperature = (TextView) view.findViewById(R.id.temp_value_tv);
         this.pulse = (TextView) view.findViewById(R.id.pulse_value_tv);
         this.bloodOx = (TextView) view.findViewById(R.id.o2_value_tv);
 
+        // get settings button
         this.settingsButton = (Button) view.findViewById(R.id.setting_button);
         this.settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,10 +134,12 @@ public class PatientDetailsFragment extends Fragment {
             }
         });
 
+        // get connect button
         this.connectButton = (Button) view.findViewById(R.id.connect_button);
         this.connectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // start or stop ECG request & change button text
                 if (connectButton.getText().equals(getActivity().getString(R.string.connect))) {
                     ((MainActivity) getActivity()).startMQTTService();
                     connectButton.setText(R.string.disconnect);
@@ -172,6 +150,7 @@ public class PatientDetailsFragment extends Fragment {
             }
         });
 
+        // get ecg request button
         this.ecgRequestButton = (Button) view.findViewById(R.id.ecg_request_btn);
         this.ecgRequestButton.setOnClickListener(new View.OnClickListener() {
 
@@ -181,7 +160,7 @@ public class PatientDetailsFragment extends Fragment {
             }
         });
 
-
+        // Restore patient src from saved state
         if (savedInstanceState != null) {
             this.setPatientSrc(savedInstanceState.getString(SAVED_STATE_PATIENT_SRC));
         }
@@ -224,6 +203,21 @@ public class PatientDetailsFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Remove view references
+        this.patientName = null;
+        this.temperature = null;
+        this.pulse = null;
+        this.bloodOx = null;
+        this.settingsButton = null;
+        this.connectButton = null;
+        this.ecgRequestButton = null;
+        // Remove reference to graphhelper (which holds reference to a view that references our activity)
+        this.graphHelper = null;
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         graphHelper.stopPlotter();
@@ -236,8 +230,9 @@ public class PatientDetailsFragment extends Fragment {
     private void requestEcgStream() {
         if (!ecgRequestInProgress && !curPatientSrc.equals("") && isMQTTConnected()) {
             ecgRequestInProgress = true;
+            // clear ecg graph
             graphHelper.clearGraph();
-
+            // set request
             ApiClient.getRippleApiClient().requestEcgStream(curPatientSrc, new Callback<EcgRequestData>() {
                 @Override
                 public void success(EcgRequestData ecgRequestData, Response response) {
@@ -306,6 +301,10 @@ public class PatientDetailsFragment extends Fragment {
         }
     }
 
+    /**
+     *
+     * @return true if MQTT service is connected, false otherwise
+     */
     private boolean isMQTTConnected() {
         // TODO: make a better connection check as service running does not always mean MQTT is connected
         Activity activity = getActivity();
@@ -320,7 +319,54 @@ public class PatientDetailsFragment extends Fragment {
         this.bannerHandler = bannerHandler;
     }
 
+    /**
+     * Get handler for message to this object
+     * @return this object's handler
+     */
     public Handler getHandler() {
         return this.handler;
+    }
+
+    /**
+     * Handler for this class
+     */
+    private class PatientDetailsHandler extends Handler{
+        @Override
+        public void handleMessage(final Message msg) {
+            super.handleMessage(msg);
+
+            switch (msg.what) {
+                case Common.RIPPLE_MSG_RECORD:
+                    JsonObject recordJson = (JsonObject) msg.obj;
+                    String src = recordJson.get(JSONTag.RECORD_SOURCE).getAsString();
+                    // update text fieldd
+                    if (!curPatientSrc.equals("") && src.equals(curPatientSrc)) {
+                        temperature.setText(recordJson.get(JSONTag.RECORD_TEMPERATURE).getAsString());
+                        if (recordJson.get(JSONTag.RECORD_HEART_RATE).getAsInt() < 250) {
+                            pulse.setText(recordJson.get(JSONTag.RECORD_HEART_RATE).getAsString());
+                        } else {
+                            pulse.setText("---");
+                        }
+                        if (recordJson.get(JSONTag.RECORD_BLOOD_OX).getAsInt() < 120) {
+                            bloodOx.setText(recordJson.get(JSONTag.RECORD_BLOOD_OX).getAsString());
+                        } else {
+                            bloodOx.setText("---");
+                        }
+                    }
+                    break;
+                case Common.RIPPLE_MSG_ECG_STREAM:
+                    PublishedMessage ecgMsg = (PublishedMessage) msg.obj;
+                    // set message to graph helper to process
+                    if (!curPatientSrc.equals("") && ecgMsg.getTopic().contains(curPatientSrc)) {
+                        graphHelper.offerVitals(ecgMsg);
+                    } else {
+                        Log.d(Common.LOG_TAG, "Stream not for current patient.");
+                    }
+                    break;
+                default:
+                    Log.e(Common.LOG_TAG, "Unknown Message type: " + msg.what);
+            }
+
+        }
     }
 }

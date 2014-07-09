@@ -41,11 +41,12 @@ import com.discoverylab.ripple.android.mqtt.MQTTServiceConstants;
 import com.discoverylab.ripple.android.mqtt.MQTTServiceManager;
 import com.discoverylab.ripple.android.mqtt.PublishedMessage;
 
-
+/**
+ * Main activity of application
+ */
 public class MainActivity extends Activity implements LocationSource.OnLocationChangedListener, View.OnClickListener {
 
     /*Inter-Fragment MGMT*/
-    private boolean isPatient = true;
     private Banner banner;
     private PatientDetailsFragment patLeft;
 
@@ -62,11 +63,14 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // no title, fullscreen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // set layout
         setContentView(R.layout.activity_main);
 
+        // set banner fragment dynamically
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         if (savedInstanceState == null) {
@@ -79,15 +83,20 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
             banner = (Banner) fragmentManager.findFragmentById(R.id.top_frag);
         }
 
-
+        // set banner handler for patient details
         patLeft = (PatientDetailsFragment) fragmentManager.findFragmentById(R.id.bottomleft);
         patLeft.setBannerHandler(banner.getHandler());
 
+        // setup map
         initMap();
 
+        // get MQTT service manager
         mqttServiceManager = new MQTTServiceManager(this, MQTTClientService.class, new MQTTHandler(this));
     }
 
+    /**
+     * Initialize map fragment
+     */
     private void initMap() {
 
         MapFragment fm = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
@@ -99,6 +108,7 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
                 map.setMyLocationEnabled(true);
             }
         }
+        // setup location manager settings
         lm = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String provider = lm.getBestProvider(criteria, true);
@@ -112,6 +122,7 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
     @Override
     protected void onPause() {
         super.onPause();
+        // unbind service
         if (this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()) {
             this.mqttServiceManager.unbind();
         }
@@ -120,9 +131,11 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
     @Override
     protected void onResume() {
         super.onResume();
+        // bind service
         if (this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()) {
             this.mqttServiceManager.bind();
         }
+        // check if we should create fake patients (for debugging/demo)
         if(createFakePatients){
             for(int i = 0; i < RandomPatient.MAX_UNIQUE_PATIENTS; i++){
                 this.banner.addPatient(RandomPatient.getRandomPatient());
@@ -133,9 +146,6 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
-//        return true;
         //We don't need menus right now
         return false;
     }
@@ -159,28 +169,40 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
     public void onClick(View view) {
         if (view instanceof PatientView) {
             PatientView pView = (PatientView) view;
-            //Log.d(Common.LOG_TAG, "Patient id selected: " + pView.getPid());
-            //this.patLeft.setPatient(pView.getPid());
             Log.d(Common.LOG_TAG, "Patient src selected: " + pView.getPatientSrc());
             this.patLeft.setPatientSrc(pView.getPatientSrc());
         }
     }
 
+    /**
+     * Start MQTT service with current connection preferences
+     */
     public void startMQTTService() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         this.mqttServiceManager.start(prefs.getString(PrefsFragment.IP_FROM_PREFS, WSConfig.DEFAULT_BROKER_IP), prefs.getString(PrefsFragment.PORT_NUM_MQTT_PREFS, WSConfig.DEFAULT_MQTT_PORT));
     }
 
+    /**
+     * Stop MQTT service (disconnect from Broker)
+     */
     public void stopMQTTService() {
         if (this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()) {
             this.mqttServiceManager.stop();
         }
     }
 
+    /**
+     *
+     * @return true if MQTT service is currently running, false otherwise
+     */
     public boolean isMQTTServiceRunning() {
         return this.mqttServiceManager.isServiceRunning();
     }
 
+    /**
+     * Subscribe to a MQTT topic
+     * @param topicName MQTT topic to subscribe to
+     */
     public void subscribeToTopic(String topicName) {
         Message msg = Message.obtain(null, MQTTServiceConstants.MSG_SUBSCRIBE);
         Bundle bundle = new Bundle();
@@ -194,6 +216,10 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
         }
     }
 
+    /**
+     * Unsubscribe from an MQTT topic
+     * @param topicName MQTT topic to unsubscribe from
+     */
     public void unsubscribeFromTopic(String topicName) {
         Message msg = Message.obtain(null, MQTTServiceConstants.MSG_UNSUBSCRIBE);
         Bundle bundle = new Bundle();
@@ -207,6 +233,10 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
         }
     }
 
+    /**
+     * Processes message from MQTT client
+     * @param msg MQTT message to process
+     */
     private void processPublishedMessage(PublishedMessage msg) {
         String topic = msg.getTopic();
         if (topic.equals(Common.MQTT_TOPIC_VITALPROP) || topic.matches(Common.MQTT_TOPIC_MATCH_VITALCAST)) {

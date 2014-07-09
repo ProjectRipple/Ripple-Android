@@ -58,16 +58,18 @@ public class PatientView extends RelativeLayout {
         init();
     }
 
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-    }
-
     public PatientView(Context context) {
         super(context);
         mContext = context;
         init();
     }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+    }
+
+
 
     public int getPid() {
         return this.mPatient.getPid();
