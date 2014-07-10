@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -17,50 +18,83 @@ import android.os.RemoteException;
 import android.provider.Settings;
 import android.util.Log;
 
-import com.ibm.mqtt.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Service to manage the MQTTClient
  */
 public class MQTTClientService extends Service {
+    // Log tag
     private final static String TAG = "MQTTClientService";
-    private final static boolean DEBUG = false;
+    // Set to true for debug messages
+    private final static boolean DEBUG = true;
+    // interval to retry connecting in ms
     private final static long INTERVAL_RETRY = 5 * 1000;
 
-    private ArrayList<Messenger> mClients = new ArrayList<Messenger>(); // handles service->manger(s) comms
-    private final Messenger mMessenger = new Messenger(new IncomingHandler(this)); // hadnles manager(s)->service comms
+    // handles service->manger(s) comms
+    private List<Messenger> mClients = new ArrayList<Messenger>();
+    // handles manager(s)->service comms
+    private final Messenger mMessenger = new Messenger(new IncomingHandler(this));
+    // Handler for messages from MQTTClient
     private final MQTTClientHandler mHandler = new MQTTClientHandler(this);
-    private boolean mIsRunning;
 
-    private ConnectivityManager connectivityManager;
+    // Reference to client
     private MQTTClient mqttClient;
 
+    // Receiver for connectivity changes
+    private final BroadcastReceiver connectivityChanged = new ConnectivityChangedReceiver();
+    // Broker information
+    private String brokerHost;
+    private String brokerPort;
+    // is the service started
+    private boolean mIsStarted;
+
+    /**
+     * Class handles messages from the MQTT client
+     */
     private static class MQTTClientHandler extends Handler {
+        // Weak reference to the service
         private final WeakReference<MQTTClientService> serviceInstance;
 
         public MQTTClientHandler(MQTTClientService service) {
             this.serviceInstance = new WeakReference<MQTTClientService>(service);
         }
 
+        @Override
         public void handleMessage(Message msg) {
             MQTTClientService service = serviceInstance.get();
             if (service != null) {
                 switch (msg.what) {
                     case MQTTClient.MQTTCLIENT_CONNECTION_ESTABLISHED:
+                        if (DEBUG) {
+                            Log.d(TAG, "Connection established.");
+                        }
                         service.send(Message.obtain(null, MQTTServiceConstants.MSG_CONNECTED));
                         break;
                     case MQTTClient.MQTTCLIENT_CONNECTION_TERMINATED:
-
+                        if (DEBUG) {
+                            Log.d(TAG, "Connection terminated!!");
+                        }
+                        service.send(Message.obtain(null, MQTTServiceConstants.MSG_DISCONNECTED));
                         break;
                     case MQTTClient.MQTTCLIENT_CONNECTION_LOST:
-                        service.scheduleReconnect(service.mqttClient.getBrokerHostName(),
-                                service.mqttClient.getBrokerPort());
-                        service.onStopService();
+                        if (DEBUG) {
+                            Log.d(TAG, "Connection lost!!!");
+                        }
+                        if (service.isNetworkAvailable()) {
+                            // try now if network is available
+                            service.reconnectIfNecessary();
+                        } else {
+                            // notify that there is no network to connect to(leave reconnect for when connectivity is restored)
+                            service.send(Message.obtain(null, MQTTServiceConstants.MSG_NO_NETWORK));
+                        }
                         break;
                     case MQTTClient.MQTTCLIENT_MESSAGE_ARRIVED:
+                        // forward message to service manager
                         PublishedMessage publishedMsg = new PublishedMessage(msg.getData().getString(MQTTClient.MESSAGE_TOPIC),
                                 msg.getData().getString(MQTTClient.MESSSAGE_PAYLOAD));
                         service.send(Message.obtain(null, MQTTServiceConstants.MSG_PUBLISHED_MESSAGE, publishedMsg));
@@ -72,7 +106,11 @@ public class MQTTClientService extends Service {
         }
     }
 
+    /**
+     * Class manages messages from the service manager
+     */
     private static class IncomingHandler extends Handler {
+        // weak reference to service instance
         private final WeakReference<MQTTClientService> serviceInstance;
 
         public IncomingHandler(MQTTClientService service) {
@@ -107,6 +145,18 @@ public class MQTTClientService extends Service {
                     case MQTTServiceConstants.MSG_UNSUBSCRIBE:
                         service.unsubscribeFromTopic(msg.getData().getString(MQTTServiceConstants.MQTT_TOPIC));
                         break;
+                    case MQTTServiceConstants.MSG_PUBLISH_TO_TOPIC:
+                        service.publishToTopic(msg.getData().getString(MQTTServiceConstants.MQTT_TOPIC), msg.getData().getString(MQTTServiceConstants.MQTT_MESSAGE));
+                        break;
+                    case MQTTServiceConstants.MSG_GET_CONNECTION_STATUS:
+                        Message connStatusMsg = Message.obtain(null, MQTTServiceConstants.MSG_CONNECTION_STATUS);
+                        // send result as boolean in bundle
+                        Bundle info = new Bundle();
+                        info.putBoolean(MQTTServiceConstants.MQTT_CONNECTION_STATUS, (service.mqttClient != null && service.isNetworkAvailable() && service.mqttClient.isConnected()));
+                        connStatusMsg.setData(info);
+
+                        service.send(connStatusMsg);
+                        break;
                     default:
                         if (DEBUG) {
                             Log.d(TAG, "Unknown message type received. Message from: " + msg.replyTo + ". Message info: " + msg.what);
@@ -117,10 +167,13 @@ public class MQTTClientService extends Service {
         }
     }
 
-    private final BroadcastReceiver connectivityChanged = new BroadcastReceiver() {
+    /**
+     * Class to monitor system connectivity
+     */
+    private class ConnectivityChangedReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            NetworkInfo info = (NetworkInfo)intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+            NetworkInfo info = ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
             boolean hasConnectivity = (info != null && info.isConnected());
 
             if (DEBUG) {
@@ -128,21 +181,72 @@ public class MQTTClientService extends Service {
             }
 
             if (hasConnectivity) {
-
-            } else {
-                if (mqttClient != null) {
-                    onStopService();
-                }
+                // attempt reconnect now
+                reconnectIfNecessary();
+            } else if (mqttClient != null) {
+                // no connectivity so make sure client is set to disconnected and cancel reconnect attempts
+                mqttClient.disconnect();
+                cancelReconnect();
             }
         }
-    };
+    }
+
+
+    private void reconnectIfNecessary() {
+
+        if (mIsStarted && (mqttClient == null || !mqttClient.isConnected())) {
+            // Notify that we are attempting to reconnect
+            send(Message.obtain(null, MQTTServiceConstants.MSG_RECONNECTING));
+            connectMqttClient();
+        }
+    }
+
+    private void connectMqttClient() {
+        if (mqttClient == null) {
+            // get device ID
+            String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+            if (deviceId == null) {
+                if (DEBUG) {
+                    Log.d(TAG, "Device ID not found, generating random ID.");
+                }
+                // generate ID if ANDROID_ID cannot be found
+                deviceId = org.eclipse.paho.client.mqttv3.MqttClient.generateClientId();
+            }
+
+            // Create client object
+            try {
+                mqttClient = new MQTTClient(brokerHost, brokerPort, deviceId, mHandler);
+            } catch (MqttException e) {
+                e.printStackTrace();
+                // TODO: something here, not really sure what at the moment
+            }
+        }
+
+        try {
+            mqttClient.connect();
+            // We connected, so cancel any pending reconnect attempts
+            cancelReconnect();
+        } catch (MqttException e) {
+            if (DEBUG) {
+                Log.d(TAG, "Connect failed.");
+            }
+            // schedule reconnect
+            if (isNetworkAvailable()) {
+                // schedule reconnect if network is available (otherwise just wait until connectivity is available)
+                scheduleReconnect();
+            } else {
+                // notify that there is no network
+                send(Message.obtain(null, MQTTServiceConstants.MSG_NO_NETWORK));
+            }
+        }
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         if (DEBUG) {
-            Log.d(TAG, "Service started");
+            Log.d(TAG, "Service created");
         }
     }
 
@@ -152,7 +256,7 @@ public class MQTTClientService extends Service {
         onStopService();
 
         if (DEBUG) {
-            Log.d(TAG, "Service stopped");
+            Log.d(TAG, "Service destroyed");
         }
     }
 
@@ -161,9 +265,21 @@ public class MQTTClientService extends Service {
         if (DEBUG) {
             Log.d(TAG, "Received start id " + startId);
         }
-        if (!mIsRunning) {
-            onStartService(intent.getExtras().getString(MQTTServiceConstants.MQTT_BROKER_IP),
-                    intent.getExtras().getString(MQTTServiceConstants.MQTT_BROKER_PORT));
+
+        if (intent.getAction().equals(MQTTServiceConstants.ACTION_START)) {
+            // Handle start action
+            brokerHost = intent.getExtras().getString(MQTTServiceConstants.MQTT_BROKER_IP);
+            brokerPort = intent.getExtras().getString(MQTTServiceConstants.MQTT_BROKER_PORT);
+            onStartService();
+        } else if (intent.getAction().equals(MQTTServiceConstants.ACTION_STOP)) {
+            // handle stop action
+            onStopService();
+            stopSelf();
+        } else if (intent.getAction().equals(MQTTServiceConstants.ACTION_RECONNECT)) {
+            // handle reconnect action
+            if (isNetworkAvailable()) {
+                reconnectIfNecessary();
+            }
         }
         return START_NOT_STICKY;
     }
@@ -173,6 +289,10 @@ public class MQTTClientService extends Service {
         return mMessenger.getBinder();
     }
 
+    /**
+     * Send msg to all registered clients
+     * @param msg Message to send
+     */
     protected void send(Message msg) {
         for (int i = mClients.size() - 1; i >= 0; i--) {
             try {
@@ -187,59 +307,100 @@ public class MQTTClientService extends Service {
         }
     }
 
-    private void onStartService(String brokerIP, String brokerPort) {
-        String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+    /**
+     * Handle start service actions
+     */
+    private void onStartService() {
 
-        if (deviceId == null) {
-            if (DEBUG) {
-                Log.d(TAG, "Device ID not found");
-            }
-        } else {
-            try {
-                mqttClient = new MQTTClient(brokerIP, brokerPort, deviceId, mHandler);
-                mIsRunning = true;
-                this.getApplicationContext().registerReceiver(connectivityChanged,  new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-            } catch (MqttException e) {
-                if (DEBUG) {
-                    Log.d(TAG, "Mqtt Exception: " + e.getMessage());
-                }
-                onStopService();
-                scheduleReconnect(brokerIP, brokerPort);
-            }
+        if (mIsStarted) {
+            Log.w(TAG, "Attempt to start connection that is already active.");
+            return;
         }
-    }
 
-
-    private void onStopService() {
-        if (mIsRunning && mqttClient != null && mqttClient.isConnected()) {
+        // register receiver
+        getApplicationContext().registerReceiver(connectivityChanged, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        // service is started
+        mIsStarted = true;
+        // new start, so make sure client is recreated
+        if (mqttClient != null && mqttClient.isConnected()) {
             mqttClient.disconnect();
-            mqttClient = null;
         }
-        try {
-            this.getApplicationContext().unregisterReceiver(connectivityChanged);
-        } catch (Exception e) {
-            if (DEBUG) {
-                Log.d(TAG, "Unable to unregister broadcast receiver: " + e.getMessage());
-            }
-        }
-        mIsRunning = false;
+        mqttClient = null;
+        // attempt to connect client
+        connectMqttClient();
+
     }
 
-    private void  scheduleReconnect(String brokerIP, String brokerPort) {
+
+    /**
+     * Handle stop service actions
+     */
+    private void onStopService() {
+
+        if (!mIsStarted) {
+            // service not running, so do nothing
+            Log.w(TAG, "Attempt to stop non-active service.");
+            return;
+        }
+
+        mIsStarted = false;
+        // remove the connectivity receiver
+        getApplicationContext().unregisterReceiver(connectivityChanged);
+
+        // cancel any reconnect timers
+        cancelReconnect();
+
+        // destroy MQTT client
+        if (mqttClient != null && mqttClient.isConnected()) {
+            mqttClient.disconnect();
+        }
+        mqttClient = null;
+
+    }
+
+    /**
+     * Schedule reconnect of MQTT client
+     */
+    private void scheduleReconnect() {
         Intent i = new Intent(this, MQTTClientService.class);
-        i.putExtra(MQTTServiceConstants.MQTT_BROKER_IP, brokerIP);
-        i.putExtra(MQTTServiceConstants.MQTT_BROKER_PORT, brokerPort);
+        i.setAction(MQTTServiceConstants.ACTION_RECONNECT);
+
         PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
-        AlarmManager am = (AlarmManager)getSystemService(ALARM_SERVICE);
+
+        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + INTERVAL_RETRY, pi);
 
+        // notify that service is attempting reconnect
+        this.send(Message.obtain(null, MQTTServiceConstants.MSG_RECONNECTING));
+
     }
 
+    /**
+     * Remove any scheduled reconnect attempts
+     */
+    private void cancelReconnect() {
+        Intent i = new Intent(this, MQTTClientService.class);
+        i.setAction(MQTTServiceConstants.ACTION_RECONNECT);
+
+        PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
+
+        AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
+        am.cancel(pi);
+    }
+
+    /**
+     * Checks if network is available
+     * @return true if network is available, false otherwise
+     */
     private boolean isNetworkAvailable() {
-        NetworkInfo info = ((ConnectivityManager)getSystemService(CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+        NetworkInfo info = ((ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
         return (info != null);
     }
 
+    /**
+     * Unsubscribe from specified topic
+     * @param topic Topic to unsubscribe from
+     */
     private void unsubscribeFromTopic(String topic) {
         try {
             mqttClient.unsubscribeFromTopic(topic);
@@ -250,12 +411,36 @@ public class MQTTClientService extends Service {
         }
     }
 
+    /**
+     * Subscribe client to specified topic
+     * @param topic topic to subscribe to
+     */
     private void subscribeToTopic(String topic) {
         try {
             mqttClient.subscribeToTopic(topic);
         } catch (MqttException e) {
             if (DEBUG) {
                 Log.d(TAG, "Unable to subscribe to " + topic + " : " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Publish message to specified topic
+     * @param topic topic to send message to
+     * @param message message to send
+     */
+    private void publishToTopic(String topic, String message) {
+        if ((mqttClient == null) || !mqttClient.isConnected()) {
+            Log.w(TAG, "No connection to publish to.");
+            // TODO: handle messages so they are not lost (just change QoS in Client?)
+        } else {
+            try {
+                mqttClient.publishToTopic(topic, message);
+            } catch (MqttException e) {
+                if (DEBUG) {
+                    Log.d(TAG, "Unable to publish message.");
+                }
             }
         }
     }

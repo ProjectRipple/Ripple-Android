@@ -20,9 +20,16 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
-import com.discoverylab.ripple.android.fragment.PatientDetailsFragment;
-import com.discoverylab.ripple.android.util.RandomPatient;
 import com.discoverylab.ripple.android.config.Common;
+import com.discoverylab.ripple.android.config.WSConfig;
+import com.discoverylab.ripple.android.fragment.Banner;
+import com.discoverylab.ripple.android.fragment.PatientDetailsFragment;
+import com.discoverylab.ripple.android.fragment.PrefsFragment;
+import com.discoverylab.ripple.android.mqtt.MQTTClientService;
+import com.discoverylab.ripple.android.mqtt.MQTTServiceConstants;
+import com.discoverylab.ripple.android.mqtt.MQTTServiceManager;
+import com.discoverylab.ripple.android.mqtt.PublishedMessage;
+import com.discoverylab.ripple.android.util.RandomPatient;
 import com.discoverylab.ripple.android.view.PatientView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,14 +39,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonObject;
 
 import java.lang.ref.WeakReference;
-
-import com.discoverylab.ripple.android.config.WSConfig;
-import com.discoverylab.ripple.android.fragment.Banner;
-import com.discoverylab.ripple.android.fragment.PrefsFragment;
-import com.discoverylab.ripple.android.mqtt.MQTTClientService;
-import com.discoverylab.ripple.android.mqtt.MQTTServiceConstants;
-import com.discoverylab.ripple.android.mqtt.MQTTServiceManager;
-import com.discoverylab.ripple.android.mqtt.PublishedMessage;
 
 /**
  * Main activity of application
@@ -120,7 +119,7 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
             onLocationChanged(location);
         } else if (map != null) {
             // zoom to USA
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(CONTIGUOUS_USA_CENTER, (float)4.0));
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(CONTIGUOUS_USA_CENTER, (float) 4.0));
         }
     }
 
@@ -141,8 +140,8 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
             this.mqttServiceManager.bind();
         }
         // check if we should create fake patients (for debugging/demo)
-        if(createFakePatients){
-            for(int i = 0; i < RandomPatient.MAX_UNIQUE_PATIENTS; i++){
+        if (createFakePatients) {
+            for (int i = 0; i < RandomPatient.MAX_UNIQUE_PATIENTS; i++) {
                 this.banner.addPatient(RandomPatient.getRandomPatient());
             }
             createFakePatients = false;
@@ -197,7 +196,6 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
     }
 
     /**
-     *
      * @return true if MQTT service is currently running, false otherwise
      */
     public boolean isMQTTServiceRunning() {
@@ -206,6 +204,7 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
 
     /**
      * Subscribe to a MQTT topic
+     *
      * @param topicName MQTT topic to subscribe to
      */
     public void subscribeToTopic(String topicName) {
@@ -223,6 +222,7 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
 
     /**
      * Unsubscribe from an MQTT topic
+     *
      * @param topicName MQTT topic to unsubscribe from
      */
     public void unsubscribeFromTopic(String topicName) {
@@ -240,6 +240,7 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
 
     /**
      * Processes message from MQTT client
+     *
      * @param msg MQTT message to process
      */
     private void processPublishedMessage(PublishedMessage msg) {
@@ -283,6 +284,18 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
                         break;
                     case MQTTServiceConstants.MSG_PUBLISHED_MESSAGE:
                         activity.processPublishedMessage((PublishedMessage) msg.obj);
+                        break;
+                    case MQTTServiceConstants.MSG_DISCONNECTED:
+                        Toast.makeText(activity, "Disconnected from Broker.", Toast.LENGTH_SHORT).show();
+                        break;
+                    case MQTTServiceConstants.MSG_NO_NETWORK:
+                        Toast.makeText(activity, "No network connection, will attempt to reconnect with broker when network is restored.", Toast.LENGTH_LONG).show();
+                        break;
+                    case MQTTServiceConstants.MSG_RECONNECTING:
+                        Toast.makeText(activity, "Reconnecting to Broker...", Toast.LENGTH_SHORT).show();
+                        break;
+                    case MQTTServiceConstants.MSG_CONNECTION_STATUS:
+
                         break;
                     default:
                         Log.d(Common.LOG_TAG, "Unknown message type :" + msg.what);
