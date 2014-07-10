@@ -22,7 +22,7 @@ public class MQTTServiceManager {
     // Log tag
     private static final String TAG = "MQTTServiceManager";
     // true to print debug messages
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     // Class of MQTT service
     private Class<? extends Service> mServiceClass;

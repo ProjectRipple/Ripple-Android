@@ -214,14 +214,14 @@ public class PatientDetailsFragment extends Fragment {
         this.connectButton = null;
         this.ecgRequestButton = null;
         // Remove reference to graphhelper (which holds reference to a view that references our activity)
+        this.graphHelper.stopPlotter();
+        this.graphHelper.clearGraph();
         this.graphHelper = null;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        graphHelper.stopPlotter();
-        graphHelper.clearGraph();
     }
 
     /**

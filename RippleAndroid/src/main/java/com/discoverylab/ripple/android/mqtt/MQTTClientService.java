@@ -126,6 +126,16 @@ public class MQTTClientService extends Service {
                         if (DEBUG) {
                             Log.d(TAG, "Client registered: " + msg.replyTo);
                         }
+                        // TODO: find cleaner way to notify a new client that the connection is already established?
+                        try {
+                            if(service.mqttClient != null && service.mqttClient.isConnected()) {
+                                // notify immediately this messager if we are already connected
+                                msg.replyTo.send(Message.obtain(null, MQTTServiceConstants.MSG_CONNECTED));
+                            }
+                        } catch (RemoteException e) {
+                            Log.e(TAG, "Client: " + msg.replyTo.toString() + " is dead, removing him from the list");
+                            service.mClients.remove(msg.replyTo);
+                        }
                         break;
                     case MQTTServiceConstants.MSG_UNREGISTER_CLIENT:
                         service.mClients.remove(msg.replyTo);
