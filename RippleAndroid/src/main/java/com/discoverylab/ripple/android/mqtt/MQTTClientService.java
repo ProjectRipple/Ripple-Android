@@ -128,7 +128,7 @@ public class MQTTClientService extends Service {
                         }
                         // TODO: find cleaner way to notify a new client that the connection is already established?
                         try {
-                            if(service.mqttClient != null && service.mqttClient.isConnected()) {
+                            if (service.mqttClient != null && service.mqttClient.isConnected()) {
                                 // notify immediately this messager if we are already connected
                                 msg.replyTo.send(Message.obtain(null, MQTTServiceConstants.MSG_CONNECTED));
                             }
@@ -202,16 +202,23 @@ public class MQTTClientService extends Service {
     }
 
 
+    /**
+     * Reconnect to the Broker if needed
+     */
     private void reconnectIfNecessary() {
 
         if (mIsStarted && (mqttClient == null || !mqttClient.isConnected())) {
             // Notify that we are attempting to reconnect
             send(Message.obtain(null, MQTTServiceConstants.MSG_RECONNECTING));
-            connectMqttClient();
+            attemptConnectMqttClient();
         }
     }
 
-    private void connectMqttClient() {
+    /**
+     * Attempt connecting the MQTTClient to the Broker.
+     * Another connection attempt will be scheduled if connecting failes.
+     */
+    private void attemptConnectMqttClient() {
         if (mqttClient == null) {
             // get device ID
             String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
@@ -301,6 +308,7 @@ public class MQTTClientService extends Service {
 
     /**
      * Send msg to all registered clients
+     *
      * @param msg Message to send
      */
     protected void send(Message msg) {
@@ -337,7 +345,7 @@ public class MQTTClientService extends Service {
         }
         mqttClient = null;
         // attempt to connect client
-        connectMqttClient();
+        attemptConnectMqttClient();
 
     }
 
@@ -372,11 +380,12 @@ public class MQTTClientService extends Service {
      * Schedule reconnect of MQTT client
      */
     private void scheduleReconnect() {
+        // Create Intent
         Intent i = new Intent(this, MQTTClientService.class);
         i.setAction(MQTTServiceConstants.ACTION_RECONNECT);
-
+        // Create PendingIntent
         PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
-
+        // Set alarm with PendingIntent
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
         am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + INTERVAL_RETRY, pi);
 
@@ -389,17 +398,19 @@ public class MQTTClientService extends Service {
      * Remove any scheduled reconnect attempts
      */
     private void cancelReconnect() {
+        // Create Intent
         Intent i = new Intent(this, MQTTClientService.class);
         i.setAction(MQTTServiceConstants.ACTION_RECONNECT);
-
+        // Create PendingIntent
         PendingIntent pi = PendingIntent.getService(this, 0, i, 0);
-
+        // Cancel any pending calls to this service
         AlarmManager am = (AlarmManager) getSystemService(ALARM_SERVICE);
         am.cancel(pi);
     }
 
     /**
      * Checks if network is available
+     *
      * @return true if network is available, false otherwise
      */
     private boolean isNetworkAvailable() {
@@ -409,6 +420,7 @@ public class MQTTClientService extends Service {
 
     /**
      * Unsubscribe from specified topic
+     *
      * @param topic Topic to unsubscribe from
      */
     private void unsubscribeFromTopic(String topic) {
@@ -423,6 +435,7 @@ public class MQTTClientService extends Service {
 
     /**
      * Subscribe client to specified topic
+     *
      * @param topic topic to subscribe to
      */
     private void subscribeToTopic(String topic) {
@@ -437,7 +450,8 @@ public class MQTTClientService extends Service {
 
     /**
      * Publish message to specified topic
-     * @param topic topic to send message to
+     *
+     * @param topic   topic to send message to
      * @param message message to send
      */
     private void publishToTopic(String topic, String message) {
