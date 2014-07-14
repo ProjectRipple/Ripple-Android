@@ -21,4 +21,5 @@
     <dimen name="patient_view_text_size">12sp</dimen>
     <dimen name="patient_view_id_width">35dp</dimen>
     <dimen name="patient_view_id_height">23dp</dimen>
+    <dimen name="patient_banner_height">150dp</dimen>
 </resources>

@@ -17,7 +17,7 @@ public class LaunchActivity extends Activity {
         setContentView(R.layout.activity_launch);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, LaunchFragment.newInstance())
+                    .add(R.id.banner_container, LaunchFragment.newInstance())
                     .commit();
         }
     }

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.discoverylab.ripple.android"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0">
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -36,13 +36,13 @@
         android:allowBackup="true"
         android:icon="@drawable/logo_square_style_small"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
+        android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen">
         <uses-library android:name="com.google.android.maps" />
 
         <activity
             android:name=".activity.LaunchActivity"
             android:label="@string/app_name"
-            android:screenOrientation="landscape" >
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -60,6 +60,11 @@
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Black.NoTitleBar" />
 
+        <activity
+            android:name=".activity.ScenerioActivity"
+            android:label="@string/title_activity_scenerio"
+            android:screenOrientation="landscape" />
+
         <service
             android:name=".mqtt.MQTTClientService"
             android:exported="false" />
@@ -72,10 +77,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name=".activity.ScenerioActivity"
-            android:label="@string/title_activity_scenerio" >
-        </activity>
+
     </application>
 
 </manifest>

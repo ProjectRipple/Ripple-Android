@@ -1,17 +1,10 @@
 package com.discoverylab.ripple.android.activity;
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.fragment.PatientBannerFragment;
 
 public class ScenerioActivity extends Activity {
 
@@ -21,24 +14,9 @@ public class ScenerioActivity extends Activity {
         setContentView(R.layout.activity_scenerio);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.banner_container, PatientBannerFragment.newInstance())
                     .commit();
         }
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_scenerio, container, false);
-            return rootView;
-        }
-    }
 }

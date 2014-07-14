@@ -1,7 +1,24 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.discoverylab.ripple.android.activity.ScenerioActivity"
-    tools:ignore="MergeRootFrame" />
+    >
+
+    <FrameLayout
+        android:id="@+id/banner_container"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/patient_banner_height"
+        android:layout_alignParentTop="true"
+        tools:context="com.discoverylab.ripple.android.activity.ScenerioActivity"
+        tools:ignore="MergeRootFrame" />
+
+    <FrameLayout
+        android:id="@+id/patient_scenario_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/banner_container"
+        tools:context="com.discoverylab.ripple.android.activity.ScenerioActivity"
+        tools:ignore="MergeRootFrame" />
+
+</RelativeLayout>

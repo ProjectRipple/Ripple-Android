@@ -1,13 +1,40 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="@dimen/patient_banner_height"
+    android:orientation="horizontal"
     tools:context=".fragment.PatientBannerFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
+    <HorizontalScrollView
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_weight="0.80"
+        android:scrollbarAlwaysDrawHorizontalTrack="true">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+
+    <ImageButton
+        android:id="@+id/banner_add_patient"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0.05"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_action_new" />
+
+    <ImageButton
+        android:id="@+id/banner_patient_overview"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="0.05"
+        android:layout_marginRight="2dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_action_view_as_list"
+        />
+
+</LinearLayout>
