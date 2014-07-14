@@ -57,6 +57,9 @@
     <string name="launch_scenario">Scenario</string>
     <string name="launch_extra">Extra</string>
     <string name="launch_action_plan">Action Plan</string>
+
+    <!-- Activity labels -->
     <string name="title_activity_scenerio">ScenerioActivity</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
