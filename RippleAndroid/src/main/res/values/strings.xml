@@ -57,5 +57,6 @@
     <string name="launch_scenario">Scenario</string>
     <string name="launch_extra">Extra</string>
     <string name="launch_action_plan">Action Plan</string>
+    <string name="title_activity_scenerio">ScenerioActivity</string>
 
 </resources>
