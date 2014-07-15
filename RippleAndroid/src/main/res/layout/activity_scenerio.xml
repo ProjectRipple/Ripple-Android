@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/patient_banner_height"
         android:layout_alignParentTop="true"
-        tools:context="com.discoverylab.ripple.android.activity.ScenerioActivity"
+        tools:context="com.discoverylab.ripple.android.activity.ScenarioActivity"
         tools:ignore="MergeRootFrame" />
 
     <FrameLayout
@@ -18,7 +18,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_below="@+id/banner_container"
-        tools:context="com.discoverylab.ripple.android.activity.ScenerioActivity"
+        tools:context="com.discoverylab.ripple.android.activity.ScenarioActivity"
         tools:ignore="MergeRootFrame" />
 
 </RelativeLayout>

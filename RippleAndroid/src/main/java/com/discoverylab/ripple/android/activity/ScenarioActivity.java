@@ -9,7 +9,7 @@ import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.fragment.PatientBannerFragment;
 import com.discoverylab.ripple.android.fragment.ScenarioPatientFragment;
 
-public class ScenerioActivity extends FragmentActivity {
+public class ScenarioActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

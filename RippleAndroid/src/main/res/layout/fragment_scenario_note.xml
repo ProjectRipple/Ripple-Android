@@ -1,13 +1,56 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     tools:context=".fragment.ScenarioNoteFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+    <LinearLayout
+        android:id="@+id/note_button_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Add note"
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="View notes"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/spacer_above_head"
+        android:layout_width="1dp"
+        android:layout_height="20dp"
+        android:layout_below="@+id/note_button_layout" />
+
+
+    <FrameLayout
+        android:id="@+id/scenario_patient_image_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/spacer_above_head">
+
+        <ImageView
+            android:id="@+id/patient_tag_painted"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/tag_painted"/>
+
+        <ImageView
+            android:id="@+id/patient_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/tag_original"/>
+
+    </FrameLayout>
+
+
+</RelativeLayout>

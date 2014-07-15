@@ -61,7 +61,7 @@
             android:theme="@android:style/Theme.Black.NoTitleBar" />
 
         <activity
-            android:name=".activity.ScenerioActivity"
+            android:name=".activity.ScenarioActivity"
             android:label="@string/title_activity_scenerio"
             android:screenOrientation="landscape" />
 

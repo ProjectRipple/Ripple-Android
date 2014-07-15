@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
-import com.discoverylab.ripple.android.activity.ScenerioActivity;
+import com.discoverylab.ripple.android.activity.ScenarioActivity;
 
 /**
  * Fragment contained the {@link com.discoverylab.ripple.android.activity.LaunchActivity}
@@ -74,7 +74,7 @@ public class LaunchFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.launch_scenario:
                 Toast.makeText(getActivity(), "Not implemented yet.", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getActivity(), ScenerioActivity.class));
+                startActivity(new Intent(getActivity(), ScenarioActivity.class));
                 break;
             case R.id.launch_settings:
                 Toast.makeText(getActivity(), "Not implemented yet.", Toast.LENGTH_SHORT).show();
