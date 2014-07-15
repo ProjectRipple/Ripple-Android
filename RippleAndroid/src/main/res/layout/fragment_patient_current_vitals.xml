@@ -3,12 +3,188 @@
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:layout_weight="3"
+    android:layout_margin="16dp"
     tools:context=".fragment.PatientCurrentVitalsFragment">
 
+
+    <TextView
+        android:id="@+id/current_vitals_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30sp"
+        android:gravity="center_horizontal"
+        android:text="Vitals"/>
+
     <View
-        android:layout_width="5dp"
-        android:layout_height="match_parent"
+        android:id="@+id/current_vitals_spacer_top"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
         android:layout_alignParentLeft="true"
+        android:layout_below="@+id/current_vitals_title"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@color/white"/>
+
+    <ImageView
+        android:id="@+id/current_vitals_temperature_label"
+        android:layout_width="@dimen/current_vitals_image_size"
+        android:layout_height="@dimen/current_vitals_image_size"
+        android:layout_below="@+id/current_vitals_spacer_top"
+        android:src="@drawable/thermostat_white"
+        />
+
+    <TextView
+        android:id="@+id/current_vitals_temperature_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/current_vitals_temperature_label"
+        android:layout_alignBottom="@+id/current_vitals_temperature_label"
+        android:layout_alignParentRight="true"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/patient_info_text_size"
+        android:ems="5"
+        android:maxEms="5"
+        android:text="100.5"
+        />
+
+    <TextView
+        android:id="@+id/current_vitals_sp02_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/current_vitals_temperature_label"
+        android:paddingTop="15dp"
+        android:textSize="@dimen/patient_info_text_size"
+        android:text="Sp02"/>
+
+
+    <TextView
+        android:id="@+id/current_vitals_sp02_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/current_vitals_sp02_label"
+        android:layout_alignLeft="@+id/current_vitals_temperature_value"
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/patient_info_text_size"
+        android:text="99%"/>
+
+    <ImageView
+        android:id="@+id/current_vitals_heartrate_label"
+        android:layout_width="@dimen/current_vitals_image_size"
+        android:layout_height="@dimen/current_vitals_image_size"
+        android:layout_below="@+id/current_vitals_sp02_label"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/heart"/>
+
+    <TextView
+        android:id="@+id/current_vitals_heartrate_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/current_vitals_heartrate_label"
+        android:layout_alignBottom="@+id/current_vitals_heartrate_label"
+        android:layout_alignLeft="@+id/current_vitals_temperature_value"
+        android:layout_alignParentRight="true"
+        android:gravity="center_vertical"
+        android:textSize="@dimen/patient_info_text_size"
+        android:text="88"/>
+
+    <View
+        android:id="@+id/current_vitals_spacer_blood_pressure"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/current_vitals_heartrate_label"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white"/>
+
+    <TextView
+        android:id="@+id/current_vitals_systolic_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/current_vitals_spacer_blood_pressure"
+        android:textSize="@dimen/patient_info_text_size"
+        android:text="SYS"/>
+
+    <TextView
+        android:id="@+id/current_vitals_systolic_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/current_vitals_systolic_label"
+        android:layout_alignLeft="@+id/current_vitals_temperature_value"
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/patient_info_text_size"
+        android:text="135"/>
+
+
+
+    <TextView
+        android:id="@+id/current_vitals_diastolic_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/current_vitals_systolic_label"
+        android:paddingTop="15dp"
+        android:textSize="@dimen/patient_info_text_size"
+        android:text="DIA"/>
+
+    <TextView
+        android:id="@+id/current_vitals_diastolic_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/current_vitals_diastolic_label"
+        android:layout_alignLeft="@+id/current_vitals_temperature_value"
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/patient_info_text_size"
+        android:text="90"/>
+
+
+    <View
+        android:id="@+id/current_vitals_spacer_resp"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/current_vitals_diastolic_label"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white"/>
+
+    <TextView
+        android:id="@+id/current_vitals_resparation_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/current_vitals_spacer_resp"
+        android:textSize="@dimen/patient_info_text_size"
+        android:text="Resparation"/>
+
+
+    <TextView
+        android:id="@+id/current_vitals_resparation_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/current_vitals_resparation_label"
+        android:layout_alignLeft="@+id/current_vitals_temperature_value"
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/patient_info_text_size"
+        android:text="15"/>
+
+
+    <TextView
+        android:id="@+id/current_vitals_pain_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/current_vitals_resparation_label"
+        android:paddingTop="15dp"
+        android:textSize="@dimen/patient_info_text_size"
+        android:text="Pain"/>
+
+    <TextView
+        android:id="@+id/current_vitals_pain_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/current_vitals_pain_label"
+        android:layout_alignLeft="@+id/current_vitals_temperature_value"
+        android:layout_alignParentRight="true"
+        android:textSize="@dimen/patient_info_text_size"
+        android:text="Some"/>
+
 
 </RelativeLayout>
