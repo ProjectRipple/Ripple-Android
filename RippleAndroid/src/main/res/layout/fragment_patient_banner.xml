@@ -9,11 +9,14 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_weight="0.80"
+        android:fadeScrollbars="false"
         android:scrollbarAlwaysDrawHorizontalTrack="true">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:id="@+id/patient_banner_view_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
         </LinearLayout>
     </HorizontalScrollView>
