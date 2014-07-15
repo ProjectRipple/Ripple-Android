@@ -11,6 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.object.Patient;
+import com.discoverylab.ripple.android.util.RandomPatient;
+import com.discoverylab.ripple.android.view.BannerPatientView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,11 +52,11 @@ public class PatientBannerFragment extends Fragment {
         LinearLayout viewLayout = (LinearLayout) v.findViewById(R.id.patient_banner_view_layout);
 
         // TODO: remove after debugging
-        for(int i = 0; i < 20; i++){
-            TextView textView = new TextView(getActivity());
-            textView.setText("Patient " + i + "! ");
-            textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-            viewLayout.addView(textView);
+        for(int i = 0; i < RandomPatient.MAX_UNIQUE_PATIENTS; i++){
+            Patient p = RandomPatient.getRandomPatient();
+            BannerPatientView bpv = new BannerPatientView(getActivity());
+            bpv.setPatient(p);
+            viewLayout.addView(bpv);
         }
 
         return v;

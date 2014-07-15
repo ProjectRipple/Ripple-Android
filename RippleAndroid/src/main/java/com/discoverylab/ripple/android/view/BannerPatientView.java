@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -73,6 +74,8 @@ public class BannerPatientView extends RelativeLayout {
         this.setPadding(this.viewPaddingPixels, this.viewPaddingPixels, this.viewPaddingPixels, this.viewPaddingPixels);
         this.setMinimumHeight(this.viewHeightPixels);
         this.setMinimumWidth(this.viewWidthPixels);
+
+        this.setGravity(Gravity.CENTER);
 
         // need layout params of parent view type
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) this.getLayoutParams();

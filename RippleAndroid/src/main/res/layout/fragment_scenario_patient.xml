@@ -16,6 +16,11 @@
 
     </FrameLayout>
 
+    <View
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:background="@color/white"/>
+
     <FrameLayout
         android:id="@+id/scenario_patient_info_container"
         android:layout_width="0dp"
@@ -25,6 +30,11 @@
 
 
     </FrameLayout>
+
+    <View
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:background="@color/white"/>
 
     <FrameLayout
         android:id="@+id/scenario_patient_current_vitals_container"

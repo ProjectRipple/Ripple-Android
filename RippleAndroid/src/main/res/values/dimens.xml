@@ -26,7 +26,7 @@
 
     <dimen name="patient_banner_height">125dp</dimen>
     <dimen name="patient_banner_view_width">125dp</dimen>
-    <dimen name="patient_banner_view_height">125dp</dimen>
+    <dimen name="patient_banner_view_height">115dp</dimen>
     <dimen name="patient_banner_view_padding">10dp</dimen>
     <dimen name="patient_banner_view_margin_right">2dp</dimen>
 
