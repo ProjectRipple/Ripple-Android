@@ -11,7 +11,7 @@ import android.os.Parcelable;
 public class Patient implements Parcelable {
 
     private int age;
-    private int color;
+    private int triageColor;
     private int bpm;
     private int rpm;
     private int o2;
@@ -26,7 +26,7 @@ public class Patient implements Parcelable {
     private String sex;
     private String type;
     private String ipaddr;
-    private String src;
+    private String patientId;
     // is the patient selected by the user
     private boolean isSelected = false;
 
@@ -40,7 +40,7 @@ public class Patient implements Parcelable {
 
         this.pid = in.readInt();
         this.age = in.readInt();
-        this.color = in.readInt();
+        this.triageColor = in.readInt();
         this.bpm = in.readInt();
         this.rpm = in.readInt();
         this.o2 = in.readInt();
@@ -54,7 +54,7 @@ public class Patient implements Parcelable {
         this.sex = in.readString();
         this.type = in.readString();
         this.ipaddr = in.readString();
-        this.src = in.readString();
+        this.patientId = in.readString();
         this.isSelected = (in.readByte() == 1);
     }
 
@@ -63,7 +63,7 @@ public class Patient implements Parcelable {
         // Make sure this ordering matches the order of reads for Patient(Parcel)
         parcel.writeInt(this.pid);
         parcel.writeInt(this.age);
-        parcel.writeInt(this.color);
+        parcel.writeInt(this.triageColor);
         parcel.writeInt(this.bpm);
         parcel.writeInt(this.rpm);
         parcel.writeInt(this.o2);
@@ -77,7 +77,7 @@ public class Patient implements Parcelable {
         parcel.writeString(this.sex);
         parcel.writeString(this.type);
         parcel.writeString(this.ipaddr);
-        parcel.writeString(this.src);
+        parcel.writeString(this.patientId);
         parcel.writeByte((byte) (this.isSelected ? 1 : 0));
     }
 
@@ -161,12 +161,12 @@ public class Patient implements Parcelable {
         this.ipaddr = ipaddr;
     }
 
-    public int getColor() {
-        return color;
+    public int getTriageColor() {
+        return triageColor;
     }
 
-    public void setColor(int color) {
-        this.color = color;
+    public void setTriageColor(int triageColor) {
+        this.triageColor = triageColor;
     }
 
     public int getBpm() {
@@ -193,12 +193,12 @@ public class Patient implements Parcelable {
         this.o2 = o2;
     }
 
-    public String getSrc() {
-        return src;
+    public String getPatientId() {
+        return patientId;
     }
 
-    public void setSrc(String src) {
-        this.src = src;
+    public void setPatientId(String patientId) {
+        this.patientId = patientId;
     }
 
     public boolean isSelected() {

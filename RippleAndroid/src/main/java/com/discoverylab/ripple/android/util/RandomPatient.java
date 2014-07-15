@@ -27,7 +27,7 @@ public final class RandomPatient {
 
     public static Patient getRandomPatient() {
         Patient patient = new Patient();
-        patient.setColor(colors[new Random().nextInt(colors.length)]);
+        patient.setTriageColor(colors[new Random().nextInt(colors.length)]);
         patient.setfName(fNames[new Random().nextInt(fNames.length)]);
         patient.setlName(lNames[new Random().nextInt(lNames.length)]);
         patient.setSsn(ssn[new Random().nextInt(ssn.length)]);
@@ -37,7 +37,7 @@ public final class RandomPatient {
         patient.setBpm(new Random().nextInt(80) + 20);
         patient.setO2(new Random().nextInt(30) + 70);
         patient.setRpm(new Random().nextInt(24));
-        patient.setSrc(src[lastSrc]);
+        patient.setPatientId(src[lastSrc]);
         lastSrc++;
         if(lastSrc == src.length){
             // reset

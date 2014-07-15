@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/patient_banner_view_width"
+    android:layout_height="@dimen/patient_banner_view_height"
+    android:background="@drawable/patient_border"
+    android:padding="@dimen/patient_banner_view_padding"
+    android:layout_marginRight="@dimen/patient_banner_view_margin_right"
+    android:gravity="center">
+
+
+    <TextView
+        android:id="@+id/patient_banner_view_id"
+        android:layout_width="90dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:text="Patient ID X"/>
+
+    <TextView
+        android:id="@+id/patient_banner_view_status"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@+id/patient_banner_view_id"
+        android:layout_alignLeft="@+id/patient_banner_view_id"
+        android:layout_alignRight="@+id/patient_banner_view_id"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:text="Attended (Other)"/>
+
+
+
+</merge>

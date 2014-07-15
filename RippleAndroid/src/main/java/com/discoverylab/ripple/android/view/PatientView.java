@@ -1,7 +1,6 @@
 package com.discoverylab.ripple.android.view;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
@@ -76,7 +75,7 @@ public class PatientView extends RelativeLayout {
     }
 
     public String getPatientSrc() {
-        return this.mPatient.getSrc();
+        return this.mPatient.getPatientId();
     }
 
     public void setPatient(Patient patient) {
@@ -170,7 +169,7 @@ public class PatientView extends RelativeLayout {
         // update patient color
         GradientDrawable bgDrawable = (GradientDrawable) this.getBackground();
         if (bgDrawable != null) {
-            bgDrawable.setStroke(5, mPatient.getColor());
+            bgDrawable.setStroke(5, mPatient.getTriageColor());
         }
 
         // check if patient is selected

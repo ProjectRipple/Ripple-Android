@@ -249,7 +249,7 @@ public class Banner extends Fragment {
                     // find patient
                     synchronized (patientLock) {
                         for (Patient p : mPatients) {
-                            if (p.getSrc().equals(src)) {
+                            if (p.getPatientId().equals(src)) {
                                 patientFound = true;
                                 curPatient = p;
                                 break;
@@ -258,9 +258,9 @@ public class Banner extends Fragment {
                         if (!patientFound) {
                             // Add patient
                             curPatient = new Patient();
-                            curPatient.setSrc(src);
+                            curPatient.setPatientId(src);
                             mPatients.add(curPatient);
-                            curPatient.setColor(Color.CYAN);
+                            curPatient.setTriageColor(Color.CYAN);
                             createPatientView(curPatient);
                         }
                     }
@@ -291,7 +291,7 @@ public class Banner extends Fragment {
                         // find patient
                         synchronized (patientLock) {
                             for (Patient p : mPatients) {
-                                if (p.getSrc().equals(patientId)) {
+                                if (p.getPatientId().equals(patientId)) {
                                     patientFound = true;
                                     curPatient = p;
                                     break;
