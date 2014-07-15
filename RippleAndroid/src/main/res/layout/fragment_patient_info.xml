@@ -1,13 +1,139 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_weight="4"
     tools:context=".fragment.PatientInfoFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
 
-</FrameLayout>
+
+        <TextView
+            android:id="@+id/patient_name_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/patient_info_label_text_size"
+            android:paddingTop="10dp"
+            android:layout_alignParentLeft="true"
+            android:text="Name: " />
+
+        <EditText
+            android:id="@+id/patient_name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/patient_name_label"
+            android:layout_alignBottom="@+id/patient_name_label"
+            android:textSize="16sp"
+            android:inputType="textPersonName"
+
+            android:text="Really long long long long long test string!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1" />
+
+        <TextView
+            android:id="@+id/patient_age_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/patient_name_label"
+            android:layout_alignRight="@+id/patient_name_label"
+            android:paddingTop="10dp"
+            android:textSize="@dimen/patient_info_label_text_size"
+            android:text="Age: " />
+
+        <EditText
+            android:id="@+id/patient_age_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/patient_age_label"
+            android:layout_alignBottom="@+id/patient_age_label"
+            android:textSize="16sp"
+            android:inputType="number"
+            android:ems="3"
+            android:maxEms="3"
+            android:maxLength="3" />
+
+        <TextView
+            android:id="@+id/patient_nbc_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/patient_age_label"
+            android:layout_alignRight="@+id/patient_name_label"
+            android:paddingTop="10dp"
+            android:textSize="@dimen/patient_info_label_text_size"
+            android:text="NBC: " />
+
+        <Spinner
+            android:id="@+id/patient_nbc_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/patient_nbc_label"
+            android:layout_alignBottom="@+id/patient_nbc_label"
+            android:entries="@array/nbc_entries" />
+
+        <TextView
+            android:id="@+id/patient_sex_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/patient_sex_spinner"
+            android:layout_alignBottom="@+id/patient_age_label"
+            android:paddingTop="10dp"
+            android:textSize="@dimen/patient_info_label_text_size"
+            android:text="Sex: " />
+
+        <Spinner
+            android:id="@+id/patient_sex_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/patient_age_label"
+            android:layout_alignParentRight="true"
+            android:entries="@array/gender_options" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/patient_triage_color_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/patient_info_label_text_size"
+            android:text="Triage Color:" />
+
+        <Spinner
+            android:id="@+id/patient_triage_color_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/patient_triage_color_label"
+            android:layout_alignBottom="@+id/patient_triage_color_label"
+            android:prompt="@string/change_triage_color"
+            android:entries="@array/triage_color_options" />
+
+        <TextView
+            android:id="@+id/patient_status_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/patient_triage_color_label"
+            android:layout_alignRight="@+id/patient_triage_color_label"
+            android:paddingTop="15dp"
+            android:textSize="@dimen/patient_info_label_text_size"
+            android:text="Status:" />
+
+        <Spinner
+            android:id="@+id/patient_status_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/patient_status_label"
+            android:layout_alignBottom="@+id/patient_status_label"
+            android:entries="@array/status_options"
+            android:prompt="@string/status_prompt" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>

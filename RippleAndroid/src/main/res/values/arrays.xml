@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <string-array name="status_options">
+        <item>Not Attended</item>
+        <item>Attended (Me)</item>
+        <item>Attended (Team)</item>
+        <item>Attended (Other)</item>
+        <item>Transport (Team)</item>
+        <item>Transport (Other)</item>
+    </string-array>
+
+
+    <string-array name="nbc_entries">
+        <item>None</item>
+        <item>(N)Nuclear</item>
+        <item>(B)Biological</item>
+        <item>(C)Chemical</item>
+        <item>NB</item>
+        <item>NC</item>
+        <item>BC</item>
+        <item>NBC</item>
+    </string-array>
+
+    <string-array name="gender_options">
+        <item>Unknown</item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
+    <string-array name="triage_color_options">
+
+        <item>Unknown</item>
+        <item>Green</item>
+        <item>Yellow</item>
+        <item>Red</item>
+        <item>Black</item>
+
+    </string-array>
+</resources>

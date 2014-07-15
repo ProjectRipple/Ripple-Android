@@ -24,4 +24,6 @@
 
 
     <dimen name="patient_banner_height">100dp</dimen>
+    <dimen name="patient_info_text_size">20sp</dimen>
+    <dimen name="patient_info_label_text_size">24sp</dimen>
 </resources>
