@@ -6,6 +6,9 @@ Organized by: Willie Tsang
 -->
 <resources>
 
+    <!-- Ripple style colors -->
+    <color name="scenario_text_color">#FFFFFF</color>
+
     <!-- Android style -->
     <color name="android_green">#A4C639</color>
 
