@@ -27,28 +27,33 @@
                 android:orientation="horizontal">
 
                 <ImageButton
+                    android:id="@+id/patient_note_add_text"
                     android:layout_width="75dp"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_action_new_event" />
 
                 <ImageButton
+                    android:id="@+id/patient_note_add_image"
                     android:layout_width="75dp"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_action_camera" />
 
                 <ImageButton
+                    android:id="@+id/patient_note_add_voice"
                     android:layout_width="75dp"
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_action_mic" />
 
 
                 <Button
+                    android:id="@+id/patient_note_add_drug"
                     android:layout_width="75dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Rx" />
 
                 <Button
+                    android:id="@+id/patient_note_add_ecg"
                     android:layout_width="75dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -77,19 +82,18 @@
                 android:orientation="vertical">
 
 
-
             </LinearLayout>
 
         </ScrollView>
+
         <Button
             android:id="@+id/patient_note_done_btn"
             android:layout_width="100dp"
             android:layout_height="150dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="Done"/>
+            android:text="Done" />
     </RelativeLayout>
-
 
 
 </LinearLayout>
