@@ -20,4 +20,10 @@
         android:layout_height="wrap_content"
         android:src="@drawable/tag_original"/>
 
+    <ImageView
+        android:id="@+id/patient_tag_highlight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0"/>
+
 </FrameLayout>
