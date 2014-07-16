@@ -163,7 +163,9 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
         // create edit text for note & set params
         EditText textNote = new EditText(getActivity());
         textNote.setMaxLines(3);
-        textNote.setTextColor(getResources().getColor(R.color.black));
+        textNote.setBackgroundColor(getResources().getColor(R.color.gray));
+        textNote.setFocusable(true);
+        textNote.requestFocus();
         // add view to list and layout (redundant)
         this.currentView = textNote;
         this.noteItemsLayout.addView(textNote);
@@ -196,6 +198,7 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
             // disable the edit text
             EditText textNote = (EditText) this.currentView;
             textNote.setEnabled(false);
+            textNote.setBackgroundColor(getResources().getColor(R.color.white));
             // add a new text note item
             this.mNote.addNoteItem(new NoteItemText(textNote.getText().toString()));
             // set the current view to null
