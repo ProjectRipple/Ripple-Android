@@ -2,7 +2,6 @@ package com.discoverylab.ripple.android.fragment;
 
 
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.util.PatientTagHelper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,13 +24,7 @@ import com.discoverylab.ripple.android.R;
 public class ScenarioNoteFragment extends Fragment implements View.OnTouchListener, View.OnClickListener {
 
     private static final String TAG = ScenarioNoteFragment.class.getSimpleName();
-    private static final int COLOR_TOLERANCE = 25;
-    private static final int COLOR_FRONT_HEAD = Color.argb(255, 255, 255, 0);
-    private static final int COLOR_FRONT_TORSO = Color.argb(255, 0, 255, 0);
-    private static final int COLOR_FRONT_RIGHT_ARM = Color.argb(255, 255, 0, 0);
-    private static final int COLOR_FRONT_LEFT_ARM = Color.argb(255, 0, 0, 255);
-    private static final int COLOR_FRONT_RIGHT_LEG = Color.argb(255, 255, 0, 255);
-    private static final int COLOR_FRONT_LEFT_LEG = Color.argb(255, 0, 255, 255);
+
 
     private static final String ADD_NOTE_FRAG_TAG = "AddNoteFragment";
 
@@ -103,89 +97,42 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
             case MotionEvent.ACTION_UP:
                 break;
             case MotionEvent.ACTION_DOWN:
-                // get color of point user touched
-                int touchColor = getTouchColor(R.id.patient_tag_painted, evX, evY);
+                if (evX >= 0 && evY >= 0) {
+                    ImageView img = (ImageView) getView().findViewById(R.id.patient_tag_painted);
+                    img.setDrawingCacheEnabled(true);
+                    Bitmap hotspots = Bitmap.createBitmap(img.getDrawingCache());
+                    img.setDrawingCacheEnabled(false);
 
-                if (touchColor == -1) {
-                    // invalid color
-                    break;
-                }
-                // Check with closeMatch as display colors may not be exactly those specified due to scaling
-                if (closeMatch(COLOR_FRONT_HEAD, touchColor, COLOR_TOLERANCE)) {
+                    PatientTagHelper.BODY_PARTS partSelected = PatientTagHelper.getBodyPartSelected(hotspots, evX, evY);
 
-                    Toast.makeText(getActivity(), "Front head touched.", Toast.LENGTH_SHORT).show();
-                } else if (closeMatch(COLOR_FRONT_TORSO, touchColor, COLOR_TOLERANCE)) {
-                    Toast.makeText(getActivity(), "Front Torso touched.", Toast.LENGTH_SHORT).show();
-
-                } else if (closeMatch(COLOR_FRONT_RIGHT_ARM, touchColor, COLOR_TOLERANCE)) {
-                    Toast.makeText(getActivity(), "Front right arm touched.", Toast.LENGTH_SHORT).show();
-
-                } else if (closeMatch(COLOR_FRONT_LEFT_ARM, touchColor, COLOR_TOLERANCE)) {
-                    Toast.makeText(getActivity(), "Front left arm touched.", Toast.LENGTH_SHORT).show();
-
-                } else if (closeMatch(COLOR_FRONT_RIGHT_LEG, touchColor, COLOR_TOLERANCE)) {
-                    Toast.makeText(getActivity(), "Front right leg touched.", Toast.LENGTH_SHORT).show();
-
-                } else if (closeMatch(COLOR_FRONT_LEFT_LEG, touchColor, COLOR_TOLERANCE)) {
-                    Toast.makeText(getActivity(), "Front left leg touched.", Toast.LENGTH_SHORT).show();
-
-                } else {
-                    Toast.makeText(getActivity(), "No body part touched.", Toast.LENGTH_SHORT).show();
-
+                    switch (partSelected) {
+                        case FRONT_HEAD:
+                            Toast.makeText(getActivity(), "Front Head touched.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case FRONT_TORSO:
+                            Toast.makeText(getActivity(), "Front Torso touched.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case FRONT_LEFT_ARM:
+                            Toast.makeText(getActivity(), "Front Left Arm touched.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case FRONT_RIGHT_ARM:
+                            Toast.makeText(getActivity(), "Front Right Arm touched.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case FRONT_LEFT_LEG:
+                            Toast.makeText(getActivity(), "Front Left Leg touched.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case FRONT_RIGHT_LEG:
+                            Toast.makeText(getActivity(), "Front Right Leg touched.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case NONE:
+                            break;
+                    }
                 }
 
                 break;
         }
 
         return true;
-    }
-
-    /**
-     * Return the color of the pixel at coordinates (x,y) of the specified ImageView
-     *
-     * @param paintedImageId Resource id of image view
-     * @param x              X coordinate of the pixel to retrieve
-     * @param y              Y coordinate of the pixel to retrieve
-     * @return Color of the pixel at (x,y) of the Imageview or -1 if point is outside the image area
-     */
-    private int getTouchColor(int paintedImageId, int x, int y) {
-        int rtnValue = -1;
-        if (x > 0 && y > 0) {
-
-            ImageView img = (ImageView) getView().findViewById(paintedImageId);
-
-            if (img != null) {
-                img.setDrawingCacheEnabled(true);
-                Bitmap hotspots = Bitmap.createBitmap(img.getDrawingCache());
-                img.setDrawingCacheEnabled(false);
-                if (x < hotspots.getWidth() && y < hotspots.getHeight()) {
-                    rtnValue = hotspots.getPixel(x, y);
-                }
-            }
-        }
-        return rtnValue;
-    }
-
-    /**
-     * Check if color1 and color2 are a close match (difference within the tolerance per channel)
-     *
-     * @param color1    An ARGB color value
-     * @param color2    ARGB color to compare with the first
-     * @param tolerance Allowable difference between the colors for each color channel
-     * @return true if colors are within the tolerance of each other, false otherwise
-     */
-    private boolean closeMatch(int color1, int color2, int tolerance) {
-        boolean rtnValue = true;
-        if (Math.abs(Color.alpha(color1) - Color.alpha(color2)) > tolerance) {
-            rtnValue = false;
-        } else if (Math.abs(Color.red(color1) - Color.red(color2)) > tolerance) {
-            rtnValue = false;
-        } else if (Math.abs(Color.green(color1) - Color.green(color2)) > tolerance) {
-            rtnValue = false;
-        } else if (Math.abs(Color.blue(color1) - Color.blue(color2)) > tolerance) {
-            rtnValue = false;
-        }
-        return rtnValue;
     }
 
 
