@@ -1,7 +1,9 @@
 package com.discoverylab.ripple.android.fragment;
 
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -154,7 +156,6 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
     }
 
 
-
     /**
      * Add a text note for the user to edit
      */
@@ -211,6 +212,11 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
         this.mNote.setSelectedBodyPart(this.selectedBodyPart);
         // call finish on the note
         this.mNote.finish();
+
+        if (getTargetFragment() != null) {
+            // TODO: save note somehow or make note parcelable and send via intent
+            getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent());
+        }
     }
 
     @Override

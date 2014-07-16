@@ -1,6 +1,7 @@
 package com.discoverylab.ripple.android.fragment;
 
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,7 +28,7 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
 
 
     private static final String ADD_NOTE_FRAG_TAG = "AddNoteFragment";
-
+    private static final int ADD_NOTE_REQUEST_CODE = 2941;
 
     /**
      * Use this factory method to create a new instance of
@@ -70,10 +71,18 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ADD_NOTE_REQUEST_CODE) {
+            // result from add note operation (nothing to do for now
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.scenario_note_add_note:
                 PatientNoteFragment noteFragment = PatientNoteFragment.newInstance();
+                noteFragment.setTargetFragment(this, ADD_NOTE_REQUEST_CODE);
                 noteFragment.show(getFragmentManager(), ADD_NOTE_FRAG_TAG);
                 break;
             case R.id.scenario_note_view_notes:
