@@ -98,6 +98,15 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
 
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // remove view references
+        this.noteItemsLayout = null;
+        this.tagHighlight = null;
+        this.noteViews.clear();
+    }
+
+    @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
@@ -130,15 +139,6 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
         textNote.setTextColor(getResources().getColor(R.color.black));
         this.noteViews.add(textNote);
         this.noteItemsLayout.addView(textNote);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        // remove view references
-        this.noteItemsLayout = null;
-        this.tagHighlight = null;
-        this.noteViews.clear();
     }
 
     private void addImageNote() {
