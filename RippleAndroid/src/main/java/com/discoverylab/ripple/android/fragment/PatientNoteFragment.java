@@ -19,11 +19,12 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.object.NoteItemText;
+import com.discoverylab.ripple.android.object.PatientNote;
 import com.discoverylab.ripple.android.util.PatientTagHelper;
 import com.discoverylab.ripple.android.util.PatientTagHelper.BODY_PARTS;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
 /**
  * Use the {@link PatientNoteFragment#newInstance} factory method to
@@ -31,11 +32,18 @@ import java.util.List;
  */
 public class PatientNoteFragment extends DialogFragment implements View.OnTouchListener, View.OnClickListener {
 
+    // Log tag
     private static final String TAG = PatientNoteFragment.class.getSimpleName();
+    // Image view used for highlighting the selected body part
     private ImageView tagHighlight;
+    // Body part currently selected by user
     private BODY_PARTS selectedBodyPart = BODY_PARTS.NONE;
+    // Layout holding the note item views
     private LinearLayout noteItemsLayout;
-    private List<View> noteViews = new ArrayList<View>();
+    // current view being edited
+    private View currentView;
+    // Note object for this new note
+    private PatientNote mNote = new PatientNote();
 
     /**
      * Use this factory method to create a new instance of
@@ -63,25 +71,32 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_patient_note, container, false);
 
+        // get the layout to hold the note item views
         this.noteItemsLayout = (LinearLayout) v.findViewById(R.id.patient_note_items_layout);
 
+        // get image view of patient tag
         ImageView tag = (ImageView) v.findViewById(R.id.patient_tag);
         tag.setOnTouchListener(this);
 
+        // get image view of tag highlight
         this.tagHighlight = (ImageView) v.findViewById(R.id.patient_tag_highlight);
         this.tagHighlight.setAlpha((float) 0.4);
 
+        // get buttons
         ImageButton textNote = (ImageButton) v.findViewById(R.id.patient_note_add_text);
         ImageButton imageNote = (ImageButton) v.findViewById(R.id.patient_note_add_image);
         ImageButton voiceNote = (ImageButton) v.findViewById(R.id.patient_note_add_voice);
         Button drugNote = (Button) v.findViewById(R.id.patient_note_add_drug);
         Button ecgNote = (Button) v.findViewById(R.id.patient_note_add_ecg);
+        Button done = (Button) v.findViewById(R.id.patient_note_done_btn);
 
+        // set click listener for buttons
         textNote.setOnClickListener(this);
         imageNote.setOnClickListener(this);
         voiceNote.setOnClickListener(this);
         drugNote.setOnClickListener(this);
         ecgNote.setOnClickListener(this);
+        done.setOnClickListener(this);
 
 
         return v;
@@ -91,6 +106,7 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Dialog dialog = super.onCreateDialog(savedInstanceState);
 
+        // request no title for dialog
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return dialog;
@@ -103,7 +119,7 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
         // remove view references
         this.noteItemsLayout = null;
         this.tagHighlight = null;
-        this.noteViews.clear();
+        this.currentView = null;
     }
 
     @Override
@@ -111,33 +127,44 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
 
         switch (v.getId()) {
             case R.id.patient_note_add_text:
-                finishCurrentNote();
+                finishCurrentNoteItem();
                 addTextNote();
                 break;
             case R.id.patient_note_add_image:
-                finishCurrentNote();
+                finishCurrentNoteItem();
                 addImageNote();
                 break;
             case R.id.patient_note_add_voice:
-                finishCurrentNote();
+                finishCurrentNoteItem();
                 addVoiceNote();
                 break;
             case R.id.patient_note_add_drug:
-                finishCurrentNote();
+                finishCurrentNoteItem();
                 addDrugNote();
                 break;
             case R.id.patient_note_add_ecg:
-                finishCurrentNote();
+                finishCurrentNoteItem();
                 addEcgNote();
+                break;
+            case R.id.patient_note_done_btn:
+                finishNote();
+                getDialog().dismiss();
                 break;
         }
     }
 
+
+
+    /**
+     * Add a text note for the user to edit
+     */
     private void addTextNote() {
+        // create edit text for note & set params
         EditText textNote = new EditText(getActivity());
         textNote.setMaxLines(3);
         textNote.setTextColor(getResources().getColor(R.color.black));
-        this.noteViews.add(textNote);
+        // add view to list and layout (redundant)
+        this.currentView = textNote;
         this.noteItemsLayout.addView(textNote);
     }
 
@@ -157,14 +184,33 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
 
     }
 
-    private void finishCurrentNote() {
-        if(this.noteViews.size() == 0){
+    /**
+     * Finish the current note item
+     */
+    private void finishCurrentNoteItem() {
+        if (this.currentView == null) {
             return;
         }
-        if(this.noteViews.get(this.noteViews.size() - 1) instanceof EditText){
-            EditText textNote = (EditText) this.noteViews.get(this.noteViews.size() - 1);
+        if (this.currentView instanceof EditText) {
+            // disable the edit text
+            EditText textNote = (EditText) this.currentView;
             textNote.setEnabled(false);
+            // add a new text note item
+            this.mNote.addNoteItem(new NoteItemText(textNote.getText().toString()));
+            // set the current view to null
+            this.currentView = null;
         }
+    }
+
+    /**
+     * Finish the note
+     */
+    private void finishNote() {
+        // set date and selected body part
+        this.mNote.setDate(new Date());
+        this.mNote.setSelectedBodyPart(this.selectedBodyPart);
+        // call finish on the note
+        this.mNote.finish();
     }
 
     @Override
