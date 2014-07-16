@@ -39,25 +39,7 @@
         android:layout_below="@+id/note_button_layout" />
 
 
-    <FrameLayout
-        android:id="@+id/scenario_patient_image_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/spacer_above_head">
-
-        <ImageView
-            android:id="@+id/patient_tag_painted"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/tag_painted"/>
-
-        <ImageView
-            android:id="@+id/patient_tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/tag_original"/>
-
-    </FrameLayout>
+    <include layout="@layout/patient_diagram"/>
 
 
 </RelativeLayout>
