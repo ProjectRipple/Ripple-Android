@@ -6,5 +6,84 @@
     tools:context=".fragment.PatientNoteFragment">
 
 
+    <include layout="@layout/patient_diagram" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <HorizontalScrollView
+            android:id="@+id/patient_note_options_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_action_new_event" />
+
+                <ImageButton
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_action_camera" />
+
+                <ImageButton
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_action_mic" />
+
+
+                <Button
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Rx" />
+
+                <Button
+                    android:layout_width="75dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="ECG" />
+
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+
+        <ScrollView
+            android:id="@+id/patient_note_items_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/patient_note_options_scrollview"
+            android:layout_toLeftOf="@+id/patient_note_done_btn"
+            android:background="@color/AntiqueWhite">
+
+            <LinearLayout
+                android:id="@+id/patient_note_items_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:orientation="vertical">
+
+
+
+            </LinearLayout>
+
+        </ScrollView>
+        <Button
+            android:id="@+id/patient_note_done_btn"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="Done"/>
+    </RelativeLayout>
+
+
 
 </LinearLayout>
