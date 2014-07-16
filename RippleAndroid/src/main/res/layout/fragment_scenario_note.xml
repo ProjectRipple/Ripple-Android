@@ -11,7 +11,7 @@
 
 
     <LinearLayout
-        android:id="@+id/note_button_layout"
+        android:id="@+id/scenario_note_button_layout"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:orientation="horizontal"
@@ -20,12 +20,14 @@
         android:layout_alignParentTop="true">
 
         <Button
+            android:id="@+id/scenario_note_add_note"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Add note"
             android:layout_weight="1" />
 
         <Button
+            android:id="@+id/scenario_note_view_notes"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="View notes"
@@ -36,7 +38,7 @@
         android:id="@+id/spacer_above_head"
         android:layout_width="1dp"
         android:layout_height="20dp"
-        android:layout_below="@+id/note_button_layout" />
+        android:layout_below="@+id/scenario_note_button_layout" />
 
 
     <include layout="@layout/patient_diagram"/>

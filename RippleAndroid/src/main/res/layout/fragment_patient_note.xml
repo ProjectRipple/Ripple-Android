@@ -3,6 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
+    android:paddingTop="30dp"
+    android:paddingBottom="10dp"
+    android:minWidth="1000dp"
+    android:minHeight="450dp"
     tools:context=".fragment.PatientNoteFragment">
 
 
@@ -61,6 +65,7 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/patient_note_options_scrollview"
             android:layout_toLeftOf="@+id/patient_note_done_btn"
+            android:minWidth="300dp"
             android:background="@color/AntiqueWhite">
 
             <LinearLayout
@@ -68,6 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
+                android:minWidth="300dp"
                 android:orientation="vertical">
 
 

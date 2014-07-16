@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -20,7 +21,7 @@ import com.discoverylab.ripple.android.R;
  * Use the {@link ScenarioNoteFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ScenarioNoteFragment extends Fragment implements View.OnTouchListener {
+public class ScenarioNoteFragment extends Fragment implements View.OnTouchListener, View.OnClickListener {
 
     private static final String TAG = ScenarioNoteFragment.class.getSimpleName();
     private static final int COLOR_TOLERANCE = 25;
@@ -30,6 +31,8 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
     private static final int COLOR_FRONT_LEFT_ARM = Color.argb(255, 0, 0, 255);
     private static final int COLOR_FRONT_RIGHT_LEG = Color.argb(255, 255, 0, 255);
     private static final int COLOR_FRONT_LEFT_LEG = Color.argb(255, 0, 255, 255);
+
+    private static final String ADD_NOTE_FRAG_TAG = "AddNoteFragment";
 
 
     /**
@@ -60,12 +63,32 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_scenario_note, container, false);
 
+        Button addNote = (Button) v.findViewById(R.id.scenario_note_add_note);
+        Button viewNotes = (Button) v.findViewById(R.id.scenario_note_view_notes);
+
+        addNote.setOnClickListener(this);
+        viewNotes.setOnClickListener(this);
+
         ImageView tag = (ImageView) v.findViewById(R.id.patient_tag);
         tag.setOnTouchListener(this);
 
         return v;
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.scenario_note_add_note:
+                PatientNoteFragment noteFragment = PatientNoteFragment.newInstance();
+                noteFragment.show(getFragmentManager(), ADD_NOTE_FRAG_TAG);
+                break;
+            case R.id.scenario_note_view_notes:
+                Toast.makeText(getActivity(), "Not implemented", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                Log.d(TAG, "Unknown item clicked.");
+        }
+    }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -164,4 +187,6 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
         }
         return rtnValue;
     }
+
+
 }
