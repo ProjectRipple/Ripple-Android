@@ -116,6 +116,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/patient_triage_color_label"
             android:layout_alignBottom="@+id/patient_triage_color_label"
+            android:layout_alignRight="@+id/patient_status_spinner"
             android:prompt="@string/change_triage_color"
             android:entries="@array/triage_color_options_text" />
 
