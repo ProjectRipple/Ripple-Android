@@ -106,6 +106,7 @@
             android:id="@+id/patient_triage_color_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingTop="15dp"
             android:textSize="@dimen/patient_info_label_text_size"
             android:text="Triage Color:" />
 
@@ -116,7 +117,7 @@
             android:layout_toRightOf="@+id/patient_triage_color_label"
             android:layout_alignBottom="@+id/patient_triage_color_label"
             android:prompt="@string/change_triage_color"
-            android:entries="@array/triage_color_options" />
+            android:entries="@array/triage_color_options_text" />
 
         <TextView
             android:id="@+id/patient_status_label"

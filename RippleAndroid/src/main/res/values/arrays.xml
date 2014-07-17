@@ -17,10 +17,6 @@
         <item>(N)Nuclear</item>
         <item>(B)Biological</item>
         <item>(C)Chemical</item>
-        <item>NB</item>
-        <item>NC</item>
-        <item>BC</item>
-        <item>NBC</item>
     </string-array>
 
     <string-array name="gender_options">
@@ -29,7 +25,7 @@
         <item>Female</item>
     </string-array>
 
-    <string-array name="triage_color_options">
+    <string-array name="triage_color_options_text">
 
         <item>Unknown</item>
         <item>Green</item>
@@ -38,4 +34,12 @@
         <item>Black</item>
 
     </string-array>
+
+    <integer-array name="triage_color_options">
+        <item>@color/white</item>
+        <item>@color/win8_green</item>
+        <item>@color/yellow</item>
+        <item>@color/red</item>
+        <item>@color/black</item>
+    </integer-array>
 </resources>
