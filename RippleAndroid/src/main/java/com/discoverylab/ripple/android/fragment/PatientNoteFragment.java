@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.activity.CameraActivity;
+import com.discoverylab.ripple.android.object.NoteItemImage;
 import com.discoverylab.ripple.android.object.NoteItemText;
 import com.discoverylab.ripple.android.object.PatientNote;
 import com.discoverylab.ripple.android.util.PatientTagHelper;
@@ -249,6 +250,7 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
                 img.setLayoutParams(params);
 
                 this.noteItemsLayout.addView(img);
+                this.mNote.addNoteItem(new NoteItemImage(imagePath));
                 this.currentView = null;
             } else {
                 Toast.makeText(getActivity(), "No image taken.", Toast.LENGTH_SHORT).show();
