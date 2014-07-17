@@ -8,7 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -233,14 +232,14 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == CAMERA_REQUEST_CODE){
-            if(resultCode == Activity.RESULT_OK && data != null){
+        if (requestCode == CAMERA_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
                 String imagePath = data.getStringExtra(CameraFragment.IMAGE_PATH_TAG);
                 ImageView img = new ImageView(getActivity());
                 Bitmap imageFromFile = BitmapFactory.decodeFile(imagePath);
                 img.setImageBitmap(imageFromFile);
-                double ratio = imageFromFile.getWidth()/(double)imageFromFile.getHeight();
-                int sizePixels = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics());
+                double ratio = imageFromFile.getWidth() / (double) imageFromFile.getHeight();
+                int sizePixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics());
                 img.setMaxWidth(sizePixels);
                 img.setMaxHeight(sizePixels);
 

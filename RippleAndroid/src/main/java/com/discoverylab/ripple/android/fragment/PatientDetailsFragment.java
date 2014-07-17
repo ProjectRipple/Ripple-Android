@@ -302,7 +302,6 @@ public class PatientDetailsFragment extends Fragment {
     }
 
     /**
-     *
      * @return true if MQTT service is connected, false otherwise
      */
     private boolean isMQTTConnected() {
@@ -321,6 +320,7 @@ public class PatientDetailsFragment extends Fragment {
 
     /**
      * Get handler for message to this object
+     *
      * @return this object's handler
      */
     public Handler getHandler() {
@@ -330,7 +330,7 @@ public class PatientDetailsFragment extends Fragment {
     /**
      * Handler for this class
      */
-    private class PatientDetailsHandler extends Handler{
+    private class PatientDetailsHandler extends Handler {
         @Override
         public void handleMessage(final Message msg) {
             super.handleMessage(msg);

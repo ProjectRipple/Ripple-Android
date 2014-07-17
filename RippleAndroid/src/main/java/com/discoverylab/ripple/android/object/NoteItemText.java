@@ -1,17 +1,19 @@
 package com.discoverylab.ripple.android.object;
 
 /**
+ * Note item for a text note.
+ * <p/>
  * Created by james on 7/16/14.
  */
 public class NoteItemText implements NoteItem {
 
     private final String noteText;
 
-    public NoteItemText(String text){
+    public NoteItemText(String text) {
         this.noteText = text;
     }
 
-    public String getNoteText(){
+    public String getNoteText() {
         return this.noteText;
     }
 

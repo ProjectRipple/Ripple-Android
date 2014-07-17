@@ -1,7 +1,6 @@
 package com.discoverylab.ripple.android.fragment;
 
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,10 +10,10 @@ import android.view.ViewGroup;
 import com.discoverylab.ripple.android.R;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment to display the patient's current vitals in the Scenario view.
+ * <p/>
  * Use the {@link PatientCurrentVitalsFragment#newInstance} factory method to
  * create an instance of this fragment.
- *
  */
 public class PatientCurrentVitalsFragment extends Fragment {
 
@@ -28,6 +27,7 @@ public class PatientCurrentVitalsFragment extends Fragment {
         PatientCurrentVitalsFragment fragment = new PatientCurrentVitalsFragment();
         return fragment;
     }
+
     public PatientCurrentVitalsFragment() {
         // Required empty public constructor
     }

@@ -1,6 +1,8 @@
 package com.discoverylab.ripple.android.object;
 
 /**
+ * Note Item for an image note.
+ * <p/>
  * Created by james on 7/16/14.
  */
 public class NoteItemImage implements NoteItem {
@@ -8,7 +10,7 @@ public class NoteItemImage implements NoteItem {
     // System path to image
     private final String imagePath;
 
-    public NoteItemImage(String imagePath){
+    public NoteItemImage(String imagePath) {
         this.imagePath = imagePath;
     }
 

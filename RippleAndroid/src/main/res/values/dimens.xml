@@ -23,7 +23,7 @@
     <dimen name="patient_view_id_height">23dp</dimen>
 
 
-
+    <!-- Patient banner (new) dimens -->
     <dimen name="patient_banner_height">125dp</dimen>
     <dimen name="patient_banner_view_width">125dp</dimen>
     <dimen name="patient_banner_view_height">115dp</dimen>
@@ -31,7 +31,10 @@
     <dimen name="patient_banner_view_margin_right">2dp</dimen>
 
 
+    <!-- patient info dimens-->
     <dimen name="patient_info_text_size">20sp</dimen>
     <dimen name="patient_info_label_text_size">24sp</dimen>
+
+    <!-- current vitals dimens-->
     <dimen name="current_vitals_image_size">40dp</dimen>
 </resources>

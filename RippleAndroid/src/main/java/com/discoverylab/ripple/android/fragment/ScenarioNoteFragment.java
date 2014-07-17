@@ -18,16 +18,18 @@ import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.util.PatientTagHelper;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment to display note related information in the scenario view.
+ * <p/>
  * Use the {@link ScenarioNoteFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class ScenarioNoteFragment extends Fragment implements View.OnTouchListener, View.OnClickListener {
 
+    // Log tag
     private static final String TAG = ScenarioNoteFragment.class.getSimpleName();
-
-
+    // Fragment tag for add note fragment
     private static final String ADD_NOTE_FRAG_TAG = "AddNoteFragment";
+    // Request code for adding a note
     private static final int ADD_NOTE_REQUEST_CODE = 2941;
 
     /**
@@ -73,7 +75,7 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ADD_NOTE_REQUEST_CODE) {
-            // result from add note operation (nothing to do for now
+            // result from add note operation (nothing to do for now)
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

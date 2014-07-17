@@ -1,8 +1,6 @@
 package com.discoverylab.ripple.android.fragment;
 
 
-
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,10 +12,10 @@ import android.view.ViewGroup;
 import com.discoverylab.ripple.android.R;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Fragment holding lower part of the scenario view.
+ * <p/>
  * Use the {@link ScenarioPatientFragment#newInstance} factory method to
  * create an instance of this fragment.
- *
  */
 public class ScenarioPatientFragment extends Fragment {
 
@@ -36,6 +34,7 @@ public class ScenarioPatientFragment extends Fragment {
         ScenarioPatientFragment fragment = new ScenarioPatientFragment();
         return fragment;
     }
+
     public ScenarioPatientFragment() {
         // Required empty public constructor
     }
@@ -49,7 +48,7 @@ public class ScenarioPatientFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v =  inflater.inflate(R.layout.fragment_scenario_patient, container, false);
+        View v = inflater.inflate(R.layout.fragment_scenario_patient, container, false);
 
 
         return v;
@@ -64,7 +63,7 @@ public class ScenarioPatientFragment extends Fragment {
 
         ScenarioNoteFragment noteFragment = (ScenarioNoteFragment) fragmentManager.findFragmentByTag(PATIENT_NOTE_FRAG_TAG);
 
-        if(noteFragment == null){
+        if (noteFragment == null) {
 
             fragmentManager.beginTransaction()
                     .add(R.id.scenario_patient_note_container,
@@ -75,7 +74,7 @@ public class ScenarioPatientFragment extends Fragment {
 
         PatientInfoFragment infoFragment = (PatientInfoFragment) fragmentManager.findFragmentByTag(PATIENT_INFO_FRAG_TAG);
 
-        if(infoFragment == null){
+        if (infoFragment == null) {
 
             fragmentManager.beginTransaction()
                     .add(R.id.scenario_patient_info_container,
@@ -86,7 +85,7 @@ public class ScenarioPatientFragment extends Fragment {
 
         PatientCurrentVitalsFragment currentVitalsFragment = (PatientCurrentVitalsFragment) fragmentManager.findFragmentByTag(PATIENT_CURRENT_VITALS_FRAG_TAG);
 
-        if(currentVitalsFragment == null){
+        if (currentVitalsFragment == null) {
 
             fragmentManager.beginTransaction()
                     .add(R.id.scenario_patient_current_vitals_container,

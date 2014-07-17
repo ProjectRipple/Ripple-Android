@@ -1,14 +1,12 @@
 package com.discoverylab.ripple.android.fragment;
 
 
-
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.object.Patient;
@@ -16,10 +14,10 @@ import com.discoverylab.ripple.android.util.RandomPatient;
 import com.discoverylab.ripple.android.view.BannerPatientView;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Displays a horizontal list of patients.
+ * <p/>
  * Use the {@link PatientBannerFragment#newInstance} factory method to
  * create an instance of this fragment.
- *
  */
 public class PatientBannerFragment extends Fragment {
 
@@ -34,6 +32,7 @@ public class PatientBannerFragment extends Fragment {
         PatientBannerFragment fragment = new PatientBannerFragment();
         return fragment;
     }
+
     public PatientBannerFragment() {
         // Required empty public constructor
     }
@@ -52,7 +51,7 @@ public class PatientBannerFragment extends Fragment {
         LinearLayout viewLayout = (LinearLayout) v.findViewById(R.id.patient_banner_view_layout);
 
         // TODO: remove after debugging
-        for(int i = 0; i < RandomPatient.MAX_UNIQUE_PATIENTS; i++){
+        for (int i = 0; i < RandomPatient.MAX_UNIQUE_PATIENTS; i++) {
             Patient p = RandomPatient.getRandomPatient();
             BannerPatientView bpv = new BannerPatientView(getActivity());
             bpv.setPatient(p);

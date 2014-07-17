@@ -3,7 +3,6 @@ package com.discoverylab.ripple.android.adapter.ui;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -33,11 +32,11 @@ public class ColorSpinnerAdapter extends ArrayAdapter<Integer> implements Spinne
 
         // set center color of view
         LayerDrawable background = (LayerDrawable) v.getBackground();
-        ((GradientDrawable)background.getDrawable(1)).setColor(getItem(position));
+        ((GradientDrawable) background.getDrawable(1)).setColor(getItem(position));
 
         // hide text by matching background & set to nothing
-        ((TextView)v).setTextColor(getItem(position));
-        ((TextView)v).setText("");
+        ((TextView) v).setTextColor(getItem(position));
+        ((TextView) v).setText("");
 
 
         return v;
@@ -52,12 +51,12 @@ public class ColorSpinnerAdapter extends ArrayAdapter<Integer> implements Spinne
 
         // set center color of view
         LayerDrawable background = (LayerDrawable) v.getBackground();
-        ((GradientDrawable)background.getDrawable(1)).setColor(getItem(position));
+        ((GradientDrawable) background.getDrawable(1)).setColor(getItem(position));
 
 
         // hide text by matching background & set to nothing
-        ((TextView)v).setTextColor(getItem(position));
-        ((TextView)v).setText("");
+        ((TextView) v).setTextColor(getItem(position));
+        ((TextView) v).setText("");
         return v;
     }
 
