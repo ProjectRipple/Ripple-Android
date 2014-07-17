@@ -149,6 +149,7 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
                 addEcgNote();
                 break;
             case R.id.patient_note_done_btn:
+                finishCurrentNoteItem();
                 finishNote();
                 getDialog().dismiss();
                 break;
