@@ -23,11 +23,13 @@
 package com.discoverylab.ripple.android.fragment;
 
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -73,6 +75,9 @@ public class CameraFragment extends Fragment {
 
     // Directory photos are stored in
     private static final String PHOTO_DIR = "Ripple";
+
+    // tag for path of saved image in result intent
+    public static final String IMAGE_PATH_TAG = "savedImage";
 
     // Native camera.
     private Camera mCamera;
@@ -461,6 +466,10 @@ public class CameraFragment extends Fragment {
                 // Restart the camera preview.
                 //safeCameraOpenInView(mCameraView);
 
+                // set activity result
+                Intent i = new Intent();
+                i.putExtra(IMAGE_PATH_TAG, pictureFile.getAbsolutePath());
+                getActivity().setResult(Activity.RESULT_OK, i);
                 // tell activity to finish
                 getActivity().finish();
             } catch (FileNotFoundException e) {

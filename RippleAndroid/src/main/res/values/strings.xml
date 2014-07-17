@@ -61,9 +61,8 @@
     <!-- Activity labels -->
     <string name="title_activity_scenerio">ScenerioActivity</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
     <string name="status_prompt">Choose a status</string>
     <string name="change_triage_color">Change Triage Color</string>
+    <string name="title_activity_camera">CameraActivity</string>
 
 </resources>

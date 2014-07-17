@@ -74,6 +74,8 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ADD_NOTE_REQUEST_CODE) {
             // result from add note operation (nothing to do for now
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -83,7 +85,7 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
             case R.id.scenario_note_add_note:
                 PatientNoteFragment noteFragment = PatientNoteFragment.newInstance();
                 noteFragment.setTargetFragment(this, ADD_NOTE_REQUEST_CODE);
-                noteFragment.show(getFragmentManager(), ADD_NOTE_FRAG_TAG);
+                noteFragment.show(getActivity().getSupportFragmentManager(), ADD_NOTE_FRAG_TAG);
                 break;
             case R.id.scenario_note_view_notes:
                 Toast.makeText(getActivity(), "Not implemented", Toast.LENGTH_SHORT).show();

@@ -5,9 +5,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,6 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.activity.CameraActivity;
 import com.discoverylab.ripple.android.object.NoteItemText;
 import com.discoverylab.ripple.android.object.PatientNote;
 import com.discoverylab.ripple.android.util.PatientTagHelper;
@@ -36,6 +40,8 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
 
     // Log tag
     private static final String TAG = PatientNoteFragment.class.getSimpleName();
+    // Request code for camera
+    private static final int CAMERA_REQUEST_CODE = 49234;
     // Image view used for highlighting the selected body part
     private ImageView tagHighlight;
     // Body part currently selected by user
@@ -173,7 +179,8 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
     }
 
     private void addImageNote() {
-
+        Intent i = new Intent(getActivity(), CameraActivity.class);
+        startActivityForResult(i, CAMERA_REQUEST_CODE);
     }
 
     private void addVoiceNote() {
@@ -220,6 +227,34 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
         if (getTargetFragment() != null) {
             // TODO: save note somehow or make note parcelable and send via intent
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent());
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == CAMERA_REQUEST_CODE){
+            if(resultCode == Activity.RESULT_OK && data != null){
+                String imagePath = data.getStringExtra(CameraFragment.IMAGE_PATH_TAG);
+                ImageView img = new ImageView(getActivity());
+                Bitmap imageFromFile = BitmapFactory.decodeFile(imagePath);
+                img.setImageBitmap(imageFromFile);
+                double ratio = imageFromFile.getWidth()/(double)imageFromFile.getHeight();
+                int sizePixels = (int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics());
+                img.setMaxWidth(sizePixels);
+                img.setMaxHeight(sizePixels);
+
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.width = sizePixels;
+                params.height = sizePixels;
+                img.setLayoutParams(params);
+
+                this.noteItemsLayout.addView(img);
+                this.currentView = null;
+            } else {
+                Toast.makeText(getActivity(), "No image taken.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

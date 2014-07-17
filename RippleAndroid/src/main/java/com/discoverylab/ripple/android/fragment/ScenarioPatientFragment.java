@@ -3,6 +3,7 @@ package com.discoverylab.ripple.android.fragment;
 
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -93,10 +94,14 @@ public class ScenarioPatientFragment extends Fragment {
                             PATIENT_CURRENT_VITALS_FRAG_TAG)
                     .commit();
         }
+    }
 
-
-
-
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // pass result to fragments
+        for (Fragment fragment : getChildFragmentManager().getFragments()) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }
