@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -116,6 +117,11 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
 
         // request no title for dialog
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        // set dialog as fullscreen to get around dialog cutting off top in 4.4
+        dialog.getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         return dialog;
     }

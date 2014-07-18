@@ -123,19 +123,19 @@ public class PatientInfoFragment extends Fragment {
     }
 
     private void onTriageColorChanged(int triageColor) {
-        Toast.makeText(getActivity(), "triage Color: " + Integer.toHexString(triageColor), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "triage Color: " + Integer.toHexString(triageColor), Toast.LENGTH_SHORT).show();
     }
 
     private void onPatientStatusChanged(String status) {
-        Toast.makeText(getActivity(), "status: " + status, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "status: " + status, Toast.LENGTH_SHORT).show();
     }
 
     private void onGenderChanged(String gender) {
-        Toast.makeText(getActivity(), "Gender: " + gender, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "Gender: " + gender, Toast.LENGTH_SHORT).show();
     }
 
     private void onNbcChanged(String nbcStatus) {
-        Toast.makeText(getActivity(), "NBC: " + nbcStatus, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "NBC: " + nbcStatus, Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -73,7 +73,6 @@ public class LaunchFragment extends Fragment implements View.OnClickListener {
                 Toast.makeText(getActivity(), "Not implemented yet.", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.launch_scenario:
-                Toast.makeText(getActivity(), "Not implemented yet.", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(getActivity(), ScenarioActivity.class));
                 break;
             case R.id.launch_settings:

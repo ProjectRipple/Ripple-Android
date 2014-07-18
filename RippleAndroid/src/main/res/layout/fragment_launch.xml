@@ -18,6 +18,7 @@
             android:text="@string/launch_action_plan"
             android:layout_weight="1"
             android:layout_margin="20dp"
+            android:textSize="40sp"
             tools:ignore="NestedWeights" />
 
         <Button
@@ -26,7 +27,8 @@
             android:layout_height="wrap_content"
             android:text="@string/launch_extra"
             android:layout_weight="1"
-            android:layout_margin="20dp" />
+            android:layout_margin="20dp"
+            android:textSize="40sp" />
 
     </LinearLayout>
 
@@ -43,6 +45,7 @@
             android:text="@string/launch_scenario"
             android:layout_weight="1"
             android:layout_margin="20dp"
+            android:textSize="40sp"
             tools:ignore="NestedWeights" />
 
         <Button
@@ -51,6 +54,7 @@
             android:layout_height="wrap_content"
             android:text="@string/launch_settings"
             android:layout_weight="1"
+            android:textSize="40sp"
             android:layout_margin="20dp" />
 
     </LinearLayout>
