@@ -66,11 +66,11 @@ public class PatientBannerFragment extends Fragment {
         this.viewLayout = (LinearLayout) v.findViewById(R.id.patient_banner_view_layout);
 
         // TODO: remove after debugging
-        Patients patientList = Patients.getInstance();
+        Patients patients = Patients.getInstance();
         for (int i = 0; i < RandomPatient.MAX_UNIQUE_PATIENTS; i++) {
             Patient p = RandomPatient.getRandomPatient();
             this.createPatientView(p);
-            patientList.addPatient(p);
+            patients.addPatient(p.getPatientId(), p);
         }
 
         // TODO: handle rotation by recreating all patient views
@@ -143,51 +143,10 @@ public class PatientBannerFragment extends Fragment {
         @Override
         public void handleMessage(Message msg) {
 
-            boolean patientFound;
             Patient curPatient;
-            Patients patientList = Patients.getInstance();
+            Patients patients = Patients.getInstance();
 
             switch (msg.what) {
-                case Common.RIPPLE_MSG_RECORD:
-                    if (msg.obj == null) {
-                        // message
-                        return;
-                    }
-                    // new patient update
-
-                    JsonObject recordJson = (JsonObject) msg.obj;
-
-                    patientFound = false;
-                    curPatient = null;
-                    String src = recordJson.get(JSONTag.RECORD_SOURCE).getAsString();
-                    int hr = recordJson.get(JSONTag.RECORD_HEART_RATE).getAsInt();
-                    int spO2 = recordJson.get(JSONTag.RECORD_BLOOD_OX).getAsInt();
-                    int temperature = recordJson.get(JSONTag.RECORD_TEMPERATURE).getAsInt();
-                    int resp_pm = recordJson.get(JSONTag.RECORD_RESP_PER_MIN).getAsInt();
-
-                    // find patient
-                    for (Patient p : patientList.getPatientMap()) {
-                        if (p.getPatientId().equals(src)) {
-                            patientFound = true;
-                            curPatient = p;
-                            break;
-                        }
-                    }
-                    if (!patientFound) {
-                        // Add patient
-                        curPatient = new Patient();
-                        curPatient.setPatientId(src);
-                        patientList.addPatient(curPatient);
-                        createPatientView(curPatient);
-                    }
-
-                    // Update patient values
-                    curPatient.setO2(spO2);
-                    curPatient.setBpm(hr);
-                    curPatient.setTemperature(temperature);
-                    curPatient.setRpm(resp_pm);
-
-                    break;
 
                 case Common.RIPPLE_MSG_SELECT_PATIENT:
                     if (msg.obj == null) {
@@ -195,8 +154,6 @@ public class PatientBannerFragment extends Fragment {
                         return;
                     }
 
-                    patientFound = false;
-                    curPatient = null;
 
                     String patientId = (String) msg.obj;
                     if (patientId.equals("")) {
@@ -206,18 +163,10 @@ public class PatientBannerFragment extends Fragment {
                             selectedPatient = null;
                         }
                     } else {
+
                         // find patient
-
-                        for (Patient p : patientList.getPatientMap()) {
-                            if (p.getPatientId().equals(patientId)) {
-                                patientFound = true;
-                                curPatient = p;
-                                break;
-                            }
-                        }
-
-
-                        if (patientFound) {
+                        curPatient = patients.getPatient(patientId);
+                        if (curPatient != null) {
                             // remove old selected patient
                             if (selectedPatient != null) {
                                 selectedPatient.setSelected(false);

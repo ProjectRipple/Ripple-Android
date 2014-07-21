@@ -233,28 +233,26 @@ public class ScenarioActivity extends FragmentActivity {
     }
 
     private void processPatientUpdate(JsonObject recordJson) {
-        Patients patientList = Patients.getInstance();
-        boolean patientFound = false;
+        Patients patients = Patients.getInstance();
         Patient curPatient = null;
+
+
         String src = recordJson.get(JSONTag.RECORD_SOURCE).getAsString();
         int hr = recordJson.get(JSONTag.RECORD_HEART_RATE).getAsInt();
         int spO2 = recordJson.get(JSONTag.RECORD_BLOOD_OX).getAsInt();
         int temperature = recordJson.get(JSONTag.RECORD_TEMPERATURE).getAsInt();
         int resp_pm = recordJson.get(JSONTag.RECORD_RESP_PER_MIN).getAsInt();
 
+
         // find patient
-        for (Patient p : patientList.getPatientMap()) {
-            if (p.getPatientId().equals(src)) {
-                patientFound = true;
-                curPatient = p;
-                break;
-            }
-        }
-        if (!patientFound) {
+        curPatient = patients.getPatient(src);
+        if (curPatient == null) {
             // Add patient
             curPatient = new Patient();
             curPatient.setPatientId(src);
-            patientList.addPatient(curPatient);
+            patients.addPatient(src, curPatient);
+            // Inform banner of new patient
+            this.patientBanner.addPatient(curPatient);
         }
 
         // Update patient values
