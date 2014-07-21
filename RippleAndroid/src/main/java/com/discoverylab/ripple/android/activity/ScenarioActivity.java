@@ -232,6 +232,11 @@ public class ScenarioActivity extends FragmentActivity {
         }
     }
 
+    /**
+     * Process a message for a patient's vitals
+     *
+     * @param recordJson JSON message to process
+     */
     private void processPatientUpdate(JsonObject recordJson) {
         Patients patients = Patients.getInstance();
         Patient curPatient = null;
