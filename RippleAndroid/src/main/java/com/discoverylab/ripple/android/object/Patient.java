@@ -1,5 +1,6 @@
 package com.discoverylab.ripple.android.object;
 
+import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -32,6 +33,7 @@ public class Patient implements Parcelable {
 
     public Patient() {
         this.nbcContam = false;
+        this.triageColor = Color.WHITE;
     }
 
 
