@@ -67,6 +67,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         }
 
 
+
         // get MQTT service manager
         this.mqttServiceManager = new MQTTServiceManager(this, MQTTClientService.class, new MQTTHandler(this));
 
@@ -107,6 +108,8 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         super.onDestroy();
         // stop MQTT connection
         this.stopMQTTService();
+        // ensure no patient is currently selected
+        this.patientFragment.setSelectedPatient(null);
     }
 
     @Override

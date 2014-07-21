@@ -81,6 +81,10 @@ public class PatientCurrentVitalsFragment extends Fragment {
     }
 
     public void updateVitals(Patient p) {
+        if (getView() == null) {
+            // view destroyed so nothing to update
+            return;
+        }
         if (p == null) {
             // set default values
             this.temperatureText.setText("N/A");
@@ -92,9 +96,9 @@ public class PatientCurrentVitalsFragment extends Fragment {
             this.painText.setText("N/A");
         } else {
             // get values from object
-            this.temperatureText.setText(p.getTemperature()+" F");
-            this.sp02Text.setText(p.getO2()+"%");
-            this.heartRateText.setText(p.getHeartRate()+" BPM");
+            this.temperatureText.setText(p.getTemperature() + " F");
+            this.sp02Text.setText(p.getO2() + "%");
+            this.heartRateText.setText(p.getHeartRate() + " BPM");
             // TODO: add blood pressure values to patient
             this.systolicText.setText("N/A");
             this.diastolicText.setText("N/A");
