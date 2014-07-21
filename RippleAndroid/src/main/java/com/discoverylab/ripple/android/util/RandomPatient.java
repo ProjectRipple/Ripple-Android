@@ -26,18 +26,15 @@ public final class RandomPatient {
     private RandomPatient(){}
 
     public static Patient getRandomPatient() {
-        Patient patient = new Patient();
+        Patient patient = new Patient(src[lastSrc]);
         patient.setTriageColor(colors[new Random().nextInt(colors.length)]);
-        patient.setfName(fNames[new Random().nextInt(fNames.length)]);
-        patient.setlName(lNames[new Random().nextInt(lNames.length)]);
-        patient.setSsn(ssn[new Random().nextInt(ssn.length)]);
+        patient.setName(fNames[new Random().nextInt(fNames.length)] + " " + lNames[new Random().nextInt(lNames.length)]);
         patient.setSex(sex[new Random().nextInt(sex.length)]);
         patient.setType(type[new Random().nextInt(type.length)]);
         patient.setIpaddr(ipAddr[new Random().nextInt(ipAddr.length)]);
         patient.setHeartRate(new Random().nextInt(80) + 20);
         patient.setO2(new Random().nextInt(30) + 70);
         patient.setBreathsPerMin(new Random().nextInt(24));
-        patient.setPatientId(src[lastSrc]);
         lastSrc++;
         if(lastSrc == src.length){
             // reset

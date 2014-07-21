@@ -268,8 +268,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         curPatient = patients.getPatient(src);
         if (curPatient == null) {
             // Add patient
-            curPatient = new Patient();
-            curPatient.setPatientId(src);
+            curPatient = new Patient(src);
             patients.addPatient(src, curPatient);
             // Inform banner of new patient
             this.patientBanner.addPatient(curPatient);

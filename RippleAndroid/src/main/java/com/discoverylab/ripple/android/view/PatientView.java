@@ -70,10 +70,6 @@ public class PatientView extends RelativeLayout {
 
 
 
-    public int getPid() {
-        return this.mPatient.getPid();
-    }
-
     public String getPatientSrc() {
         return this.mPatient.getPatientId();
     }

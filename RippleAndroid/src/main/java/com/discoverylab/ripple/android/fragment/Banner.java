@@ -257,8 +257,7 @@ public class Banner extends Fragment {
                         }
                         if (!patientFound) {
                             // Add patient
-                            curPatient = new Patient();
-                            curPatient.setPatientId(src);
+                            curPatient = new Patient(src);
                             mPatients.add(curPatient);
                             curPatient.setTriageColor(Color.CYAN);
                             createPatientView(curPatient);

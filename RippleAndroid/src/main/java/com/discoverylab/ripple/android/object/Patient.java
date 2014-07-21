@@ -16,31 +16,43 @@ public class Patient implements Parcelable {
     private int heartRate;
     private int breathsPerMin;
     private int o2;
-    private int pid;
-
     private int temperature;
 
-    private Boolean nbcContam;
-    private String fName;
-    private String lName;
-    private String ssn;
+    private String name;
     private String sex;
     private String type;
     private String ipaddr;
+    private String status;
     private String patientId;
+
     // is the patient selected by the user
     private boolean isSelected = false;
+    private Boolean nbcContam;
 
-    public Patient() {
-        this.nbcContam = false;
+    public Patient(String patientId) {
+        this.patientId = patientId;
+
+        // set default values
+        this.age = -1;
         this.triageColor = Color.WHITE;
+        this.heartRate = -1;
+        this.breathsPerMin = -1;
+        this.o2 = -1;
+        this.temperature = -1;
+
+        this.name = "John Doe";
+        this.sex = "Unknown";
+        this.type = "Unknown";
+        this.status = "Not Attended";
+        this.ipaddr = "";
+
+        this.isSelected = false;
+        this.nbcContam = false;
     }
 
 
     public Patient(Parcel in) {
         // Make sure this ordering matches the order of writes for writeToParcel
-
-        this.pid = in.readInt();
         this.age = in.readInt();
         this.triageColor = in.readInt();
         this.heartRate = in.readInt();
@@ -48,22 +60,20 @@ public class Patient implements Parcelable {
         this.o2 = in.readInt();
         this.temperature = in.readInt();
 
-        this.nbcContam = in.readByte() == 1;
-
-        this.fName = in.readString();
-        this.lName = in.readString();
-        this.ssn = in.readString();
+        this.name = in.readString();
         this.sex = in.readString();
         this.type = in.readString();
+        this.status = in.readString();
         this.ipaddr = in.readString();
         this.patientId = in.readString();
+
         this.isSelected = (in.readByte() == 1);
+        this.nbcContam = (in.readByte() == 1);
     }
 
     @Override
     public void writeToParcel(Parcel parcel, int flags) {
         // Make sure this ordering matches the order of reads for Patient(Parcel)
-        parcel.writeInt(this.pid);
         parcel.writeInt(this.age);
         parcel.writeInt(this.triageColor);
         parcel.writeInt(this.heartRate);
@@ -71,24 +81,15 @@ public class Patient implements Parcelable {
         parcel.writeInt(this.o2);
         parcel.writeInt(this.temperature);
 
-        parcel.writeByte((byte) (this.nbcContam ? 1 : 0));
-
-        parcel.writeString(this.fName);
-        parcel.writeString(this.lName);
-        parcel.writeString(this.ssn);
+        parcel.writeString(this.name);
         parcel.writeString(this.sex);
         parcel.writeString(this.type);
+        parcel.writeString(this.status);
         parcel.writeString(this.ipaddr);
         parcel.writeString(this.patientId);
+
         parcel.writeByte((byte) (this.isSelected ? 1 : 0));
-    }
-
-    public int getPid() {
-        return pid;
-    }
-
-    public void setPid(int pid) {
-        this.pid = pid;
+        parcel.writeByte((byte) (this.nbcContam ? 1 : 0));
     }
 
     public int getTemperature() {
@@ -123,28 +124,12 @@ public class Patient implements Parcelable {
         this.sex = sex;
     }
 
-    public String getSsn() {
-        return ssn;
+    public String getName() {
+        return name;
     }
 
-    public void setSsn(String ssn) {
-        this.ssn = ssn;
-    }
-
-    public String getlName() {
-        return lName;
-    }
-
-    public void setlName(String lName) {
-        this.lName = lName;
-    }
-
-    public String getfName() {
-        return fName;
-    }
-
-    public void setfName(String fName) {
-        this.fName = fName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getAge() {
@@ -197,10 +182,6 @@ public class Patient implements Parcelable {
 
     public String getPatientId() {
         return patientId;
-    }
-
-    public void setPatientId(String patientId) {
-        this.patientId = patientId;
     }
 
     public boolean isSelected() {
