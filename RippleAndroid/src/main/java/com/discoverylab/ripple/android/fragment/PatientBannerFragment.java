@@ -37,6 +37,10 @@ public class PatientBannerFragment extends Fragment {
     // Runnable to refresh all patient views
     private Runnable refreshRunnable = new RefreshBannerRunnable();
 
+
+    // set to true to populate banner with dummy patients
+    private boolean randomTestPatients = false;
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -65,12 +69,15 @@ public class PatientBannerFragment extends Fragment {
 
         this.viewLayout = (LinearLayout) v.findViewById(R.id.patient_banner_view_layout);
 
-        // TODO: remove after debugging
-        Patients patients = Patients.getInstance();
-        for (int i = 0; i < RandomPatient.MAX_UNIQUE_PATIENTS; i++) {
-            Patient p = RandomPatient.getRandomPatient();
-            this.createPatientView(p);
-            patients.addPatient(p.getPatientId(), p);
+        if(randomTestPatients) {
+            // TODO: remove after debugging
+            Patients patients = Patients.getInstance();
+            for (int i = 0; i < RandomPatient.MAX_UNIQUE_PATIENTS; i++) {
+                Patient p = RandomPatient.getRandomPatient();
+                this.createPatientView(p);
+                patients.addPatient(p.getPatientId(), p);
+            }
+            randomTestPatients = false;
         }
 
         // TODO: handle rotation by recreating all patient views
