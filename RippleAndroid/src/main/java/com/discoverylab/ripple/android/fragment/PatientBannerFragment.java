@@ -73,6 +73,8 @@ public class PatientBannerFragment extends Fragment {
             patientList.addPatient(p);
         }
 
+        // TODO: handle rotation by recreating all patient views
+
         return v;
     }
 
