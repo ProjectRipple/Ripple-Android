@@ -344,8 +344,17 @@ public class MQTTClientService extends Service {
             mqttClient.disconnect();
         }
         mqttClient = null;
-        // attempt to connect client
-        attemptConnectMqttClient();
+
+        // Attempt connect is other thread to avoid blocking of activity binding
+        new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+                // attempt to connect client
+                attemptConnectMqttClient();
+            }
+        }).start();
+
 
     }
 

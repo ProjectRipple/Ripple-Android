@@ -29,7 +29,7 @@ public class MQTTServiceManager {
     // context for this object
     private Context mContext;
     // is the service bound
-    private boolean mIsBound;
+    private boolean mIsBound = false;
     // Messenger for manager -> service communication
     private Messenger mService = null;
     // Handler for manager -> activity communication
@@ -211,7 +211,9 @@ public class MQTTServiceManager {
      * Bind the service to the context
      */
     private void doBindService() {
-        mContext.bindService(new Intent(mContext, mServiceClass), mConnection, Context.BIND_AUTO_CREATE);
+        if (!mIsBound) {
+            mContext.bindService(new Intent(mContext, mServiceClass), mConnection, Context.BIND_AUTO_CREATE);
+        }
         mIsBound = true;
     }
 }
