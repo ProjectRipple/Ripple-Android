@@ -201,8 +201,9 @@ public class MQTTServiceManager {
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
+            mContext.unbindService(mConnection);
         }
-        mContext.unbindService(mConnection);
+
         mIsBound = false;
     }
 

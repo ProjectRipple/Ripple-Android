@@ -1,7 +1,6 @@
 package com.discoverylab.ripple.android.activity;
 
 
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -49,7 +48,7 @@ public class ScenarioActivity extends FragmentActivity {
         if (savedInstanceState == null) {
             this.patientBanner = PatientBannerFragment.newInstance();
             getFragmentManager().beginTransaction()
-                    .add(R.id.banner_container, this.patientBanner )
+                    .add(R.id.banner_container, this.patientBanner)
                     .commit();
 
             this.patientFragment = ScenarioPatientFragment.newInstance();
@@ -79,7 +78,7 @@ public class ScenarioActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         // bind service if running
-        if (this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()){
+        if (this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()) {
             this.mqttServiceManager.bind();
         }
     }
@@ -118,18 +117,33 @@ public class ScenarioActivity extends FragmentActivity {
      * Start MQTT service with current connection preferences
      */
     public void startMQTTService() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        this.mqttServiceManager.start(prefs.getString(PrefsFragment.IP_FROM_PREFS, WSConfig.DEFAULT_BROKER_IP), prefs.getString(PrefsFragment.PORT_NUM_MQTT_PREFS, WSConfig.DEFAULT_MQTT_PORT));
+        if (this.mqttServiceManager != null) {
+            if (this.isMQTTServiceRunning()) {
+                // stop service
+                this.stopMQTTService();
+            }
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            this.mqttServiceManager.start(prefs.getString(PrefsFragment.IP_FROM_PREFS, WSConfig.DEFAULT_BROKER_IP), prefs.getString(PrefsFragment.PORT_NUM_MQTT_PREFS, WSConfig.DEFAULT_MQTT_PORT));
+        }
     }
 
     /**
      * Stop MQTT service (disconnect from Broker)
      */
     public void stopMQTTService() {
-        if (this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()) {
+        if (this.mqttServiceManager != null && this.isMQTTServiceRunning()) {
             this.mqttServiceManager.stop();
+            this.setMqttConnected(false);
         }
     }
+
+    /**
+     * @return true if MQTT service is currently running, false otherwise
+     */
+    public boolean isMQTTServiceRunning() {
+        return this.mqttServiceManager.isServiceRunning();
+    }
+
 
     /**
      * Subscribe to a MQTT topic if connected to broker
@@ -167,7 +181,7 @@ public class ScenarioActivity extends FragmentActivity {
         }
     }
 
-    public void publishMQTTMessage(String topic, String message){
+    public void publishMQTTMessage(String topic, String message) {
         Message msg = Message.obtain(null, MQTTServiceConstants.MSG_PUBLISH_TO_TOPIC);
         Bundle data = new Bundle();
         data.putString(MQTTServiceConstants.MQTT_TOPIC, topic);
@@ -181,11 +195,11 @@ public class ScenarioActivity extends FragmentActivity {
         }
     }
 
-    private void setMqttConnected(boolean connected){
+    private void setMqttConnected(boolean connected) {
         this.isMqttConnected = connected;
     }
 
-    private boolean isMqttConnected(){
+    private boolean isMqttConnected() {
         return this.isMqttConnected;
     }
 
