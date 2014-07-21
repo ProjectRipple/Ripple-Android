@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.activity.PrefsActivity;
 import com.discoverylab.ripple.android.activity.ScenarioActivity;
 
 /**
@@ -76,7 +77,7 @@ public class LaunchFragment extends Fragment implements View.OnClickListener {
                 startActivity(new Intent(getActivity(), ScenarioActivity.class));
                 break;
             case R.id.launch_settings:
-                Toast.makeText(getActivity(), "Not implemented yet.", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getActivity(), PrefsActivity.class));
                 break;
             default:
                 Log.e(TAG, "Unknown view clicked!");
