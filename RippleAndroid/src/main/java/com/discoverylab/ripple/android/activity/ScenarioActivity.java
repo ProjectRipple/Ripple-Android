@@ -39,6 +39,9 @@ public class ScenarioActivity extends FragmentActivity {
     private PatientBannerFragment patientBanner;
     private ScenarioPatientFragment patientFragment;
 
+    // Is mqtt currently connected?
+    private boolean isMqttConnected = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -178,6 +181,13 @@ public class ScenarioActivity extends FragmentActivity {
         }
     }
 
+    private void setMqttConnected(boolean connected){
+        this.isMqttConnected = connected;
+    }
+
+    private boolean isMqttConnected(){
+        return this.isMqttConnected;
+    }
 
     /**
      * Processes message from MQTT client
@@ -213,28 +223,34 @@ public class ScenarioActivity extends FragmentActivity {
             if (activity != null) {
                 switch (msg.what) {
                     case MQTTServiceConstants.MSG_CONNECTED:
+                        // Set that we are connected
+                        activity.setMqttConnected(true);
                         // Subscribe to vitalcast messages
                         activity.subscribeToTopic(Common.MQTT_TOPIC_VITALCAST.replace(Common.MQTT_TOPIC_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
                         Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show();
                         // Clear old patient list
                         break;
                     case MQTTServiceConstants.MSG_CANT_CONNECT:
+                        activity.setMqttConnected(false);
                         Toast.makeText(activity, "Unable to connect", Toast.LENGTH_SHORT).show();
                         break;
                     case MQTTServiceConstants.MSG_PUBLISHED_MESSAGE:
                         activity.processPublishedMessage((PublishedMessage) msg.obj);
                         break;
                     case MQTTServiceConstants.MSG_DISCONNECTED:
+                        activity.setMqttConnected(false);
                         Toast.makeText(activity, "Disconnected from Broker.", Toast.LENGTH_SHORT).show();
                         break;
                     case MQTTServiceConstants.MSG_NO_NETWORK:
+                        activity.setMqttConnected(false);
                         Toast.makeText(activity, "No network connection, will attempt to reconnect with broker when network is restored.", Toast.LENGTH_LONG).show();
                         break;
                     case MQTTServiceConstants.MSG_RECONNECTING:
+                        activity.setMqttConnected(false);
                         Toast.makeText(activity, "Reconnecting to Broker...", Toast.LENGTH_SHORT).show();
                         break;
                     case MQTTServiceConstants.MSG_CONNECTION_STATUS:
-
+                        activity.setMqttConnected(msg.getData().getBoolean(MQTTServiceConstants.MQTT_CONNECTION_STATUS, activity.isMqttConnected()));
                         break;
                     default:
                         Log.d(Common.LOG_TAG, "Unknown message type :" + msg.what);
