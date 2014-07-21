@@ -14,7 +14,7 @@ import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.config.JSONTag;
 import com.discoverylab.ripple.android.object.Patient;
-import com.discoverylab.ripple.android.object.PatientList;
+import com.discoverylab.ripple.android.object.Patients;
 import com.discoverylab.ripple.android.util.RandomPatient;
 import com.discoverylab.ripple.android.view.BannerPatientView;
 import com.google.gson.JsonObject;
@@ -66,7 +66,7 @@ public class PatientBannerFragment extends Fragment {
         this.viewLayout = (LinearLayout) v.findViewById(R.id.patient_banner_view_layout);
 
         // TODO: remove after debugging
-        PatientList patientList = PatientList.getInstance();
+        Patients patientList = Patients.getInstance();
         for (int i = 0; i < RandomPatient.MAX_UNIQUE_PATIENTS; i++) {
             Patient p = RandomPatient.getRandomPatient();
             this.createPatientView(p);
@@ -145,7 +145,7 @@ public class PatientBannerFragment extends Fragment {
 
             boolean patientFound;
             Patient curPatient;
-            PatientList patientList = PatientList.getInstance();
+            Patients patientList = Patients.getInstance();
 
             switch (msg.what) {
                 case Common.RIPPLE_MSG_RECORD:
@@ -166,7 +166,7 @@ public class PatientBannerFragment extends Fragment {
                     int resp_pm = recordJson.get(JSONTag.RECORD_RESP_PER_MIN).getAsInt();
 
                     // find patient
-                    for (Patient p : patientList.getPatientList()) {
+                    for (Patient p : patientList.getPatientMap()) {
                         if (p.getPatientId().equals(src)) {
                             patientFound = true;
                             curPatient = p;
@@ -208,7 +208,7 @@ public class PatientBannerFragment extends Fragment {
                     } else {
                         // find patient
 
-                        for (Patient p : patientList.getPatientList()) {
+                        for (Patient p : patientList.getPatientMap()) {
                             if (p.getPatientId().equals(patientId)) {
                                 patientFound = true;
                                 curPatient = p;
