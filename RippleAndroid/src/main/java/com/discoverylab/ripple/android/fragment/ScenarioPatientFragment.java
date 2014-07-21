@@ -23,7 +23,9 @@ public class ScenarioPatientFragment extends Fragment {
     private static final String PATIENT_NOTE_FRAG_TAG = "ScenarioPatientNoteFrag";
     private static final String PATIENT_INFO_FRAG_TAG = "ScenarioPatientInfoFrag";
     private static final String PATIENT_CURRENT_VITALS_FRAG_TAG = "ScenarioPatientCurrentVitalsFrag";
+    // Reference to currently selected patient
     private Patient selectedPatient = null;
+    // Fragment references
     private ScenarioNoteFragment noteFragment;
     private PatientInfoFragment infoFragment;
     private PatientCurrentVitalsFragment currentVitalsFragment;

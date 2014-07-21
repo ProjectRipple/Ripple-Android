@@ -1,6 +1,5 @@
 package com.discoverylab.ripple.android.object;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,7 +12,7 @@ import java.util.concurrent.ConcurrentMap;
 public class Patients {
 
     // Global list of patients
-    private ConcurrentMap<String,Patient> patientMap = new ConcurrentHashMap<String, Patient>(80);
+    private ConcurrentMap<String, Patient> patientMap = new ConcurrentHashMap<String, Patient>(80);
 
     // object to lock patient list
     private final Object lock = new Object();
@@ -31,23 +30,23 @@ public class Patients {
         return Loader.instance;
     }
 
-    public boolean patientExists(String id){
+    public boolean patientExists(String id) {
         return patientMap.containsKey(id);
     }
 
     public void addPatient(String id, Patient p) {
-        patientMap.put(id,p);
+        patientMap.put(id, p);
     }
 
     public Patient getPatient(String id) {
         return patientMap.get(id);
     }
 
-    public int getPatientListSize() {
+    public int getNumPatients() {
         return patientMap.size();
     }
 
-    public Set<Map.Entry<String,Patient>> getPatientEntries() {
+    public Set<Map.Entry<String, Patient>> getPatientEntries() {
         return patientMap.entrySet();
     }
 }

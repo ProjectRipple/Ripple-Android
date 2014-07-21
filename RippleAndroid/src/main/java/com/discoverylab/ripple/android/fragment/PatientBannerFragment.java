@@ -17,6 +17,9 @@ import com.discoverylab.ripple.android.object.Patients;
 import com.discoverylab.ripple.android.util.RandomPatient;
 import com.discoverylab.ripple.android.view.BannerPatientView;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Displays a horizontal list of patients.
  * <p/>
@@ -39,7 +42,7 @@ public class PatientBannerFragment extends Fragment {
 
 
     // set to true to populate banner with dummy patients
-    private boolean randomTestPatients = false;
+    private static boolean randomTestPatients = false;
 
     /**
      * Use this factory method to create a new instance of
@@ -69,9 +72,17 @@ public class PatientBannerFragment extends Fragment {
 
         this.viewLayout = (LinearLayout) v.findViewById(R.id.patient_banner_view_layout);
 
+        // TODO: handle rotation by recreating all patient views
+        Patients patients = Patients.getInstance();
+        if (patients.getNumPatients() > 0) {
+            Set<Map.Entry<String, Patient>> patientsSet = patients.getPatientEntries();
+            for (Map.Entry<String, Patient> entry : patientsSet) {
+                this.createPatientView(entry.getValue());
+            }
+        }
+
         if (randomTestPatients) {
             // TODO: remove after debugging
-            Patients patients = Patients.getInstance();
             for (int i = 0; i < RandomPatient.MAX_UNIQUE_PATIENTS; i++) {
                 Patient p = RandomPatient.getRandomPatient();
                 this.createPatientView(p);
@@ -80,7 +91,6 @@ public class PatientBannerFragment extends Fragment {
             randomTestPatients = false;
         }
 
-        // TODO: handle rotation by recreating all patient views
 
         return v;
     }
