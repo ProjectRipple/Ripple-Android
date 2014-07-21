@@ -78,7 +78,28 @@ public class PatientBannerFragment extends Fragment {
         return v;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // remove view references
+        this.viewLayout = null;
+    }
 
+    /**
+     * Add a new patient to the banner
+     *
+     * @param p Patien to add
+     */
+    public void addPatient(Patient p) {
+        this.createPatientView(p);
+    }
+
+
+    /**
+     * Create a new patient view for patient
+     *
+     * @param p Patient to create view for
+     */
     private void createPatientView(Patient p) {
         if (this.viewLayout != null) {
             BannerPatientView bpv = new BannerPatientView(getActivity());
