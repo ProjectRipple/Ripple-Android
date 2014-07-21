@@ -124,6 +124,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
             BannerPatientView bpv = (BannerPatientView) v;
             Patient p = bpv.getPatient();
             this.patientFragment.setSelectedPatient(p);
+            this.patientBanner.refreshBanner();
         }
     }
 

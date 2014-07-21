@@ -122,7 +122,7 @@ public class PatientBannerFragment extends Fragment {
     /**
      * Cause redraw of banner child views.
      */
-    private void refreshBanner() {
+    public void refreshBanner() {
         this.mHandler.post(refreshRunnable);
     }
 

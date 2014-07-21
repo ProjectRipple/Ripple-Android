@@ -2,6 +2,7 @@ package com.discoverylab.ripple.android.view;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.view.Gravity;
@@ -109,6 +110,16 @@ public class BannerPatientView extends RelativeLayout {
 
         // set patient status
         this.patientStatusText.setText("Not Attended.");
+
+        // check if patient is selected
+        if(mPatient.isSelected()){
+            this.patientIdText.setTextColor(this.colorYellow);
+            this.patientIdText.setTypeface(this.patientIdText.getTypeface(), Typeface.BOLD);
+        } else {
+            // reset text color
+            this.patientIdText.setTextColor(getResources().getColor(R.color.white));
+            this.patientIdText.setTypeface(null, Typeface.NORMAL);
+        }
 
         // set patient color
         GradientDrawable bgDrawable = (GradientDrawable) this.getBackground();
