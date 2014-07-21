@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.discoverylab.ripple.android.config.Common;
@@ -18,6 +19,9 @@ import com.discoverylab.ripple.android.fragment.PrefsFragment;
  */
 public class RippleApp extends Application {
 
+    // Log tag
+    private static final String TAG = RippleApp.class.getSimpleName();
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -30,6 +34,25 @@ public class RippleApp extends Application {
         // Load preferences
         loadConnectionPreferences();
 
+        // lookup device id
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String deviceId = prefs.getString(Common.RESPONDER_ID_PREF, "");
+
+        if (deviceId.equals("")) {
+            // get device ID
+            deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+            if (deviceId == null) {
+
+                Log.d(TAG, "Device ID not found, generating random ID.");
+                // generate ID if ANDROID_ID cannot be found
+                deviceId = org.eclipse.paho.client.mqttv3.MqttClient.generateClientId();
+            }
+            // save id in preferences
+            prefs.edit().putString(Common.RESPONDER_ID_PREF, deviceId).apply();
+        }
+        // set id to static global value
+        Common.RESPONDER_ID = deviceId;
+
         // Database ignored for now
         /*DatabaseAdapter.getInstance(this.getApplicationContext());
         if (DatabaseAdapter.getInstance().isTableEmpty(DatabaseAdapter.TableType.VITAL.name())) {
@@ -41,7 +64,7 @@ public class RippleApp extends Application {
     /**
      * Load and verify connection preferences, loading defaults if needed.
      */
-    private void loadConnectionPreferences(){
+    private void loadConnectionPreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         SharedPreferences.Editor myEditor = prefs.edit();

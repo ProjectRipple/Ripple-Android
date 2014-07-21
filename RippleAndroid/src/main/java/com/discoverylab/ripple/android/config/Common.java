@@ -16,6 +16,11 @@ public final class Common {
         // Empty
     }
 
+    // responder id for this device
+    public static String RESPONDER_ID = "";
+    // key for responder id preference
+    public static final String RESPONDER_ID_PREF = "ResponderIdPref";
+
     // Json Formatting
     public static final Gson GSON = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
 

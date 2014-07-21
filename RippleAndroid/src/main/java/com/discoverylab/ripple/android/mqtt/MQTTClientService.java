@@ -18,6 +18,8 @@ import android.os.RemoteException;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.discoverylab.ripple.android.config.Common;
+
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.lang.ref.WeakReference;
@@ -221,14 +223,15 @@ public class MQTTClientService extends Service {
     private void attemptConnectMqttClient() {
         if (mqttClient == null) {
             // get device ID
-            String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-            if (deviceId == null) {
-                if (DEBUG) {
-                    Log.d(TAG, "Device ID not found, generating random ID.");
-                }
-                // generate ID if ANDROID_ID cannot be found
-                deviceId = org.eclipse.paho.client.mqttv3.MqttClient.generateClientId();
-            }
+//            String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+//            if (deviceId == null) {
+//                if (DEBUG) {
+//                    Log.d(TAG, "Device ID not found, generating random ID.");
+//                }
+//                // generate ID if ANDROID_ID cannot be found
+//                deviceId = org.eclipse.paho.client.mqttv3.MqttClient.generateClientId();
+//            }
+            String deviceId = Common.RESPONDER_ID;
 
             // Create client object
             try {
