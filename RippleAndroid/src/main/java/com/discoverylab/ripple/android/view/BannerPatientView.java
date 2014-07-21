@@ -101,6 +101,10 @@ public class BannerPatientView extends RelativeLayout {
         this.updateViewFields();
     }
 
+    public Patient getPatient() {
+        return this.mPatient;
+    }
+
     public void updateViewFields() {
 
         // set patient status

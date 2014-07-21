@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.object.Patient;
 
 /**
  * Fragment holding lower part of the scenario view.
@@ -22,6 +23,7 @@ public class ScenarioPatientFragment extends Fragment {
     private static final String PATIENT_NOTE_FRAG_TAG = "ScenarioPatientNoteFrag";
     private static final String PATIENT_INFO_FRAG_TAG = "ScenarioPatientInfoFrag";
     private static final String PATIENT_CURRENT_VITALS_FRAG_TAG = "ScenarioPatientCurrentVitalsFrag";
+    private Patient selectedPatient = null;
 
 
     /**
@@ -102,5 +104,30 @@ public class ScenarioPatientFragment extends Fragment {
         for (Fragment fragment : getChildFragmentManager().getFragments()) {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    public void setSelectedPatient(Patient p) {
+
+
+        if (this.selectedPatient != null) {
+            this.selectedPatient.setSelected(false);
+            if (p != null && this.selectedPatient.getPatientId().equals(p.getPatientId())) {
+                p.setSelected(false);
+                // deselecting patient
+                p = null;
+            }
+        }
+
+        if (p != null) {
+            // ensure p is selected
+            p.setSelected(true);
+        }
+
+        this.selectedPatient = p;
+
+    }
+
+    public Patient getSelectedPatient() {
+        return this.selectedPatient;
     }
 }

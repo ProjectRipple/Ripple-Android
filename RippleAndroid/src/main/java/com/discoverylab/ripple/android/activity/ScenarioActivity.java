@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
@@ -25,11 +26,12 @@ import com.discoverylab.ripple.android.mqtt.MQTTServiceManager;
 import com.discoverylab.ripple.android.mqtt.PublishedMessage;
 import com.discoverylab.ripple.android.object.Patient;
 import com.discoverylab.ripple.android.object.Patients;
+import com.discoverylab.ripple.android.view.BannerPatientView;
 import com.google.gson.JsonObject;
 
 import java.lang.ref.WeakReference;
 
-public class ScenarioActivity extends FragmentActivity {
+public class ScenarioActivity extends FragmentActivity implements View.OnClickListener {
 
     // Log tag
     private static final String TAG = ScenarioActivity.class.getSimpleName();
@@ -113,6 +115,15 @@ public class ScenarioActivity extends FragmentActivity {
         // pass result to fragments
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             fragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v instanceof BannerPatientView) {
+            BannerPatientView bpv = (BannerPatientView) v;
+            Patient p = bpv.getPatient();
+            this.patientFragment.setSelectedPatient(p);
         }
     }
 

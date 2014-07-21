@@ -5,19 +5,17 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.discoverylab.ripple.android.R;
-import com.discoverylab.ripple.android.config.Common;
-import com.discoverylab.ripple.android.config.JSONTag;
 import com.discoverylab.ripple.android.object.Patient;
 import com.discoverylab.ripple.android.object.Patients;
 import com.discoverylab.ripple.android.util.RandomPatient;
 import com.discoverylab.ripple.android.view.BannerPatientView;
-import com.google.gson.JsonObject;
 
 /**
  * Displays a horizontal list of patients.
@@ -28,6 +26,8 @@ import com.google.gson.JsonObject;
 public class PatientBannerFragment extends Fragment {
 
 
+    // Log tag
+    private static final String TAG = PatientBannerFragment.class.getSimpleName();
     // Reference to the currently selected Patient
     public Patient selectedPatient;
     // Handler for messages to Banner
@@ -69,7 +69,7 @@ public class PatientBannerFragment extends Fragment {
 
         this.viewLayout = (LinearLayout) v.findViewById(R.id.patient_banner_view_layout);
 
-        if(randomTestPatients) {
+        if (randomTestPatients) {
             // TODO: remove after debugging
             Patients patients = Patients.getInstance();
             for (int i = 0; i < RandomPatient.MAX_UNIQUE_PATIENTS; i++) {
@@ -155,37 +155,8 @@ public class PatientBannerFragment extends Fragment {
 
             switch (msg.what) {
 
-                case Common.RIPPLE_MSG_SELECT_PATIENT:
-                    if (msg.obj == null) {
-                        // no message
-                        return;
-                    }
-
-
-                    String patientId = (String) msg.obj;
-                    if (patientId.equals("")) {
-                        // no patient currently selected
-                        if (selectedPatient != null) {
-                            selectedPatient.setSelected(false);
-                            selectedPatient = null;
-                        }
-                    } else {
-
-                        // find patient
-                        curPatient = patients.getPatient(patientId);
-                        if (curPatient != null) {
-                            // remove old selected patient
-                            if (selectedPatient != null) {
-                                selectedPatient.setSelected(false);
-                                selectedPatient = null;
-                            }
-                            selectedPatient = curPatient;
-                            selectedPatient.setSelected(true);
-
-                        }
-                    }
-                    refreshBanner();
-                    break;
+                default:
+                    Log.d(TAG, "Unknown message to handler.");
             }
         }
     }
