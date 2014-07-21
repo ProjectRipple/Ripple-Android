@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.config.Common;
+import com.discoverylab.ripple.android.config.JSONTag;
 import com.discoverylab.ripple.android.config.WSConfig;
 import com.discoverylab.ripple.android.fragment.PatientBannerFragment;
 import com.discoverylab.ripple.android.fragment.PrefsFragment;
@@ -22,6 +23,8 @@ import com.discoverylab.ripple.android.mqtt.MQTTClientService;
 import com.discoverylab.ripple.android.mqtt.MQTTServiceConstants;
 import com.discoverylab.ripple.android.mqtt.MQTTServiceManager;
 import com.discoverylab.ripple.android.mqtt.PublishedMessage;
+import com.discoverylab.ripple.android.object.Patient;
+import com.discoverylab.ripple.android.object.PatientList;
 import com.google.gson.JsonObject;
 
 import java.lang.ref.WeakReference;
@@ -183,7 +186,8 @@ public class ScenarioActivity extends FragmentActivity {
 
     /**
      * Publish a message over MQTT
-     * @param topic Topic to publish to.
+     *
+     * @param topic   Topic to publish to.
      * @param message Message to publish
      */
     public void publishMQTTMessage(String topic, String message) {
@@ -217,6 +221,7 @@ public class ScenarioActivity extends FragmentActivity {
         String topic = msg.getTopic();
         if (topic.matches(Common.MQTT_TOPIC_MATCH_VITALCAST)) {
             JsonObject recordJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
+            this.processPatientUpdate(recordJson);
             //this.banner.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
             //this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
         } else if (topic.matches(Common.MQTT_TOPIC_MATCH_ECG_STREAM)) {
@@ -225,6 +230,38 @@ public class ScenarioActivity extends FragmentActivity {
         } else {
             Log.d(Common.LOG_TAG, "Unknown MQTT topic recieved:" + topic);
         }
+    }
+
+    private void processPatientUpdate(JsonObject recordJson) {
+        PatientList patientList = PatientList.getInstance();
+        boolean patientFound = false;
+        Patient curPatient = null;
+        String src = recordJson.get(JSONTag.RECORD_SOURCE).getAsString();
+        int hr = recordJson.get(JSONTag.RECORD_HEART_RATE).getAsInt();
+        int spO2 = recordJson.get(JSONTag.RECORD_BLOOD_OX).getAsInt();
+        int temperature = recordJson.get(JSONTag.RECORD_TEMPERATURE).getAsInt();
+        int resp_pm = recordJson.get(JSONTag.RECORD_RESP_PER_MIN).getAsInt();
+
+        // find patient
+        for (Patient p : patientList.getPatientList()) {
+            if (p.getPatientId().equals(src)) {
+                patientFound = true;
+                curPatient = p;
+                break;
+            }
+        }
+        if (!patientFound) {
+            // Add patient
+            curPatient = new Patient();
+            curPatient.setPatientId(src);
+            patientList.addPatient(curPatient);
+        }
+
+        // Update patient values
+        curPatient.setO2(spO2);
+        curPatient.setBpm(hr);
+        curPatient.setTemperature(temperature);
+        curPatient.setRpm(resp_pm);
     }
 
     /**
