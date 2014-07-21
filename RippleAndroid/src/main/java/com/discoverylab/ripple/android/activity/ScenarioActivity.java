@@ -215,11 +215,12 @@ public class ScenarioActivity extends FragmentActivity {
      */
     private void processPublishedMessage(PublishedMessage msg) {
         String topic = msg.getTopic();
-        if (topic.equals(Common.MQTT_TOPIC_VITALPROP) || topic.matches(Common.MQTT_TOPIC_MATCH_VITALCAST)) {
+        if (topic.matches(Common.MQTT_TOPIC_MATCH_VITALCAST)) {
             JsonObject recordJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
             //this.banner.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
             //this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
         } else if (topic.matches(Common.MQTT_TOPIC_MATCH_ECG_STREAM)) {
+            // TODO: Send to new note fragment when ready
             //this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_ECG_STREAM, msg).sendToTarget();
         } else {
             Log.d(Common.LOG_TAG, "Unknown MQTT topic recieved:" + topic);
