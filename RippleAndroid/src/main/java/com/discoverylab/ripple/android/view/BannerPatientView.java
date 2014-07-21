@@ -101,7 +101,7 @@ public class BannerPatientView extends RelativeLayout {
         this.updateViewFields();
     }
 
-    private void updateViewFields() {
+    public void updateViewFields() {
 
         // set patient status
         this.patientStatusText.setText("Not Attended.");
