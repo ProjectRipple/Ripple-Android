@@ -147,7 +147,7 @@ public class PatientView extends RelativeLayout {
         this.temperatureText.setBackgroundColor(this.getColor(DataFields.TEMPERATURE));
 
         // update heart rate field
-        int heartRate = this.mPatient.getBpm();
+        int heartRate = this.mPatient.getHeartRate();
         String hrString = "HR: " + heartRate;
         if (heartRate >= 250) {
             // no reading if HR == 255
@@ -214,7 +214,7 @@ public class PatientView extends RelativeLayout {
      * @return status color for patient's resparation rate
      */
     private int getRespPMBGColor() {
-        int val = mPatient.getRpm();
+        int val = mPatient.getBreathsPerMin();
         if (val < 26 && val > 11) {
             return this.colorGreen;
         } else if (val < 30 && val > 9) {
@@ -244,7 +244,7 @@ public class PatientView extends RelativeLayout {
      * @return status color for patient's current heart rate
      */
     private int getBeatsPMBGColor() {
-        int val = mPatient.getBpm();
+        int val = mPatient.getHeartRate();
         if (val < 120 && val > 60) {
             return this.colorGreen;
         } else if (val < 150 && val > 40) {

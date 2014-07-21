@@ -169,7 +169,7 @@
 
 
     <TextView
-        android:id="@+id/current_vitals_resparation_value"
+        android:id="@+id/current_vitals_respiration_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/current_vitals_resparation_label"

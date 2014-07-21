@@ -13,8 +13,8 @@ public class Patient implements Parcelable {
 
     private int age;
     private int triageColor;
-    private int bpm;
-    private int rpm;
+    private int heartRate;
+    private int breathsPerMin;
     private int o2;
     private int pid;
 
@@ -43,8 +43,8 @@ public class Patient implements Parcelable {
         this.pid = in.readInt();
         this.age = in.readInt();
         this.triageColor = in.readInt();
-        this.bpm = in.readInt();
-        this.rpm = in.readInt();
+        this.heartRate = in.readInt();
+        this.breathsPerMin = in.readInt();
         this.o2 = in.readInt();
         this.temperature = in.readInt();
 
@@ -66,8 +66,8 @@ public class Patient implements Parcelable {
         parcel.writeInt(this.pid);
         parcel.writeInt(this.age);
         parcel.writeInt(this.triageColor);
-        parcel.writeInt(this.bpm);
-        parcel.writeInt(this.rpm);
+        parcel.writeInt(this.heartRate);
+        parcel.writeInt(this.breathsPerMin);
         parcel.writeInt(this.o2);
         parcel.writeInt(this.temperature);
 
@@ -171,20 +171,20 @@ public class Patient implements Parcelable {
         this.triageColor = triageColor;
     }
 
-    public int getBpm() {
-        return bpm;
+    public int getHeartRate() {
+        return heartRate;
     }
 
-    public void setBpm(int bpm) {
-        this.bpm = bpm;
+    public void setHeartRate(int heartRate) {
+        this.heartRate = heartRate;
     }
 
-    public int getRpm() {
-        return rpm;
+    public int getBreathsPerMin() {
+        return breathsPerMin;
     }
 
-    public void setRpm(int rpm) {
-        this.rpm = rpm;
+    public void setBreathsPerMin(int breathsPerMin) {
+        this.breathsPerMin = breathsPerMin;
     }
 
     public int getO2() {

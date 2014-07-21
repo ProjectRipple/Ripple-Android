@@ -274,9 +274,14 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
 
         // Update patient values
         curPatient.setO2(spO2);
-        curPatient.setBpm(hr);
+        curPatient.setHeartRate(hr);
         curPatient.setTemperature(temperature);
-        curPatient.setRpm(resp_pm);
+        curPatient.setBreathsPerMin(resp_pm);
+
+        if(curPatient == this.patientFragment.getSelectedPatient()){
+            // update vitals on screen for selected patient
+            this.patientFragment.updatePatientVitals();
+        }
     }
 
     /**

@@ -34,9 +34,9 @@ public final class RandomPatient {
         patient.setSex(sex[new Random().nextInt(sex.length)]);
         patient.setType(type[new Random().nextInt(type.length)]);
         patient.setIpaddr(ipAddr[new Random().nextInt(ipAddr.length)]);
-        patient.setBpm(new Random().nextInt(80) + 20);
+        patient.setHeartRate(new Random().nextInt(80) + 20);
         patient.setO2(new Random().nextInt(30) + 70);
-        patient.setRpm(new Random().nextInt(24));
+        patient.setBreathsPerMin(new Random().nextInt(24));
         patient.setPatientId(src[lastSrc]);
         lastSrc++;
         if(lastSrc == src.length){

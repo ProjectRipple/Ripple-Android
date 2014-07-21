@@ -24,6 +24,9 @@ public class ScenarioPatientFragment extends Fragment {
     private static final String PATIENT_INFO_FRAG_TAG = "ScenarioPatientInfoFrag";
     private static final String PATIENT_CURRENT_VITALS_FRAG_TAG = "ScenarioPatientCurrentVitalsFrag";
     private Patient selectedPatient = null;
+    private ScenarioNoteFragment noteFragment;
+    private PatientInfoFragment infoFragment;
+    private PatientCurrentVitalsFragment currentVitalsFragment;
 
 
     /**
@@ -63,35 +66,38 @@ public class ScenarioPatientFragment extends Fragment {
 
         // Get child fragments
 
-        ScenarioNoteFragment noteFragment = (ScenarioNoteFragment) fragmentManager.findFragmentByTag(PATIENT_NOTE_FRAG_TAG);
+        this.noteFragment = (ScenarioNoteFragment) fragmentManager.findFragmentByTag(PATIENT_NOTE_FRAG_TAG);
 
-        if (noteFragment == null) {
+        if (this.noteFragment == null) {
 
+            this.noteFragment = ScenarioNoteFragment.newInstance();
             fragmentManager.beginTransaction()
                     .add(R.id.scenario_patient_note_container,
-                            ScenarioNoteFragment.newInstance(),
+                            this.noteFragment,
                             PATIENT_NOTE_FRAG_TAG)
                     .commit();
         }
 
-        PatientInfoFragment infoFragment = (PatientInfoFragment) fragmentManager.findFragmentByTag(PATIENT_INFO_FRAG_TAG);
+        this.infoFragment = (PatientInfoFragment) fragmentManager.findFragmentByTag(PATIENT_INFO_FRAG_TAG);
 
-        if (infoFragment == null) {
+        if (this.infoFragment == null) {
 
+            this.infoFragment = PatientInfoFragment.newInstance();
             fragmentManager.beginTransaction()
                     .add(R.id.scenario_patient_info_container,
-                            PatientInfoFragment.newInstance(),
+                            this.infoFragment,
                             PATIENT_INFO_FRAG_TAG)
                     .commit();
         }
 
-        PatientCurrentVitalsFragment currentVitalsFragment = (PatientCurrentVitalsFragment) fragmentManager.findFragmentByTag(PATIENT_CURRENT_VITALS_FRAG_TAG);
+        this.currentVitalsFragment = (PatientCurrentVitalsFragment) fragmentManager.findFragmentByTag(PATIENT_CURRENT_VITALS_FRAG_TAG);
 
-        if (currentVitalsFragment == null) {
+        if (this.currentVitalsFragment == null) {
 
+            this.currentVitalsFragment = PatientCurrentVitalsFragment.newInstance();
             fragmentManager.beginTransaction()
                     .add(R.id.scenario_patient_current_vitals_container,
-                            PatientCurrentVitalsFragment.newInstance(),
+                            this.currentVitalsFragment,
                             PATIENT_CURRENT_VITALS_FRAG_TAG)
                     .commit();
         }
@@ -124,10 +130,15 @@ public class ScenarioPatientFragment extends Fragment {
         }
 
         this.selectedPatient = p;
+        this.currentVitalsFragment.updateVitals(this.selectedPatient);
 
     }
 
     public Patient getSelectedPatient() {
         return this.selectedPatient;
+    }
+
+    public void updatePatientVitals() {
+        this.currentVitalsFragment.updateVitals(this.selectedPatient);
     }
 }

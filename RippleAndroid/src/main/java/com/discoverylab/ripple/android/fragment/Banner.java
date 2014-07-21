@@ -266,9 +266,9 @@ public class Banner extends Fragment {
                     }
                     // Update patient values
                     curPatient.setO2(spO2);
-                    curPatient.setBpm(hr);
+                    curPatient.setHeartRate(hr);
                     curPatient.setTemperature(temperature);
-                    curPatient.setRpm(resp_pm);
+                    curPatient.setBreathsPerMin(resp_pm);
 
                     break;
 
