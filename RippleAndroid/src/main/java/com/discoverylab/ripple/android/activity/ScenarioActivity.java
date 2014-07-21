@@ -181,6 +181,11 @@ public class ScenarioActivity extends FragmentActivity {
         }
     }
 
+    /**
+     * Publish a message over MQTT
+     * @param topic Topic to publish to.
+     * @param message Message to publish
+     */
     public void publishMQTTMessage(String topic, String message) {
         Message msg = Message.obtain(null, MQTTServiceConstants.MSG_PUBLISH_TO_TOPIC);
         Bundle data = new Bundle();
