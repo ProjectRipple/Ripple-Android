@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -114,9 +115,9 @@ public class PatientInfoFragment extends Fragment {
         });
 
         // get text fields
-        TextView patientName = (TextView) v.findViewById(R.id.patient_name_text);
+        EditText patientName = (EditText) v.findViewById(R.id.patient_name_text);
 
-        TextView patientAge = (TextView) v.findViewById(R.id.patient_age_text);
+        EditText patientAge = (EditText) v.findViewById(R.id.patient_age_text);
 
 
         return v;
