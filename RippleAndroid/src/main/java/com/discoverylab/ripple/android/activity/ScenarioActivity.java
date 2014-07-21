@@ -3,9 +3,11 @@ package com.discoverylab.ripple.android.activity;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -13,7 +15,9 @@ import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.config.Common;
+import com.discoverylab.ripple.android.config.WSConfig;
 import com.discoverylab.ripple.android.fragment.PatientBannerFragment;
+import com.discoverylab.ripple.android.fragment.PrefsFragment;
 import com.discoverylab.ripple.android.fragment.ScenarioPatientFragment;
 import com.discoverylab.ripple.android.mqtt.MQTTClientService;
 import com.discoverylab.ripple.android.mqtt.MQTTServiceConstants;
@@ -25,25 +29,42 @@ import java.lang.ref.WeakReference;
 
 public class ScenarioActivity extends FragmentActivity {
 
+    // Log tag
+    private static final String TAG = ScenarioActivity.class.getSimpleName();
+
     // MQTT
     private MQTTServiceManager mqttServiceManager;
+
+    // References to fragments
+    private PatientBannerFragment patientBanner;
+    private ScenarioPatientFragment patientFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scenerio);
         if (savedInstanceState == null) {
+            this.patientBanner = PatientBannerFragment.newInstance();
             getFragmentManager().beginTransaction()
-                    .add(R.id.banner_container, PatientBannerFragment.newInstance())
+                    .add(R.id.banner_container, this.patientBanner )
                     .commit();
 
-
+            this.patientFragment = ScenarioPatientFragment.newInstance();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.patient_scenario_container, ScenarioPatientFragment.newInstance())
+                    .add(R.id.patient_scenario_container, this.patientFragment)
                     .commit();
+        } else {
+            // Fragments already exist, so just get from fragment manager
+            this.patientBanner = (PatientBannerFragment) getFragmentManager().findFragmentById(R.id.banner_container);
+            this.patientFragment = (ScenarioPatientFragment) getSupportFragmentManager().findFragmentById(R.id.patient_scenario_container);
         }
+
+
         // get MQTT service manager
         this.mqttServiceManager = new MQTTServiceManager(this, MQTTClientService.class, new MQTTHandler(this));
+
+        // Start MQTT connection
+        this.startMQTTService();
     }
 
     @Override
@@ -77,6 +98,8 @@ public class ScenarioActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // stop MQTT connection
+        this.stopMQTTService();
     }
 
     @Override
@@ -85,6 +108,73 @@ public class ScenarioActivity extends FragmentActivity {
         // pass result to fragments
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             fragment.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    /**
+     * Start MQTT service with current connection preferences
+     */
+    public void startMQTTService() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        this.mqttServiceManager.start(prefs.getString(PrefsFragment.IP_FROM_PREFS, WSConfig.DEFAULT_BROKER_IP), prefs.getString(PrefsFragment.PORT_NUM_MQTT_PREFS, WSConfig.DEFAULT_MQTT_PORT));
+    }
+
+    /**
+     * Stop MQTT service (disconnect from Broker)
+     */
+    public void stopMQTTService() {
+        if (this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()) {
+            this.mqttServiceManager.stop();
+        }
+    }
+
+    /**
+     * Subscribe to a MQTT topic if connected to broker
+     *
+     * @param topicName MQTT topic to subscribe to
+     */
+    public void subscribeToTopic(String topicName) {
+        Message msg = Message.obtain(null, MQTTServiceConstants.MSG_SUBSCRIBE);
+        Bundle bundle = new Bundle();
+        bundle.putString(MQTTServiceConstants.MQTT_TOPIC, topicName);
+        msg.setData(bundle);
+        try {
+            this.mqttServiceManager.send(msg);
+            Log.d(Common.LOG_TAG, "Subscribed for: " + topicName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Unsubscribe from an MQTT topic if connected to broker
+     *
+     * @param topicName MQTT topic to unsubscribe from
+     */
+    public void unsubscribeFromTopic(String topicName) {
+        Message msg = Message.obtain(null, MQTTServiceConstants.MSG_UNSUBSCRIBE);
+        Bundle bundle = new Bundle();
+        bundle.putString(MQTTServiceConstants.MQTT_TOPIC, topicName);
+        msg.setData(bundle);
+        try {
+            this.mqttServiceManager.send(msg);
+            Log.d(TAG, "Unsubscribed from: " + topicName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void publishMQTTMessage(String topic, String message){
+        Message msg = Message.obtain(null, MQTTServiceConstants.MSG_PUBLISH_TO_TOPIC);
+        Bundle data = new Bundle();
+        data.putString(MQTTServiceConstants.MQTT_TOPIC, topic);
+        data.putString(MQTTServiceConstants.MQTT_MESSAGE, message);
+        msg.setData(data);
+        try {
+            this.mqttServiceManager.send(msg);
+            Log.d(TAG, "Published message to topic " + topic);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -123,8 +213,8 @@ public class ScenarioActivity extends FragmentActivity {
             if (activity != null) {
                 switch (msg.what) {
                     case MQTTServiceConstants.MSG_CONNECTED:
-                        //activity.subscribeToTopic(Common.MQTT_TOPIC_VITALPROP);
-                        //activity.subscribeToTopic(Common.MQTT_TOPIC_VITALCAST.replace(Common.MQTT_TOPIC_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
+                        // Subscribe to vitalcast messages
+                        activity.subscribeToTopic(Common.MQTT_TOPIC_VITALCAST.replace(Common.MQTT_TOPIC_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
                         Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show();
                         // Clear old patient list
                         break;
