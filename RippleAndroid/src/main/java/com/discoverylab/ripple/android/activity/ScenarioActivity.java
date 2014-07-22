@@ -52,7 +52,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         setContentView(R.layout.activity_scenerio);
         if (savedInstanceState == null) {
             this.patientBanner = PatientBannerFragment.newInstance();
-            getFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .add(R.id.banner_container, this.patientBanner)
                     .commit();
 
@@ -62,7 +62,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
                     .commit();
         } else {
             // Fragments already exist, so just get from fragment manager
-            this.patientBanner = (PatientBannerFragment) getFragmentManager().findFragmentById(R.id.banner_container);
+            this.patientBanner = (PatientBannerFragment) getSupportFragmentManager().findFragmentById(R.id.banner_container);
             this.patientFragment = (ScenarioPatientFragment) getSupportFragmentManager().findFragmentById(R.id.patient_scenario_container);
         }
 
@@ -71,8 +71,10 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         // get MQTT service manager
         this.mqttServiceManager = new MQTTServiceManager(this, MQTTClientService.class, new MQTTHandler(this));
 
-        // Start MQTT connection
-        this.startMQTTService();
+        if(!this.mqttServiceManager.isServiceRunning()) {
+            // Start MQTT connection
+            this.startMQTTService();
+        }
     }
 
     @Override
@@ -151,8 +153,8 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
     public void stopMQTTService() {
         if (this.mqttServiceManager != null && this.isMQTTServiceRunning()) {
             this.mqttServiceManager.stop();
-            this.setMqttConnected(false);
         }
+        this.setMqttConnected(false);
     }
 
     /**

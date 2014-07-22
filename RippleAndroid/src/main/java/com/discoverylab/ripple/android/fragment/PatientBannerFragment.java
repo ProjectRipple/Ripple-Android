@@ -1,7 +1,7 @@
 package com.discoverylab.ripple.android.fragment;
 
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;

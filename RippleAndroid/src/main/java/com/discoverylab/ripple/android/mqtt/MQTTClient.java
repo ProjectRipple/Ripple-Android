@@ -81,7 +81,7 @@ public class MQTTClient implements MqttCallback {
         this.mqttClient = new MqttClient(mqttConnSpec, clientID, MQTT_PERSISTENCE);
 
         // set time to wait
-        this.mqttClient.setTimeToWait(TIME_TO_WAIT_IN_MILLIS);
+        //this.mqttClient.setTimeToWait(TIME_TO_WAIT_IN_MILLIS);
         // set callback to this
         this.mqttClient.setCallback(this);
     }
@@ -107,11 +107,6 @@ public class MQTTClient implements MqttCallback {
 
         // attempt connect
         this.mqttClient.connect(options);
-        try {
-            Thread.sleep(25); // to ensure the handler will send the below message
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         // notify handler of success
         handler.sendEmptyMessage(MQTTCLIENT_CONNECTION_ESTABLISHED);
     }

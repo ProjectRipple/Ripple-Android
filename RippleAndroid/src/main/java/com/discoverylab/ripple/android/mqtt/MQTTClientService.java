@@ -246,6 +246,9 @@ public class MQTTClientService extends Service {
             mqttClient.connect();
             // We connected, so cancel any pending reconnect attempts
             cancelReconnect();
+            if(DEBUG){
+                Log.d(TAG, "Connect success!");
+            }
         } catch (MqttException e) {
             if (DEBUG) {
                 Log.d(TAG, "Connect failed.");
@@ -353,6 +356,12 @@ public class MQTTClientService extends Service {
 
             @Override
             public void run() {
+                try {
+                    // short sleep
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 // attempt to connect client
                 attemptConnectMqttClient();
             }
