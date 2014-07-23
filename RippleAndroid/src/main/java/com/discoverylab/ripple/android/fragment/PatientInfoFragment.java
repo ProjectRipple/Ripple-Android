@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +24,7 @@ import com.google.gson.JsonObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -76,23 +76,17 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
 
         // get color spinner
         this.triageColor = (Spinner) v.findViewById(R.id.patient_triage_color_spinner);
-        // get colors for spinner
-        int[] colorsArray = getResources().getIntArray(R.array.triage_color_options);
-        List<Integer> colors = new ArrayList<Integer>(colorsArray.length);
-        for (int c : colorsArray) {
-            colors.add(c);
-        }
-        // get color strings
-        this.colorsTextArray = getResources().getStringArray(R.array.triage_color_options_text);
-        if (this.colorsTextArray.length != colorsArray.length) {
-            Log.e(TAG, "ERROR, color arrays lengths do not match, fix immediatly");
-        }
+        // get spinner colors
+        Common.TRIAGE_COLORS[] colorsArray = Common.TRIAGE_COLORS.values();
+        List<Common.TRIAGE_COLORS> colorsList = new ArrayList<Common.TRIAGE_COLORS>(colorsArray.length);
+        Collections.addAll(colorsList, colorsArray);
+
         // set adapter & listener
-        triageColor.setAdapter(new ColorSpinnerAdapter(getActivity(), colors));
+        triageColor.setAdapter(new ColorSpinnerAdapter(getActivity(), colorsList));
         triageColor.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                onTriageColorChanged((Integer) parent.getItemAtPosition(position));
+                onTriageColorChanged((Common.TRIAGE_COLORS) parent.getItemAtPosition(position));
             }
 
             @Override
@@ -154,8 +148,8 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         this.saveButton.setOnClickListener(this);
         this.saveButton.setEnabled(false);
 
-        this.disableAllFields();
         this.resetAllFields();
+        this.disableAllFields();
 
         return v;
     }
@@ -191,17 +185,18 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         int count = 0;
         int i = 0;
         SpinnerAdapter adapter;
-        // TODO: Change this selection method to something better
+
         adapter = this.triageColor.getAdapter();
         count = adapter.getCount();
-        for (i = 1; i < count; i++) {
-            Integer item = (Integer) adapter.getItem(i);
-            if (item == p.getTriageColor()) {
+        for (i = 0; i < count; i++) {
+            Common.TRIAGE_COLORS item = (Common.TRIAGE_COLORS) adapter.getItem(i);
+            if (item == p.getTriageState()) {
                 selection = i;
             }
         }
         this.triageColor.setSelection(selection);
 
+        // TODO: Change this selection method to something better
         selection = 0;
         adapter = this.status.getAdapter();
         count = adapter.getCount();
@@ -239,7 +234,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         p.setNbcContam(this.nbc.getSelectedItemPosition() != 0);
         p.setSex((String) this.patientSex.getSelectedItem());
         // assuming that array entries match
-        //p.setTriageColor((Integer) this.triageColor.getSelectedItem());
+        p.setTriageState((Common.TRIAGE_COLORS) this.triageColor.getSelectedItem());
         p.setStatus((String) this.status.getSelectedItem());
     }
 
@@ -282,9 +277,10 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         this.nbc.setSelection(0);
         this.patientName.setText("John Doe");
         this.patientAge.setText("");
+        this.saveButton.setEnabled(false);
     }
 
-    private void onTriageColorChanged(int triageColor) {
+    private void onTriageColorChanged(Common.TRIAGE_COLORS triageState) {
         //Toast.makeText(getActivity(), "triage Color: " + Integer.toHexString(triageColor), Toast.LENGTH_SHORT).show();
         this.saveButton.setEnabled(true);
     }
@@ -310,14 +306,15 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
             this.saveButton.setEnabled(false);
             JsonObject updateMsg = new JsonObject();
             Patient p = ((ScenarioPatientFragment) getParentFragment()).getSelectedPatient();
+            if (p != null) {
+                saveFieldsToPatient(p);
 
-            saveFieldsToPatient(p);
+                updateMsg.addProperty(JSONTag.RESPONDER_ID, Common.RESPONDER_ID);
+                DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
+                df.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-            updateMsg.addProperty(JSONTag.RESPONDER_ID, Common.RESPONDER_ID);
-            DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
-            df.setTimeZone(TimeZone.getTimeZone("UTC"));
-
-            updateMsg.addProperty(JSONTag.BROKER_PING_DATE, df.format(new Date()));
+                updateMsg.addProperty(JSONTag.BROKER_PING_DATE, df.format(new Date()));
+            }
 
         }
     }
@@ -329,12 +326,12 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        // do nothing
+        // enable save
+        this.saveButton.setEnabled(true);
     }
 
     @Override
     public void afterTextChanged(Editable s) {
-        // enable save
-        this.saveButton.setEnabled(true);
+        // do nothing
     }
 }

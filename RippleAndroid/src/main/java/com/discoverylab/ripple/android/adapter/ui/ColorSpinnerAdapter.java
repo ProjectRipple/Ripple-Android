@@ -10,6 +10,7 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.config.Common;
 
 import java.util.List;
 
@@ -17,8 +18,8 @@ import java.util.List;
  * Adapter for a Spinner of colored views
  * Created by james on 7/17/14.
  */
-public class ColorSpinnerAdapter extends ArrayAdapter<Integer> implements SpinnerAdapter {
-    public ColorSpinnerAdapter(Context context, List<Integer> objects) {
+public class ColorSpinnerAdapter extends ArrayAdapter<Common.TRIAGE_COLORS> implements SpinnerAdapter {
+    public ColorSpinnerAdapter(Context context, List<Common.TRIAGE_COLORS> objects) {
         super(context, android.R.layout.simple_spinner_item, objects);
         setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     }
@@ -32,10 +33,10 @@ public class ColorSpinnerAdapter extends ArrayAdapter<Integer> implements Spinne
 
         // set center color of view
         LayerDrawable background = (LayerDrawable) v.getBackground();
-        ((GradientDrawable) background.getDrawable(1)).setColor(getItem(position));
+        ((GradientDrawable) background.getDrawable(1)).setColor(getItem(position).getColor());
 
         // hide text by matching background & set to nothing
-        ((TextView) v).setTextColor(getItem(position));
+        ((TextView) v).setTextColor(getItem(position).getColor());
         ((TextView) v).setText("");
 
 
@@ -51,11 +52,11 @@ public class ColorSpinnerAdapter extends ArrayAdapter<Integer> implements Spinne
 
         // set center color of view
         LayerDrawable background = (LayerDrawable) v.getBackground();
-        ((GradientDrawable) background.getDrawable(1)).setColor(getItem(position));
+        ((GradientDrawable) background.getDrawable(1)).setColor(getItem(position).getColor());
 
 
         // hide text by matching background & set to nothing
-        ((TextView) v).setTextColor(getItem(position));
+        ((TextView) v).setTextColor(getItem(position).getColor());
         ((TextView) v).setText("");
         return v;
     }
