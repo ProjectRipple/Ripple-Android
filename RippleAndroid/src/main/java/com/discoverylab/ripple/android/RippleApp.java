@@ -3,6 +3,9 @@ package com.discoverylab.ripple.android;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Bundle;
+import android.os.Parcel;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
@@ -10,6 +13,7 @@ import android.util.Log;
 import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.config.WSConfig;
 import com.discoverylab.ripple.android.fragment.PrefsFragment;
+import com.discoverylab.ripple.android.object.Patient;
 
 /**
  * RippleApplication object initializes the connection preferences and stores global variables
@@ -52,6 +56,32 @@ public class RippleApp extends Application {
         }
         // set id to static global value
         Common.RESPONDER_ID = deviceId;
+
+        // Setup triage colors from values
+        Resources resources = getResources();
+        Common.TRIAGE_COLORS.UNKNOWN.setColor(resources.getColor(R.color.triage_unknown));
+        Common.TRIAGE_COLORS.GREEN.setColor(resources.getColor(R.color.triage_green));
+        Common.TRIAGE_COLORS.YELLOW.setColor(resources.getColor(R.color.triage_yellow));
+        Common.TRIAGE_COLORS.RED.setColor(resources.getColor(R.color.triage_red));
+        Common.TRIAGE_COLORS.BLACK.setColor(resources.getColor(R.color.triage_black));
+
+        // test that patient is still parcelable
+        Patient p = new Patient("hello");
+        p.setTriageState(Common.TRIAGE_COLORS.RED);
+
+        Bundle b = new Bundle();
+        b.putParcelable("temptag", p);
+
+        Parcel parcel = Parcel.obtain();
+        b.writeToParcel(parcel, 0);
+
+        parcel.setDataPosition(0);
+        Bundle b2 = parcel.readBundle();
+        b2.setClassLoader(Patient.class.getClassLoader());
+        Patient p2 = b2.getParcelable("temptag");
+
+        Log.d(TAG, "P2 triage is " + p2.getTriageState().toString());
+        // end test
 
         // Database ignored for now
         /*DatabaseAdapter.getInstance(this.getApplicationContext());

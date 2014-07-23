@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import java.util.Random;
 
+import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.object.Patient;
 
 /**
@@ -27,7 +28,7 @@ public final class RandomPatient {
 
     public static Patient getRandomPatient() {
         Patient patient = new Patient(src[lastSrc]);
-        patient.setTriageColor(colors[new Random().nextInt(colors.length)]);
+        patient.setTriageState(Common.TRIAGE_COLORS.values()[new Random().nextInt(Common.TRIAGE_COLORS.values().length)]);
         patient.setName(fNames[new Random().nextInt(fNames.length)] + " " + lNames[new Random().nextInt(lNames.length)]);
         patient.setSex(sex[new Random().nextInt(sex.length)]);
         patient.setType(type[new Random().nextInt(type.length)]);

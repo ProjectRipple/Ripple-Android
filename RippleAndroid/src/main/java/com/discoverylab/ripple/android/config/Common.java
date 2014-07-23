@@ -71,6 +71,22 @@ public final class Common {
     public static final String MQTT_TOPIC_RESPONDER_ID_STRING = "[RID]";
     public static final String MQTT_TOPIC_RESPONDER_PING = "R_Status/" + MQTT_TOPIC_RESPONDER_ID_STRING + "/ping";
 
+
+    public enum TRIAGE_COLORS {
+        UNKNOWN, GREEN, YELLOW, RED, BLACK;
+
+        private int color;
+
+        public void setColor(int color){
+            this.color = color;
+        }
+
+        public int getColor(){
+            return this.color;
+        }
+    }
+
+
     // Vital constants
     public enum VITAL_TYPES {
         VITAL_PULSE(0), VITAL_ECG(1), VITAL_TEMPERATURE(2), VITAL_BLOOD_OX(3);

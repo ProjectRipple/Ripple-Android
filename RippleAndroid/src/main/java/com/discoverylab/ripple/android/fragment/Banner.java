@@ -259,7 +259,7 @@ public class Banner extends Fragment {
                             // Add patient
                             curPatient = new Patient(src);
                             mPatients.add(curPatient);
-                            curPatient.setTriageColor(Color.CYAN);
+                            curPatient.setTriageState(Common.TRIAGE_COLORS.UNKNOWN);
                             createPatientView(curPatient);
                         }
                     }

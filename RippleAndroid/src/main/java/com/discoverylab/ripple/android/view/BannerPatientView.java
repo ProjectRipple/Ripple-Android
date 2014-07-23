@@ -15,7 +15,7 @@ import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.object.Patient;
 
 /**
- * TODO: document your custom view class.
+ * View to display each patient in the banner.
  */
 public class BannerPatientView extends RelativeLayout {
 
@@ -112,7 +112,7 @@ public class BannerPatientView extends RelativeLayout {
         this.patientStatusText.setText("Not Attended.");
 
         // check if patient is selected
-        if(mPatient.isSelected()){
+        if (mPatient.isSelected()) {
             this.patientIdText.setTextColor(this.colorYellow);
             this.patientIdText.setTypeface(this.patientIdText.getTypeface(), Typeface.BOLD);
         } else {

@@ -239,7 +239,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         p.setNbcContam(this.nbc.getSelectedItemPosition() != 0);
         p.setSex((String) this.patientSex.getSelectedItem());
         // assuming that array entries match
-        p.setTriageColor((Integer) this.triageColor.getSelectedItem());
+        //p.setTriageColor((Integer) this.triageColor.getSelectedItem());
         p.setStatus((String) this.status.getSelectedItem());
     }
 

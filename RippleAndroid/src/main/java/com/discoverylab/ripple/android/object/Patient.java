@@ -1,13 +1,11 @@
 package com.discoverylab.ripple.android.object;
 
-import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import com.discoverylab.ripple.android.config.Common;
+
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * Defines the patient.
@@ -18,11 +16,12 @@ public class Patient implements Parcelable {
 
     // integer values of patient
     private int age;
-    private int triageColor;
     private int heartRate;
     private int breathsPerMin;
     private int o2;
     private int temperature;
+
+    private Common.TRIAGE_COLORS triageState;
 
     // string values of patient
     private String name;
@@ -44,7 +43,7 @@ public class Patient implements Parcelable {
 
         // set default values
         this.age = -1;
-        this.triageColor = Color.WHITE;
+        this.triageState = Common.TRIAGE_COLORS.UNKNOWN;
         this.heartRate = -1;
         this.breathsPerMin = -1;
         this.o2 = -1;
@@ -64,7 +63,7 @@ public class Patient implements Parcelable {
     public Patient(Parcel in) {
         // Make sure this ordering matches the order of writes for writeToParcel
         this.age = in.readInt();
-        this.triageColor = in.readInt();
+        this.triageState = (Common.TRIAGE_COLORS) in.readSerializable();
         this.heartRate = in.readInt();
         this.breathsPerMin = in.readInt();
         this.o2 = in.readInt();
@@ -87,7 +86,7 @@ public class Patient implements Parcelable {
     public void writeToParcel(Parcel parcel, int flags) {
         // Make sure this ordering matches the order of reads for Patient(Parcel)
         parcel.writeInt(this.age);
-        parcel.writeInt(this.triageColor);
+        parcel.writeSerializable(this.triageState);
         parcel.writeInt(this.heartRate);
         parcel.writeInt(this.breathsPerMin);
         parcel.writeInt(this.o2);
@@ -163,11 +162,15 @@ public class Patient implements Parcelable {
     }
 
     public int getTriageColor() {
-        return triageColor;
+        return triageState.getColor();
     }
 
-    public void setTriageColor(int triageColor) {
-        this.triageColor = triageColor;
+    public Common.TRIAGE_COLORS getTriageState() {
+        return this.triageState;
+    }
+
+    public void setTriageState(Common.TRIAGE_COLORS triageState) {
+        this.triageState = triageState;
     }
 
     public int getHeartRate() {
