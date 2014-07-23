@@ -133,6 +133,7 @@ public class ScenarioPatientFragment extends Fragment {
 
         this.selectedPatient = p;
         this.currentVitalsFragment.updateVitals(this.selectedPatient);
+        this.infoFragment.setPatient(this.selectedPatient);
 
     }
 

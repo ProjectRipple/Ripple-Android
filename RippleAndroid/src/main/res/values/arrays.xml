@@ -27,7 +27,7 @@
 
     <string-array name="triage_color_options_text">
 
-        <item>Unknown</item>
+        <item>White</item>
         <item>Green</item>
         <item>Yellow</item>
         <item>Red</item>
