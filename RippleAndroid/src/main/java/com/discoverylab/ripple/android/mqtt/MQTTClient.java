@@ -41,7 +41,7 @@ public class MQTTClient implements MqttCallback {
     // MQTT client id base
     private static final String MQTT_CLIENT_ID_BASE = "ripple";
     // Time to wait for any blocking action to complete
-    private static final long TIME_TO_WAIT_IN_MILLIS = 5000;
+    private static final long TIME_TO_WAIT_IN_MILLIS = 30000;
     // Reference to Client object
     private MqttClient mqttClient;
 
@@ -81,7 +81,7 @@ public class MQTTClient implements MqttCallback {
         this.mqttClient = new MqttClient(mqttConnSpec, clientID, MQTT_PERSISTENCE);
 
         // set time to wait
-        //this.mqttClient.setTimeToWait(TIME_TO_WAIT_IN_MILLIS);
+        this.mqttClient.setTimeToWait(TIME_TO_WAIT_IN_MILLIS);
         // set callback to this
         this.mqttClient.setCallback(this);
     }

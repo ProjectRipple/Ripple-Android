@@ -34,7 +34,7 @@ public class MQTTClientService extends Service {
     // Set to true for debug messages
     private final static boolean DEBUG = true;
     // interval to retry connecting in ms
-    private final static long INTERVAL_RETRY = 5 * 1000;
+    private final static long INTERVAL_RETRY = 10 * 1000;
 
     // handles service->manger(s) comms
     private List<Messenger> mClients = new ArrayList<Messenger>();
