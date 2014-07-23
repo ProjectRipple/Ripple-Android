@@ -229,7 +229,7 @@ public class MQTTClientService extends Service {
     private synchronized void attemptConnectMqttClient() {
         if (isConnecting && connectThread != null && connectThread.isAlive()) {
             // connect already in progress, so do nothing
-            Log.d(TAG, "Already connecting.");
+            Log.d(TAG, "Already connecting to broker.");
             return;
         }
 
@@ -241,6 +241,9 @@ public class MQTTClientService extends Service {
 
     }
 
+    /**
+     * Runnable to create MQTT Client and attempt connect to broker.
+     */
     private class ConnectRunnable implements Runnable {
 
         @Override
