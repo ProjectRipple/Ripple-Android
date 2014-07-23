@@ -95,6 +95,9 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         if (!this.mqttServiceManager.isServiceRunning()) {
             // Start MQTT connection
             this.startMQTTService();
+        } else {
+            // just bind service
+            this.mqttServiceManager.bind();
         }
     }
 

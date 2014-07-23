@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -304,16 +305,28 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         if (v.getId() == R.id.patient_info_save) {
             this.saveButton.setEnabled(false);
-            JsonObject updateMsg = new JsonObject();
             Patient p = ((ScenarioPatientFragment) getParentFragment()).getSelectedPatient();
             if (p != null) {
                 saveFieldsToPatient(p);
 
+                JsonObject updateMsg = new JsonObject();
+
                 updateMsg.addProperty(JSONTag.RESPONDER_ID, Common.RESPONDER_ID);
+                updateMsg.addProperty(JSONTag.PATIENT_ID, p.getPatientId());
+
                 DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
                 df.setTimeZone(TimeZone.getTimeZone("UTC"));
 
                 updateMsg.addProperty(JSONTag.BROKER_PING_DATE, df.format(new Date()));
+
+                updateMsg.addProperty(JSONTag.PATIENT_INFO_NAME, p.getName());
+                updateMsg.addProperty(JSONTag.PATIENT_INFO_AGE, p.getAge());
+                updateMsg.addProperty(JSONTag.PATIENT_INFO_SEX, p.getSex());
+                updateMsg.addProperty(JSONTag.PATIENT_INFO_NBC, p.getNbcContam());
+                updateMsg.addProperty(JSONTag.PATIENT_INFO_TRIAGE, p.getTriageState().toString());
+                updateMsg.addProperty(JSONTag.PATIENT_INFO_STATUS, p.getStatus());
+
+                Log.d(TAG, "Patient info message: " + updateMsg.toString());
             }
 
         }
