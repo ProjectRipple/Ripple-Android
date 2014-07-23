@@ -15,7 +15,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.provider.Settings;
 import android.util.Log;
 
 import com.discoverylab.ripple.android.config.Common;
@@ -54,6 +53,10 @@ public class MQTTClientService extends Service {
     private String brokerPort;
     // is the service started
     private boolean mIsStarted;
+    // is a connect operation in progress
+    private volatile boolean isConnecting = false;
+    // reference to connection thread
+    private Thread connectThread;
 
     /**
      * Class handles messages from the MQTT client
@@ -218,48 +221,65 @@ public class MQTTClientService extends Service {
 
     /**
      * Attempt connecting the MQTTClient to the Broker.
-     * Another connection attempt will be scheduled if connecting failes.
+     * <p/>
+     * Another connection attempt will be scheduled if connecting fails.
+     * <p/>
+     * Synchronized to not create multiple threads at the same time.
      */
-    private void attemptConnectMqttClient() {
-        if (mqttClient == null) {
-            // get device ID
-//            String deviceId = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-//            if (deviceId == null) {
-//                if (DEBUG) {
-//                    Log.d(TAG, "Device ID not found, generating random ID.");
-//                }
-//                // generate ID if ANDROID_ID cannot be found
-//                deviceId = org.eclipse.paho.client.mqttv3.MqttClient.generateClientId();
-//            }
-            String deviceId = Common.RESPONDER_ID;
-
-            // Create client object
-            try {
-                mqttClient = new MQTTClient(brokerHost, brokerPort, deviceId, mHandler);
-            } catch (MqttException e) {
-                e.printStackTrace();
-                // TODO: something here, not really sure what at the moment
-            }
+    private synchronized void attemptConnectMqttClient() {
+        if (isConnecting && connectThread != null && connectThread.isAlive()) {
+            // connect already in progress, so do nothing
+            Log.d(TAG, "Already connecting.");
+            return;
         }
 
-        try {
-            mqttClient.connect();
-            // We connected, so cancel any pending reconnect attempts
-            cancelReconnect();
-            if(DEBUG){
-                Log.d(TAG, "Connect success!");
+        isConnecting = true;
+        // run operation as background thread
+        connectThread = new Thread(new ConnectRunnable());
+        connectThread.setName("MQTT Connect thread");
+        connectThread.start();
+
+    }
+
+    private class ConnectRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            if (mqttClient == null) {
+                // get device ID
+                String deviceId = Common.RESPONDER_ID;
+
+                // Create client object
+                try {
+                    mqttClient = new MQTTClient(brokerHost, brokerPort, deviceId, mHandler);
+                } catch (MqttException e) {
+                    e.printStackTrace();
+                    // TODO: something here, not really sure what at the moment
+                }
             }
-        } catch (MqttException e) {
-            if (DEBUG) {
-                Log.d(TAG, "Connect failed.");
-            }
-            // schedule reconnect
-            if (isNetworkAvailable()) {
-                // schedule reconnect if network is available (otherwise just wait until connectivity is available)
-                scheduleReconnect();
-            } else {
-                // notify that there is no network
-                send(Message.obtain(null, MQTTServiceConstants.MSG_NO_NETWORK));
+
+            try {
+                mqttClient.connect();
+                // We connected, so cancel any pending reconnect attempts
+                cancelReconnect();
+                if (DEBUG) {
+                    Log.d(TAG, "Connect success!");
+                }
+            } catch (MqttException e) {
+                if (DEBUG) {
+                    Log.d(TAG, "Connect failed.");
+                }
+                // schedule reconnect
+                if (isNetworkAvailable()) {
+                    // schedule reconnect if network is available (otherwise just wait until connectivity is available)
+                    scheduleReconnect();
+                } else {
+                    // notify that there is no network
+                    send(Message.obtain(null, MQTTServiceConstants.MSG_NO_NETWORK));
+                }
+            } finally {
+                // no longer attempting connect
+                isConnecting = false;
             }
         }
     }
@@ -352,7 +372,7 @@ public class MQTTClientService extends Service {
         mqttClient = null;
 
         // Attempt connect is other thread to avoid blocking of activity binding
-        new Thread(new Runnable(){
+        new Thread(new Runnable() {
 
             @Override
             public void run() {
