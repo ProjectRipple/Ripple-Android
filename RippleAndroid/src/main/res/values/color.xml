@@ -9,6 +9,13 @@ Organized by: Willie Tsang
     <!-- Ripple style colors -->
     <color name="scenario_text_color">#FFFFFF</color>
 
+    <!-- Triage colors for display -->
+    <color name="triage_unknown">@color/white</color>
+    <color name="triage_green">@color/win8_green</color>
+    <color name="triage_yellow">@color/yellow</color>
+    <color name="triage_red">@color/red</color>
+    <color name="triage_black">@color/black</color>
+
     <!-- Android style -->
     <color name="android_green">#A4C639</color>
 

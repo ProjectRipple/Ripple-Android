@@ -53,9 +53,9 @@ public class BannerPatientView extends RelativeLayout {
         // get Resources object
         Resources resources = getResources();
         // get colors from resources
-        this.colorRed = resources.getColor(R.color.red);
-        this.colorYellow = resources.getColor(R.color.yellow);
-        this.colorGreen = resources.getColor(R.color.win8_green);
+        this.colorRed = resources.getColor(R.color.triage_red);
+        this.colorYellow = resources.getColor(R.color.triage_yellow);
+        this.colorGreen = resources.getColor(R.color.triage_green);
 
         // get view dimensions
         this.viewWidthPixels = resources.getDimensionPixelSize(R.dimen.patient_banner_view_width);

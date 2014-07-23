@@ -36,10 +36,10 @@
     </string-array>
 
     <integer-array name="triage_color_options">
-        <item>@color/white</item>
-        <item>@color/win8_green</item>
-        <item>@color/yellow</item>
-        <item>@color/red</item>
-        <item>@color/black</item>
+        <item>@color/triage_unknown</item>
+        <item>@color/triage_green</item>
+        <item>@color/triage_yellow</item>
+        <item>@color/triage_red</item>
+        <item>@color/triage_black</item>
     </integer-array>
 </resources>

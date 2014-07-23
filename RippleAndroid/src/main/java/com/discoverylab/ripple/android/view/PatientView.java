@@ -89,9 +89,9 @@ public class PatientView extends RelativeLayout {
      */
     private void init() {
         // get colors from resources
-        this.colorRed = getResources().getColor(R.color.red);
-        this.colorYellow = getResources().getColor(R.color.yellow);
-        this.colorGreen = getResources().getColor(R.color.win8_green);
+        this.colorRed = getResources().getColor(R.color.triage_red);
+        this.colorYellow = getResources().getColor(R.color.triage_yellow);
+        this.colorGreen = getResources().getColor(R.color.triage_green);
 
         // inflate view and attach to this object
         View v = inflate(this.mContext, R.layout.patient_view, this);
