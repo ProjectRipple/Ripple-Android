@@ -85,19 +85,11 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
     @Override
     protected void onResume() {
         super.onResume();
-        // bind service if running
-        if (this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()) {
-            this.mqttServiceManager.bind();
-        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // unbind service
-        if (this.mqttServiceManager != null && this.mqttServiceManager.isServiceRunning()) {
-            this.mqttServiceManager.unbind();
-        }
     }
 
     @Override
