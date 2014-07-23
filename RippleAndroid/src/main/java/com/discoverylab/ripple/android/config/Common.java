@@ -50,6 +50,8 @@ public final class Common {
     public static final String MQTT_TOPIC_MATCH_VITALCAST = "P_Stats/.*/vitalcast";
     public static final String MQTT_TOPIC_ECG_STREAM = "P_Stream/" + MQTT_TOPIC_ID_STRING + "/ecg";
     public static final String MQTT_TOPIC_MATCH_ECG_STREAM = "P_Stream/.*/ecg";
+    public static final String MQTT_TOPIC_BROKER_ID_STRING = "[CID]";
+    public static final String MQTT_TOPIC_BROKER_PING = "C_Status/" + MQTT_TOPIC_BROKER_ID_STRING + "/ping";
 
 
     // Vital constants
