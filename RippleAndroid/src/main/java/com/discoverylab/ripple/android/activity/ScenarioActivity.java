@@ -27,9 +27,17 @@ import com.discoverylab.ripple.android.mqtt.PublishedMessage;
 import com.discoverylab.ripple.android.object.Patient;
 import com.discoverylab.ripple.android.object.Patients;
 import com.discoverylab.ripple.android.view.BannerPatientView;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.lang.ref.WeakReference;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class ScenarioActivity extends FragmentActivity implements View.OnClickListener {
 
@@ -67,11 +75,10 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         }
 
 
-
         // get MQTT service manager
         this.mqttServiceManager = new MQTTServiceManager(this, MQTTClientService.class, new MQTTHandler(this));
 
-        if(!this.mqttServiceManager.isServiceRunning()) {
+        if (!this.mqttServiceManager.isServiceRunning()) {
             // Start MQTT connection
             this.startMQTTService();
         }
@@ -231,14 +238,79 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         if (topic.matches(Common.MQTT_TOPIC_MATCH_VITALCAST)) {
             JsonObject recordJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
             this.processPatientUpdate(recordJson);
-            //this.banner.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
-            //this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_RECORD, recordJson).sendToTarget();
+        } else if (topic.matches(Common.MQTT_TOPIC_MATCH_BROKER_PING)) {
+            JsonObject pingJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
+            this.processBrokerPing(pingJson);
         } else if (topic.matches(Common.MQTT_TOPIC_MATCH_ECG_STREAM)) {
             // TODO: Send to new note fragment when ready
             //this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_ECG_STREAM, msg).sendToTarget();
         } else {
             Log.d(Common.LOG_TAG, "Unknown MQTT topic recieved:" + topic);
         }
+    }
+
+    /**
+     * Process a ping message from the broker.
+     *
+     * @param pingJson JSON message to process
+     */
+    private void processBrokerPing(JsonObject pingJson) {
+
+        // TODO: filter by broker id
+        // parse message
+        String brokerId = pingJson.get(JSONTag.BROKER_PING_ID).getAsString();
+        String date = pingJson.get(JSONTag.BROKER_PING_DATE).getAsString();
+
+        // Get location
+        JsonObject location = pingJson.get(JSONTag.BROKER_PING_LOCATION).getAsJsonObject();
+        double lat = location.get(JSONTag.BROKER_PING_LOCATION_LAT).getAsDouble();
+        double lng = location.get(JSONTag.BROKER_PING_LOCATION_LNG).getAsDouble();
+        double alt = location.get(JSONTag.BROKER_PING_LOCATION_ALT).getAsDouble();
+
+        Common.brokerLatLng = new LatLng(lat, lng);
+        Common.brokerAltitude = alt;
+
+        // get patient list from broker
+        JsonArray patientsArray = pingJson.get(JSONTag.BROKER_PING_PATIENTS).getAsJsonArray();
+        Patients patients = Patients.getInstance();
+        // check that we have all patients in our cache
+        for (JsonElement p : patientsArray) {
+            JsonObject patient = p.getAsJsonObject();
+            String id = patient.get(JSONTag.BROKER_PING_PATIENTS_ID).getAsString();
+
+            String lastSeenDateString = patient.get(JSONTag.BROKER_PING_PATIENTS_LAST_SEEN).getAsString();
+            Date lastSeenDate = null;
+            try {
+                // TODO: check on other systems than 4.4
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                df.setTimeZone(TimeZone.getTimeZone("UTC"));
+                lastSeenDate = df.parse(lastSeenDateString);
+                Log.d(TAG, "Original String: " + lastSeenDateString + ", derived string: " + df.format(lastSeenDate));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+            // add patient to list if patient does not exist
+            if (!patients.patientExists(id)) {
+                Log.d(TAG, "New patient " + id + " from ping message");
+                // get full IP address
+                String ip = patient.get(JSONTag.BROKER_PING_PATIENTS_IP).getAsString();
+
+                // create new patient
+                Patient newPatient = new Patient(id);
+                newPatient.setIpaddr(ip);
+                newPatient.setLastSeenDate(lastSeenDate);
+                patients.addPatient(id, newPatient);
+                // also add to banner
+                this.patientBanner.addPatient(newPatient);
+
+            } else {
+                // just update last seen
+                patients.getPatient(id).setLastSeenDate(lastSeenDate);
+            }
+        }
+
+
     }
 
     /**
@@ -274,7 +346,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         curPatient.setTemperature(temperature);
         curPatient.setBreathsPerMin(resp_pm);
 
-        if(curPatient == this.patientFragment.getSelectedPatient()){
+        if (curPatient == this.patientFragment.getSelectedPatient()) {
             // update vitals on screen for selected patient
             this.patientFragment.updatePatientVitals();
         }

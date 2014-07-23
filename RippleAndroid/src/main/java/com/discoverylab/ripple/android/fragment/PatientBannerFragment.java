@@ -1,10 +1,10 @@
 package com.discoverylab.ripple.android.fragment;
 
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,6 +108,18 @@ public class PatientBannerFragment extends Fragment {
      * @param p Patien to add
      */
     public void addPatient(Patient p) {
+        if (this.viewLayout != null) {
+            // make sure patient does not already have a view
+            int childCount = this.viewLayout.getChildCount();
+
+            for (int i = 0; i < childCount; i++) {
+                BannerPatientView bpv = (BannerPatientView) this.viewLayout.getChildAt(i);
+                if (bpv.getPatient().getPatientId().equals(p.getPatientId())) {
+                    // patient view already exists
+                    return;
+                }
+            }
+        }
         this.createPatientView(p);
     }
 

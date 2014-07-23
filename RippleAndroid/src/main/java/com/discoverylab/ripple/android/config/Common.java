@@ -1,6 +1,6 @@
 package com.discoverylab.ripple.android.config;
 
-import com.discoverylab.ripple.android.R;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -20,6 +20,10 @@ public final class Common {
     public static String RESPONDER_ID = "";
     // key for responder id preference
     public static final String RESPONDER_ID_PREF = "ResponderIdPref";
+
+    // Saved broker location
+    public static LatLng brokerLatLng = new LatLng(0.0, 0.0);
+    public static double brokerAltitude = 0.0;
 
     // Json Formatting
     public static final Gson GSON = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
@@ -52,6 +56,7 @@ public final class Common {
     public static final String MQTT_TOPIC_MATCH_ECG_STREAM = "P_Stream/.*/ecg";
     public static final String MQTT_TOPIC_BROKER_ID_STRING = "[CID]";
     public static final String MQTT_TOPIC_BROKER_PING = "C_Status/" + MQTT_TOPIC_BROKER_ID_STRING + "/ping";
+    public static final String MQTT_TOPIC_MATCH_BROKER_PING = "C_Status/.*/ping";
 
 
     // Vital constants

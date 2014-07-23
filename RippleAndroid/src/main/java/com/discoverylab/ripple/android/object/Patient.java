@@ -4,6 +4,11 @@ import android.graphics.Color;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 /**
  * Defines the patient.
  * <p/>
@@ -11,6 +16,7 @@ import android.os.Parcelable;
  */
 public class Patient implements Parcelable {
 
+    // integer values of patient
     private int age;
     private int triageColor;
     private int heartRate;
@@ -18,12 +24,16 @@ public class Patient implements Parcelable {
     private int o2;
     private int temperature;
 
+    // string values of patient
     private String name;
     private String sex;
     private String type;
     private String ipaddr;
     private String status;
     private String patientId;
+
+    // date patient was last seen by system
+    private Date lastSeenDate = new Date();
 
     // is the patient selected by the user
     private boolean isSelected = false;
@@ -67,6 +77,8 @@ public class Patient implements Parcelable {
         this.ipaddr = in.readString();
         this.patientId = in.readString();
 
+        this.lastSeenDate = new Date(in.readLong());
+
         this.isSelected = (in.readByte() == 1);
         this.nbcContam = (in.readByte() == 1);
     }
@@ -87,6 +99,8 @@ public class Patient implements Parcelable {
         parcel.writeString(this.status);
         parcel.writeString(this.ipaddr);
         parcel.writeString(this.patientId);
+
+        parcel.writeLong(this.lastSeenDate.getTime());
 
         parcel.writeByte((byte) (this.isSelected ? 1 : 0));
         parcel.writeByte((byte) (this.nbcContam ? 1 : 0));
@@ -190,6 +204,22 @@ public class Patient implements Parcelable {
 
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
+    }
+
+    public Date getLastSeenDate() {
+        return lastSeenDate;
+    }
+
+    public void setLastSeenDate(Date lastSeenDate) {
+        this.lastSeenDate = lastSeenDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override
