@@ -38,6 +38,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ScenarioActivity extends FragmentActivity implements View.OnClickListener {
 
@@ -53,6 +55,18 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
 
     // Is mqtt currently connected?
     private boolean isMqttConnected = false;
+
+    // Reference to timer for sending periodic messages
+    private Timer periodicTimer = new Timer();
+
+    // periodic task period
+    private static final long PERIODIC_PERIOD = 10 * 1000;
+
+    // true if location was set by gps
+    private boolean gpsLocationSet = false;
+
+    // true if periodic timer was started
+    private boolean periodicTimerStarted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +125,9 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         this.stopMQTTService();
         // ensure no patient is currently selected
         this.patientFragment.setSelectedPatient(null);
+        // stop timer task
+        this.periodicTimer.cancel();
+        this.periodicTimer = null;
     }
 
     @Override
@@ -228,6 +245,34 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         return this.isMqttConnected;
     }
 
+    private void sendResponderUpdate() {
+        if (!this.isMqttConnected) {
+            // don't bother with message if mqtt is not connected
+            return;
+        }
+        JsonObject updateMsg = new JsonObject();
+        // set id
+        updateMsg.addProperty(JSONTag.RESPONDER_ID, Common.RESPONDER_ID);
+        // set date of message
+        DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        updateMsg.addProperty(JSONTag.BROKER_PING_DATE, df.format(new Date()));
+
+        // set location
+        JsonObject location = new JsonObject();
+        location.addProperty(JSONTag.BROKER_PING_LOCATION_LAT, Common.responderLatLng.latitude);
+        location.addProperty(JSONTag.BROKER_PING_LOCATION_LNG, Common.responderLatLng.longitude);
+        location.addProperty(JSONTag.BROKER_PING_LOCATION_ALT, Common.responderAltitude);
+
+        updateMsg.add(JSONTag.BROKER_PING_LOCATION, location);
+
+        Log.d(TAG, "Sending update: " + updateMsg.toString());
+
+        // publish message
+        this.publishMQTTMessage(Common.MQTT_TOPIC_RESPONDER_PING.replace(Common.MQTT_TOPIC_RESPONDER_ID_STRING, Common.RESPONDER_ID), updateMsg.toString());
+
+    }
+
     /**
      * Processes message from MQTT client
      *
@@ -270,6 +315,23 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         Common.brokerLatLng = new LatLng(lat, lng);
         Common.brokerAltitude = alt;
 
+        if (!this.gpsLocationSet) {
+            // set responder location to broker's only if gps has not set the location
+            Common.responderLatLng = Common.brokerLatLng;
+            Common.responderAltitude = Common.brokerAltitude;
+        }
+
+        if (!this.periodicTimerStarted) {
+            // start timer task now that we know we have a location
+            this.periodicTimer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    sendResponderUpdate();
+                }
+            }, PERIODIC_PERIOD, PERIODIC_PERIOD);
+            this.periodicTimerStarted = true;
+        }
+
         // get patient list from broker
         JsonArray patientsArray = pingJson.get(JSONTag.BROKER_PING_PATIENTS).getAsJsonArray();
         Patients patients = Patients.getInstance();
@@ -282,7 +344,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
             Date lastSeenDate = null;
             try {
                 // TODO: check on other systems than 4.4
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
                 df.setTimeZone(TimeZone.getTimeZone("UTC"));
                 lastSeenDate = df.parse(lastSeenDateString);
                 Log.d(TAG, "Original String: " + lastSeenDateString + ", derived string: " + df.format(lastSeenDate));

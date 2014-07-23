@@ -25,6 +25,10 @@ public final class Common {
     public static LatLng brokerLatLng = new LatLng(0.0, 0.0);
     public static double brokerAltitude = 0.0;
 
+    // Save responder location
+    public static LatLng responderLatLng = new LatLng(0.0, 0.0);
+    public static double responderAltitude = 0.0;
+
     // Json Formatting
     public static final Gson GSON = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
 
@@ -40,6 +44,8 @@ public final class Common {
     // Date Formatting
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+    public static final String ISO_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+
     // Messaging What Constants
     public static final int RIPPLE_MSG_RECORD = 77;
     public static final int RIPPLE_MSG_ECG_STREAM = 88;
@@ -49,15 +55,21 @@ public final class Common {
     public static final String MQTT_TOPIC_ID_STRING = "[PID]";
     public static final String MQTT_TOPIC_WILDCARD_SINGLE_LEVEL = "+";
     public static final String MQTT_TOPIC_WILDCARD_SUBTREE = "#";
+
     public static final String MQTT_TOPIC_VITALPROP = "P_Stats/vitalprop";
+
     public static final String MQTT_TOPIC_VITALCAST = "P_Stats/" + MQTT_TOPIC_ID_STRING + "/vitalcast";
     public static final String MQTT_TOPIC_MATCH_VITALCAST = "P_Stats/.*/vitalcast";
+
     public static final String MQTT_TOPIC_ECG_STREAM = "P_Stream/" + MQTT_TOPIC_ID_STRING + "/ecg";
     public static final String MQTT_TOPIC_MATCH_ECG_STREAM = "P_Stream/.*/ecg";
+
     public static final String MQTT_TOPIC_BROKER_ID_STRING = "[CID]";
     public static final String MQTT_TOPIC_BROKER_PING = "C_Status/" + MQTT_TOPIC_BROKER_ID_STRING + "/ping";
     public static final String MQTT_TOPIC_MATCH_BROKER_PING = "C_Status/.*/ping";
 
+    public static final String MQTT_TOPIC_RESPONDER_ID_STRING = "[RID]";
+    public static final String MQTT_TOPIC_RESPONDER_PING = "R_Status/" + MQTT_TOPIC_RESPONDER_ID_STRING + "/ping";
 
     // Vital constants
     public enum VITAL_TYPES {

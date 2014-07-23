@@ -34,6 +34,8 @@ public final class JSONTag {
     public static final String BROKER_PING_PATIENTS_IP = "ip";
     public static final String BROKER_PING_PATIENTS_LAST_SEEN = "last_seen";
 
+    public static final String RESPONDER_ID = "rid";
+
     // PatientList WS tags
     public static final String PATIENTS = "patients";
     public static final String PATIENT = "patient";
