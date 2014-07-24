@@ -73,6 +73,7 @@ public final class Common {
 
 
     public enum TRIAGE_COLORS {
+        // Always ensure default options is first in list
         UNKNOWN, GREEN, YELLOW, RED, BLACK;
 
         private int color;
@@ -84,6 +85,22 @@ public final class Common {
         public int getColor(){
             return this.color;
         }
+    }
+
+    public enum NBC_CONTAMINATION_OPTIONS {
+        // Always ensure default options is first in list
+        NONE("None"), NUCLEAR("Nuclear"), BIOLOGICAL("Biological"), CHEMICAL("Chemical");
+
+        private final String printableString;
+
+        private NBC_CONTAMINATION_OPTIONS(String s){
+            this.printableString = s;
+        }
+
+        public String getPrintableString() {
+            return printableString;
+        }
+
     }
 
 

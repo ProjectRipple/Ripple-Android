@@ -17,6 +17,7 @@ import android.widget.SpinnerAdapter;
 
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.adapter.ui.ColorSpinnerAdapter;
+import com.discoverylab.ripple.android.adapter.ui.NBCSpinnerAdapter;
 import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.config.JSONTag;
 import com.discoverylab.ripple.android.object.Patient;
@@ -126,10 +127,16 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         });
 
         this.nbc = (Spinner) v.findViewById(R.id.patient_nbc_spinner);
+
+        Common.NBC_CONTAMINATION_OPTIONS[] nbcArray = Common.NBC_CONTAMINATION_OPTIONS.values();
+        List<Common.NBC_CONTAMINATION_OPTIONS> nbcList = new ArrayList<Common.NBC_CONTAMINATION_OPTIONS>(nbcArray.length);
+        Collections.addAll(nbcList, nbcArray);
+        this.nbc.setAdapter(new NBCSpinnerAdapter(getActivity(), nbcList));
+
         nbc.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                onNbcChanged((String) parent.getItemAtPosition(position));
+                onNbcChanged((Common.NBC_CONTAMINATION_OPTIONS) parent.getItemAtPosition(position));
             }
 
             @Override
@@ -148,7 +155,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(selectedPatient != null && !selectedPatient.getName().equals(s.toString())){
+                if (selectedPatient != null && !selectedPatient.getName().equals(s.toString())) {
                     saveButton.setEnabled(true);
                     Log.d(TAG, "Name changed");
                 }
@@ -169,7 +176,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(selectedPatient != null && !(selectedPatient.getAge()+"").equals(s.toString())){
+                if (selectedPatient != null && !(selectedPatient.getAge() + "").equals(s.toString())) {
                     saveButton.setEnabled(true);
                     Log.d(TAG, "Age changed");
                 }
@@ -226,6 +233,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         int i = 0;
         SpinnerAdapter adapter;
 
+        // set triage color field
         adapter = this.triageColor.getAdapter();
         count = adapter.getCount();
         for (i = 0; i < count; i++) {
@@ -236,7 +244,8 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         }
         this.triageColor.setSelection(selection);
 
-        // TODO: Change this selection method to something better
+        // TODO: Change this selection method using strings to something better?
+        // Set status field
         selection = 0;
         adapter = this.status.getAdapter();
         count = adapter.getCount();
@@ -248,21 +257,30 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         }
         this.status.setSelection(selection);
 
+        // Set sex field
         selection = 0;
-        count = this.patientSex.getAdapter().getCount();
+        adapter = this.patientSex.getAdapter();
+        count = adapter.getCount();
         for (i = 1; i < count; i++) {
-            String item = (String) this.patientSex.getAdapter().getItem(i);
+            String item = (String) adapter.getItem(i);
             if (item.toLowerCase().equals(p.getSex().toLowerCase())) {
                 selection = i;
             }
         }
         this.patientSex.setSelection(selection);
-        // TODO: switch from boolean value for nbc?
-        if (p.getNbcContam()) {
-            selection = 1;
-        } else {
-            selection = 0;
+
+        // Set NBC field
+        adapter = this.nbc.getAdapter();
+        count = adapter.getCount();
+        selection = 0;
+
+        for (i = 0; i < count; i++) {
+            Common.NBC_CONTAMINATION_OPTIONS option = (Common.NBC_CONTAMINATION_OPTIONS) adapter.getItem(i);
+            if (option == p.getNbcContam()) {
+                selection = i;
+            }
         }
+
         this.nbc.setSelection(selection);
         this.patientName.setText(p.getName());
         this.patientAge.setText(p.getAge() + "");
@@ -272,7 +290,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
     private void saveFieldsToPatient(Patient p) {
         p.setName(this.patientName.getText().toString());
         p.setAge(Integer.parseInt(this.patientAge.getText().toString()));
-        p.setNbcContam(this.nbc.getSelectedItemPosition() != 0);
+        p.setNbcContam((Common.NBC_CONTAMINATION_OPTIONS) this.nbc.getSelectedItem());
         p.setSex((String) this.patientSex.getSelectedItem());
         // assuming that array entries match
         p.setTriageState((Common.TRIAGE_COLORS) this.triageColor.getSelectedItem());
@@ -346,9 +364,8 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    private void onNbcChanged(String nbcStatus) {
-        boolean contaminated = (this.nbc.getSelectedItemPosition() != 0);
-        if (this.selectedPatient != null && (contaminated != this.selectedPatient.getNbcContam())) {
+    private void onNbcChanged(Common.NBC_CONTAMINATION_OPTIONS nbcStatus) {
+        if (this.selectedPatient != null && (nbcStatus != this.selectedPatient.getNbcContam())) {
             this.saveButton.setEnabled(true);
             Log.d(TAG, "nbc changed");
         }
@@ -375,7 +392,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
                 updateMsg.addProperty(JSONTag.PATIENT_INFO_NAME, p.getName());
                 updateMsg.addProperty(JSONTag.PATIENT_INFO_AGE, p.getAge());
                 updateMsg.addProperty(JSONTag.PATIENT_INFO_SEX, p.getSex());
-                updateMsg.addProperty(JSONTag.PATIENT_INFO_NBC, p.getNbcContam());
+                updateMsg.addProperty(JSONTag.PATIENT_INFO_NBC, p.getNbcContam().toString());
                 updateMsg.addProperty(JSONTag.PATIENT_INFO_TRIAGE, p.getTriageState().toString());
                 updateMsg.addProperty(JSONTag.PATIENT_INFO_STATUS, p.getStatus());
 

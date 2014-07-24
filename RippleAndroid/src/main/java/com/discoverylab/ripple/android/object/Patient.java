@@ -22,6 +22,7 @@ public class Patient implements Parcelable {
     private int temperature;
 
     private Common.TRIAGE_COLORS triageState;
+    private Common.NBC_CONTAMINATION_OPTIONS nbcContam;
 
     // string values of patient
     private String name;
@@ -36,7 +37,6 @@ public class Patient implements Parcelable {
 
     // is the patient selected by the user
     private boolean isSelected = false;
-    private Boolean nbcContam;
 
     public Patient(String patientId) {
         this.patientId = patientId;
@@ -56,7 +56,7 @@ public class Patient implements Parcelable {
         this.ipaddr = "";
 
         this.isSelected = false;
-        this.nbcContam = false;
+        this.nbcContam = Common.NBC_CONTAMINATION_OPTIONS.NONE;
     }
 
 
@@ -79,7 +79,7 @@ public class Patient implements Parcelable {
         this.lastSeenDate = new Date(in.readLong());
 
         this.isSelected = (in.readByte() == 1);
-        this.nbcContam = (in.readByte() == 1);
+        this.nbcContam = (Common.NBC_CONTAMINATION_OPTIONS) in.readSerializable();
     }
 
     @Override
@@ -102,7 +102,7 @@ public class Patient implements Parcelable {
         parcel.writeLong(this.lastSeenDate.getTime());
 
         parcel.writeByte((byte) (this.isSelected ? 1 : 0));
-        parcel.writeByte((byte) (this.nbcContam ? 1 : 0));
+        parcel.writeSerializable(this.nbcContam);
     }
 
     public int getTemperature() {
@@ -113,11 +113,11 @@ public class Patient implements Parcelable {
         this.temperature = temperature;
     }
 
-    public Boolean getNbcContam() {
+    public Common.NBC_CONTAMINATION_OPTIONS getNbcContam() {
         return nbcContam;
     }
 
-    public void setNbcContam(Boolean nbcContam) {
+    public void setNbcContam(Common.NBC_CONTAMINATION_OPTIONS nbcContam) {
         this.nbcContam = nbcContam;
     }
 
