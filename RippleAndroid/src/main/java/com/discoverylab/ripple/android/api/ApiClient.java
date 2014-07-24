@@ -2,6 +2,8 @@ package com.discoverylab.ripple.android.api;
 
 import com.discoverylab.ripple.android.config.WSConfig;
 import com.discoverylab.ripple.android.model.EcgRequestData;
+import com.discoverylab.ripple.android.model.PatientInfoRequestData;
+
 import retrofit.Callback;
 import retrofit.RestAdapter;
 import retrofit.http.Body;
@@ -53,6 +55,10 @@ public class ApiClient {
         @FormUrlEncoded
         @POST("/ecgrequest")
         void requestEcgStream(@Field("id") String id, Callback<EcgRequestData> callback);
+
+        @FormUrlEncoded
+        @POST("/patientinforequest")
+        void requestCurrentPatientInfo(@Field("patients") String patientsJson, Callback<PatientInfoRequestData> callback);
     }
 
 }
