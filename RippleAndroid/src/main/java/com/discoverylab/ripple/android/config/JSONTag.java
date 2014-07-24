@@ -38,6 +38,15 @@ public final class JSONTag {
     public static final String PATIENT_INFO_STATUS = "status";
     public static final String PATIENT_INFO_REQUEST_LAST_UPDATED = "last_updated";
 
+    // Patient Note tags
+    public static final String NOTE_BODY_PART = "body_part";
+    public static final String NOTE_CONTENTS = "contents";
+    public static final String NOTE_ITEM_TYPE = "type";
+    public static final String NOTE_ITEM_MESSAGE = "msg";
+    public static final String NOTE_ITEM_FILE = "file";
+
+
+
     // More general tags
     public static final String RESPONDER_ID = "rid";
     public static final String PATIENT_ID = "pid";

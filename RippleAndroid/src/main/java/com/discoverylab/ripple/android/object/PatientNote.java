@@ -1,7 +1,13 @@
 package com.discoverylab.ripple.android.object;
 
+import com.discoverylab.ripple.android.config.Common;
+import com.discoverylab.ripple.android.config.JSONTag;
 import com.discoverylab.ripple.android.util.PatientTagHelper;
+import com.discoverylab.ripple.android.util.Util;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -13,6 +19,8 @@ import java.util.List;
  */
 public class PatientNote {
 
+    // Reference to patient that this note is about
+    private final Patient mPatient;
     // List of note items
     private List<NoteItem> noteItems = new ArrayList<NoteItem>();
     // Date that note was taken
@@ -21,6 +29,10 @@ public class PatientNote {
     private PatientTagHelper.BODY_PARTS selectedBodyPart = PatientTagHelper.BODY_PARTS.NONE;
     // Is the note finalised (unmodifiable)
     private boolean isFinished = false;
+
+    public PatientNote(Patient p) {
+        this.mPatient = p;
+    }
 
     /**
      * Add an item to the note
@@ -107,8 +119,45 @@ public class PatientNote {
      * @return true if {@link #finish()} has been called on this Note, false otherwise
      */
     public boolean isFinished() {
-        return this.isFinished();
+        return this.isFinished;
     }
 
+    public Patient getPatient() {
+        return this.mPatient;
+    }
+
+    /**
+     * Get a Json Object representing this note.
+     *
+     * @return JsonObject representing this note.
+     */
+    public JsonObject getJsonObject() {
+        JsonObject object = new JsonObject();
+
+        DateFormat df = Util.getISOUTCFormatter();
+
+        object.addProperty(JSONTag.RESPONDER_ID, Common.RESPONDER_ID);
+        object.addProperty(JSONTag.PATIENT_ID, this.mPatient.getPatientId());
+        object.addProperty(JSONTag.DATE, df.format(this.mDateTime));
+        object.addProperty(JSONTag.NOTE_BODY_PART, this.selectedBodyPart.toString());
+
+        JsonObject location = new JsonObject();
+        location.addProperty(JSONTag.LOCATION_LAT, Common.responderLatLng.latitude);
+        location.addProperty(JSONTag.LOCATION_LNG, Common.responderLatLng.longitude);
+        location.addProperty(JSONTag.LOCATION_ALT, Common.responderAltitude);
+
+        object.add(JSONTag.LOCATION, location);
+
+        JsonArray noteContents = new JsonArray();
+
+        for(NoteItem i : this.noteItems){
+            noteContents.add(i.getJsonObject());
+        }
+
+        object.add(JSONTag.NOTE_CONTENTS, noteContents);
+
+        return object;
+
+    }
 
 }
