@@ -334,7 +334,21 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
             String patientId = patientInfoJson.get(JSONTag.PATIENT_ID).getAsString();
             String date = patientInfoJson.get(JSONTag.DATE).getAsString();
 
+            DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+            // default to time received if date is invalid
+            Date msgDate = new Date();
+            try {
+                msgDate = df.parse(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+
             Patient p = this.getPatient(patientId);
+
+            p.setLastUpdated(msgDate);
 
             String name = patientInfoJson.get(JSONTag.PATIENT_INFO_NAME).getAsString();
             int age = patientInfoJson.get(JSONTag.PATIENT_INFO_AGE).getAsInt();
