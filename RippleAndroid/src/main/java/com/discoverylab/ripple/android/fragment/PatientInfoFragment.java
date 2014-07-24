@@ -35,7 +35,7 @@ import java.util.TimeZone;
  * Use the {@link PatientInfoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PatientInfoFragment extends Fragment implements View.OnClickListener, TextWatcher {
+public class PatientInfoFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = PatientInfoFragment.class.getSimpleName();
     // Temporary save button (until a better sync method is implemented)
@@ -47,6 +47,8 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
     private EditText patientName;
     private EditText patientAge;
     private String[] colorsTextArray;
+    // Reference to currently selected patient
+    private Patient selectedPatient;
 
     /**
      * Use this factory method to create a new instance of
@@ -138,10 +140,46 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
 
         // get text fields
         this.patientName = (EditText) v.findViewById(R.id.patient_name_text);
-        patientName.addTextChangedListener(this);
+        patientName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(selectedPatient != null && !selectedPatient.getName().equals(s.toString())){
+                    saveButton.setEnabled(true);
+                    Log.d(TAG, "Name changed");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         this.patientAge = (EditText) v.findViewById(R.id.patient_age_text);
-        patientAge.addTextChangedListener(this);
+        patientAge.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(selectedPatient != null && !(selectedPatient.getAge()+"").equals(s.toString())){
+                    saveButton.setEnabled(true);
+                    Log.d(TAG, "Age changed");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         // get temp save changes button
         this.saveButton = (Button) v.findViewById(R.id.patient_info_save);
@@ -170,6 +208,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
     }
 
     public void setPatient(Patient p) {
+        this.selectedPatient = p;
         if (p == null) {
             // disable all entry fields
             resetAllFields();
@@ -227,6 +266,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         this.nbc.setSelection(selection);
         this.patientName.setText(p.getName());
         this.patientAge.setText(p.getAge() + "");
+        Log.d(TAG, "fields set to patient values");
     }
 
     private void saveFieldsToPatient(Patient p) {
@@ -237,6 +277,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         // assuming that array entries match
         p.setTriageState((Common.TRIAGE_COLORS) this.triageColor.getSelectedItem());
         p.setStatus((String) this.status.getSelectedItem());
+        Log.d(TAG, "saved fields to patient");
     }
 
     private void disableAllFields() {
@@ -251,6 +292,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         this.patientName.setEnabled(false);
         this.patientAge.setEnabled(false);
         this.saveButton.setEnabled(false);
+        Log.d(TAG, "fields disabled");
     }
 
     private void enableAllFields() {
@@ -265,6 +307,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         this.patientName.setEnabled(true);
         this.patientAge.setEnabled(true);
         this.saveButton.setEnabled(false);
+        Log.d(TAG, "fields enabled");
     }
 
     private void resetAllFields() {
@@ -279,26 +322,36 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         this.patientName.setText("John Doe");
         this.patientAge.setText("");
         this.saveButton.setEnabled(false);
+        Log.d(TAG, "Fields reset");
     }
 
     private void onTriageColorChanged(Common.TRIAGE_COLORS triageState) {
-        //Toast.makeText(getActivity(), "triage Color: " + Integer.toHexString(triageColor), Toast.LENGTH_SHORT).show();
-        this.saveButton.setEnabled(true);
+        if (this.selectedPatient != null && this.selectedPatient.getTriageState() != triageState) {
+            this.saveButton.setEnabled(true);
+            Log.d(TAG, "Triage color changed");
+        }
     }
 
     private void onPatientStatusChanged(String status) {
-        //Toast.makeText(getActivity(), "status: " + status, Toast.LENGTH_SHORT).show();
-        this.saveButton.setEnabled(true);
+        if (this.selectedPatient != null && !this.selectedPatient.getStatus().equalsIgnoreCase(status)) {
+            this.saveButton.setEnabled(true);
+            Log.d(TAG, "status changed");
+        }
     }
 
     private void onGenderChanged(String gender) {
-        //Toast.makeText(getActivity(), "Gender: " + gender, Toast.LENGTH_SHORT).show();
-        this.saveButton.setEnabled(true);
+        if (this.selectedPatient != null && !this.selectedPatient.getSex().equalsIgnoreCase(gender)) {
+            this.saveButton.setEnabled(true);
+            Log.d(TAG, "gender changed");
+        }
     }
 
     private void onNbcChanged(String nbcStatus) {
-        //Toast.makeText(getActivity(), "NBC: " + nbcStatus, Toast.LENGTH_SHORT).show();
-        this.saveButton.setEnabled(true);
+        boolean contaminated = (this.nbc.getSelectedItemPosition() != 0);
+        if (this.selectedPatient != null && (contaminated != this.selectedPatient.getNbcContam())) {
+            this.saveButton.setEnabled(true);
+            Log.d(TAG, "nbc changed");
+        }
     }
 
     @Override
@@ -330,21 +383,5 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
             }
 
         }
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        // do nothing
-    }
-
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-        // enable save
-        this.saveButton.setEnabled(true);
-    }
-
-    @Override
-    public void afterTextChanged(Editable s) {
-        // do nothing
     }
 }
