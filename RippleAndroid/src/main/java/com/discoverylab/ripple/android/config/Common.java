@@ -52,16 +52,16 @@ public final class Common {
     public static final int RIPPLE_MSG_SELECT_PATIENT = 11;
 
     // MQTT topics
-    public static final String MQTT_TOPIC_ID_STRING = "[PID]";
+    public static final String MQTT_TOPIC_PATIENT_ID_STRING = "[PID]";
     public static final String MQTT_TOPIC_WILDCARD_SINGLE_LEVEL = "+";
     public static final String MQTT_TOPIC_WILDCARD_SUBTREE = "#";
 
     public static final String MQTT_TOPIC_VITALPROP = "P_Stats/vitalprop";
 
-    public static final String MQTT_TOPIC_VITALCAST = "P_Stats/" + MQTT_TOPIC_ID_STRING + "/vitalcast";
+    public static final String MQTT_TOPIC_VITALCAST = "P_Stats/" + MQTT_TOPIC_PATIENT_ID_STRING + "/vitalcast";
     public static final String MQTT_TOPIC_MATCH_VITALCAST = "P_Stats/.*/vitalcast";
 
-    public static final String MQTT_TOPIC_ECG_STREAM = "P_Stream/" + MQTT_TOPIC_ID_STRING + "/ecg";
+    public static final String MQTT_TOPIC_ECG_STREAM = "P_Stream/" + MQTT_TOPIC_PATIENT_ID_STRING + "/ecg";
     public static final String MQTT_TOPIC_MATCH_ECG_STREAM = "P_Stream/.*/ecg";
 
     public static final String MQTT_TOPIC_BROKER_ID_STRING = "[CID]";
@@ -71,6 +71,9 @@ public final class Common {
     public static final String MQTT_TOPIC_RESPONDER_ID_STRING = "[RID]";
     public static final String MQTT_TOPIC_RESPONDER_PING = "R_Status/" + MQTT_TOPIC_RESPONDER_ID_STRING + "/ping";
 
+    public static final String MQTT_TOPIC_PATIENT_INFO_UPDATE = "P_Stats/" + MQTT_TOPIC_PATIENT_ID_STRING + "/info";
+    public static final String MQTT_TOPIC_MATCH_PATIENT_INFO_UPDATE = "P_Stats/.*/info";
+
 
     public enum TRIAGE_COLORS {
         // Always ensure default options is first in list
@@ -78,11 +81,11 @@ public final class Common {
 
         private int color;
 
-        public void setColor(int color){
+        public void setColor(int color) {
             this.color = color;
         }
 
-        public int getColor(){
+        public int getColor() {
             return this.color;
         }
     }
@@ -93,7 +96,7 @@ public final class Common {
 
         private final String printableString;
 
-        private NBC_CONTAMINATION_OPTIONS(String s){
+        private NBC_CONTAMINATION_OPTIONS(String s) {
             this.printableString = s;
         }
 
@@ -113,15 +116,15 @@ public final class Common {
         // "Me" or "Team" for the user's actual name or team at runtime
         private String printableString;
 
-        private PATIENT_STATUS(String s){
+        private PATIENT_STATUS(String s) {
             this.printableString = s;
         }
 
-        public String getPrintableString(){
+        public String getPrintableString() {
             return printableString;
         }
 
-        public void setPrintableString(String s){
+        public void setPrintableString(String s) {
             this.printableString = s;
         }
 

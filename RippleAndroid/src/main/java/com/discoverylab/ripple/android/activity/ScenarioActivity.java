@@ -436,7 +436,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
                         // Set that we are connected
                         activity.setMqttConnected(true);
                         // Subscribe to vitalcast messages
-                        activity.subscribeToTopic(Common.MQTT_TOPIC_VITALCAST.replace(Common.MQTT_TOPIC_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
+                        activity.subscribeToTopic(Common.MQTT_TOPIC_VITALCAST.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
                         // Subscribe to ping messages from broker
                         activity.subscribeToTopic(Common.MQTT_TOPIC_BROKER_PING.replace(Common.MQTT_TOPIC_BROKER_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
                         Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show();

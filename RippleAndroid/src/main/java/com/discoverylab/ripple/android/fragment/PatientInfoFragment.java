@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.activity.ScenarioActivity;
 import com.discoverylab.ripple.android.adapter.ui.ColorSpinnerAdapter;
 import com.discoverylab.ripple.android.adapter.ui.NBCSpinnerAdapter;
 import com.discoverylab.ripple.android.adapter.ui.PatientStatusSpinnerAdapter;
@@ -182,7 +183,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String compareString = "";
                 if (selectedPatient != null && selectedPatient.getAge() >= 0) {
-                    compareString  = selectedPatient.getAge() + "";
+                    compareString = selectedPatient.getAge() + "";
                 }
                 if (!compareString.equals(s.toString())) {
                     saveButton.setEnabled(true);
@@ -419,6 +420,13 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
                 updateMsg.addProperty(JSONTag.PATIENT_INFO_STATUS, p.getStatus().toString());
 
                 Log.d(TAG, "Patient info message: " + updateMsg.toString());
+
+                if (getActivity() != null && getActivity() instanceof ScenarioActivity) {
+                    ((ScenarioActivity) getActivity()).publishMQTTMessage(
+                            Common.MQTT_TOPIC_PATIENT_INFO_UPDATE
+                                    .replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, p.getPatientId()),
+                            updateMsg.toString());
+                }
             }
 
         }

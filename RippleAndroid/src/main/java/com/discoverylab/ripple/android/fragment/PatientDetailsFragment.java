@@ -263,7 +263,7 @@ public class PatientDetailsFragment extends Fragment {
         if (this.curPatientSrc.equals(patientSrc) || patientSrc.equals("")) {
             // unsubscribe
             if (!this.curPatientSrc.equals("") && isMQTTConnected()) {
-                String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_ID_STRING, this.curPatientSrc);
+                String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, this.curPatientSrc);
                 ((MainActivity) getActivity()).unsubscribeFromTopic(topic);
             }
 
@@ -280,7 +280,7 @@ public class PatientDetailsFragment extends Fragment {
 
             // unsubscribe from old patient stream (if any)
             if (!this.curPatientSrc.equals("") && isMQTTConnected()) {
-                String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_ID_STRING, this.curPatientSrc);
+                String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, this.curPatientSrc);
                 ((MainActivity) getActivity()).unsubscribeFromTopic(topic);
             }
             graphHelper.startPlotter();
@@ -289,7 +289,7 @@ public class PatientDetailsFragment extends Fragment {
             this.curPatientSrc = patientSrc;
 
             if (!this.curPatientSrc.equals("") && isMQTTConnected()) {
-                String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_ID_STRING, this.curPatientSrc);
+                String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, this.curPatientSrc);
                 ((MainActivity) getActivity()).subscribeToTopic(topic);
             }
 
