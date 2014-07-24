@@ -36,6 +36,7 @@ public final class JSONTag {
     public static final String PATIENT_INFO_NBC = "nbc";
     public static final String PATIENT_INFO_TRIAGE = "triage";
     public static final String PATIENT_INFO_STATUS = "status";
+    public static final String PATIENT_INFO_REQUEST_LAST_UPDATED = "last_updated";
 
     // More general tags
     public static final String RESPONDER_ID = "rid";

@@ -40,6 +40,8 @@ import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -284,14 +286,55 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
     private void requestPatientInfoFromBroker() {
         ApiClient.RippleApiInterface apiClient = ApiClient.getRippleApiClient();
         DateFormat df = Util.getISOUTCFormatter();
-        apiClient.requestCurrentPatientInfo("", new Callback<PatientInfoRequestData>() {
+        // build message
+        JsonArray patientsArray = new JsonArray();
+        Set<Map.Entry<String, Patient>> patientSet = Patients.getInstance().getPatientEntries();
+        for (Map.Entry<String, Patient> entry : patientSet) {
+            Patient p = entry.getValue();
+            // create Json object
+            JsonObject requestPatient = new JsonObject();
+            requestPatient.addProperty(JSONTag.PATIENT_ID, p.getPatientId());
+            requestPatient.addProperty(JSONTag.PATIENT_INFO_REQUEST_LAST_UPDATED, df.format(p.getLastUpdated()));
+            // Add object to request array
+            patientsArray.add(requestPatient);
+        }
+
+        apiClient.requestCurrentPatientInfo(patientsArray.toString(), new Callback<PatientInfoRequestData>() {
             @Override
             public void success(PatientInfoRequestData patientInfoRequestData, Response response) {
-                if (patientInfoRequestData.getResult().equalsIgnoreCase("success")) {
-                    Log.d(TAG, "Successful patient info request.");
-                    for (PatientInfo info : patientInfoRequestData.getPatients()) {
 
+                if (patientInfoRequestData.getResult().equalsIgnoreCase("success")) {
+
+                    Log.d(TAG, "Successful patient info request.");
+
+                    DateFormat df = Util.getISOUTCFormatter();
+                    for (PatientInfo info : patientInfoRequestData.getPatients()) {
+                        if (info.getRid() == null) {
+                            // Broker does not know about this patient, so ignore result for now
+                        } else {
+                            // Can assume any other patients returned are newer as the Broker filters out older entries
+                            Patient p = getPatient(info.getPid());
+                            p.setName(info.getName());
+                            Date lastUpdated;
+                            try{
+                                lastUpdated = df.parse(info.getDate());
+                            } catch (ParseException e) {
+                                // just default to current time
+                                lastUpdated = new Date();
+                                Log.d(TAG, "Error parsing date from info. Date string=" + info.getDate());
+                            }
+                            p.setLastUpdated(lastUpdated);
+                            p.setAge(info.getAge());
+                            p.setSex(info.getSex());
+                            p.setNbcContam(Common.NBC_CONTAMINATION_OPTIONS.valueOf(info.getNbc()));
+                            p.setTriageState(Common.TRIAGE_COLORS.valueOf(info.getTriage()));
+                            p.setStatus(Common.PATIENT_STATUS.valueOf(info.getStatus()));
+                            // inform banner of potentially new patient
+                            patientBanner.addPatient(p);
+                        }
                     }
+                    // request a banner refresh
+                    patientBanner.refreshBanner();
                 }
             }
 
