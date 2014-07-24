@@ -282,10 +282,10 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
      * @param id Id of patient to retrieve
      * @return Patient object for given patient ID
      */
-    private synchronized Patient getPatient(String id){
+    private synchronized Patient getPatient(String id) {
         Patients patients = Patients.getInstance();
         Patient p = patients.getPatient(id);
-        if(p == null){
+        if (p == null) {
             // no existing object, so create a new one
             p = new Patient(id);
             patients.addPatient(id, p);
@@ -326,7 +326,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
     private void processPatientInfo(JsonObject patientInfoJson) {
 
         String responderId = patientInfoJson.get(JSONTag.RESPONDER_ID).getAsString();
-        if(responderId.equals(Common.RESPONDER_ID)){
+        if (responderId.equals(Common.RESPONDER_ID)) {
             // message from self
             // just update banner for now
             this.patientBanner.refreshBanner();
@@ -335,6 +335,34 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
             String date = patientInfoJson.get(JSONTag.DATE).getAsString();
 
             Patient p = this.getPatient(patientId);
+
+            String name = patientInfoJson.get(JSONTag.PATIENT_INFO_NAME).getAsString();
+            int age = patientInfoJson.get(JSONTag.PATIENT_INFO_AGE).getAsInt();
+            String sex = patientInfoJson.get(JSONTag.PATIENT_INFO_SEX).getAsString();
+            Common.NBC_CONTAMINATION_OPTIONS nbc =
+                    Common.NBC_CONTAMINATION_OPTIONS.valueOf(
+                            patientInfoJson.get(JSONTag.PATIENT_INFO_NBC).getAsString());
+            Common.TRIAGE_COLORS triage = Common.TRIAGE_COLORS.valueOf(
+                    patientInfoJson.get(JSONTag.PATIENT_INFO_TRIAGE).getAsString());
+            Common.PATIENT_STATUS status = Common.PATIENT_STATUS.valueOf(
+                    patientInfoJson.get(JSONTag.PATIENT_INFO_STATUS).getAsString());
+
+
+            p.setName(name);
+            p.setAge(age);
+            p.setSex(sex);
+            p.setNbcContam(nbc);
+            p.setTriageState(triage);
+            p.setStatus(status);
+
+            // refresh banner
+            this.patientBanner.refreshBanner();
+
+            // update fragments if patient is selected
+            if (this.patientFragment.getSelectedPatient() == p) {
+                // easiest method at the moment, maybe change
+                this.patientFragment.updatePatientInfo();
+            }
 
         }
     }

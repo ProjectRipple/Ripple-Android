@@ -144,4 +144,9 @@ public class ScenarioPatientFragment extends Fragment {
     public void updatePatientVitals() {
         this.currentVitalsFragment.updateVitals(this.selectedPatient);
     }
+
+    public void updatePatientInfo() {
+        // TODO: do this in a way that merges with local edit if possible.
+        this.infoFragment.setPatient(this.selectedPatient);
+    }
 }
