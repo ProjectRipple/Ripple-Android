@@ -35,6 +35,9 @@ public class Patient implements Parcelable {
     // date patient was last seen by system
     private Date lastSeenDate = new Date();
 
+    // date patient info (name, age, etc.) was last updated by a responder
+    private Date lastUpdated = new Date(0);
+
     // is the patient selected by the user
     private boolean isSelected = false;
 
@@ -77,6 +80,7 @@ public class Patient implements Parcelable {
         this.patientId = in.readString();
 
         this.lastSeenDate = new Date(in.readLong());
+        this.lastUpdated = new Date(in.readLong());
 
         this.isSelected = (in.readByte() == 1);
         this.nbcContam = (Common.NBC_CONTAMINATION_OPTIONS) in.readSerializable();
@@ -100,6 +104,7 @@ public class Patient implements Parcelable {
         parcel.writeString(this.patientId);
 
         parcel.writeLong(this.lastSeenDate.getTime());
+        parcel.writeLong(this.lastUpdated.getTime());
 
         parcel.writeByte((byte) (this.isSelected ? 1 : 0));
         parcel.writeSerializable(this.nbcContam);
