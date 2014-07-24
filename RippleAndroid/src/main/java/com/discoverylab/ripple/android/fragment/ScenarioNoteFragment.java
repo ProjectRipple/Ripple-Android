@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.object.Patient;
 import com.discoverylab.ripple.android.util.PatientTagHelper;
 
 /**
@@ -85,9 +86,14 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.scenario_note_add_note:
-                PatientNoteFragment noteFragment = PatientNoteFragment.newInstance();
-                noteFragment.setTargetFragment(this, ADD_NOTE_REQUEST_CODE);
-                noteFragment.show(getActivity().getSupportFragmentManager(), ADD_NOTE_FRAG_TAG);
+                Patient p = ((ScenarioPatientFragment)getParentFragment()).getSelectedPatient();
+                if(p == null){
+                    Toast.makeText(getActivity(), "You must select a patient before creating a note.", Toast.LENGTH_SHORT).show();
+                } else {
+                    PatientNoteFragment noteFragment = PatientNoteFragment.newInstance(p);
+                    noteFragment.setTargetFragment(this, ADD_NOTE_REQUEST_CODE);
+                    noteFragment.show(getActivity().getSupportFragmentManager(), ADD_NOTE_FRAG_TAG);
+                }
                 break;
             case R.id.scenario_note_view_notes:
                 Toast.makeText(getActivity(), "Not implemented", Toast.LENGTH_SHORT).show();

@@ -27,6 +27,7 @@ import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.activity.CameraActivity;
 import com.discoverylab.ripple.android.object.NoteItemImage;
 import com.discoverylab.ripple.android.object.NoteItemText;
+import com.discoverylab.ripple.android.object.Patient;
 import com.discoverylab.ripple.android.object.PatientNote;
 import com.discoverylab.ripple.android.util.PatientTagHelper;
 import com.discoverylab.ripple.android.util.PatientTagHelper.BODY_PARTS;
@@ -52,7 +53,7 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
     // current view being edited
     private View currentView;
     // Note object for this new note
-    private PatientNote mNote = new PatientNote();
+    private PatientNote mNote;
 
     /**
      * Use this factory method to create a new instance of
@@ -60,8 +61,9 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
      *
      * @return A new instance of fragment PatientNoteFragment.
      */
-    public static PatientNoteFragment newInstance() {
+    public static PatientNoteFragment newInstance(Patient p) {
         PatientNoteFragment fragment = new PatientNoteFragment();
+        fragment.mNote = new PatientNote(p);
         return fragment;
     }
 
