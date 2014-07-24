@@ -1,5 +1,11 @@
 package com.discoverylab.ripple.android.util;
 
+import com.discoverylab.ripple.android.config.Common;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
+
 /**
  * Class to hold static utility functions
  * Created by James on 6/1/2014.
@@ -7,6 +13,12 @@ package com.discoverylab.ripple.android.util;
 public final class Util {
 
     private Util(){}
+
+    public static DateFormat getISOUTCFormatter(){
+        DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return df;
+    }
 
     /**
      * Converts the first 4 bytes of the array to a 4 byte unsigned int(returned as long)

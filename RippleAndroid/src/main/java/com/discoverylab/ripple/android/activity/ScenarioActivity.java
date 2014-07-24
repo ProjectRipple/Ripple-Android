@@ -14,18 +14,22 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.api.ApiClient;
 import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.config.JSONTag;
 import com.discoverylab.ripple.android.config.WSConfig;
 import com.discoverylab.ripple.android.fragment.PatientBannerFragment;
 import com.discoverylab.ripple.android.fragment.PrefsFragment;
 import com.discoverylab.ripple.android.fragment.ScenarioPatientFragment;
+import com.discoverylab.ripple.android.model.PatientInfo;
+import com.discoverylab.ripple.android.model.PatientInfoRequestData;
 import com.discoverylab.ripple.android.mqtt.MQTTClientService;
 import com.discoverylab.ripple.android.mqtt.MQTTServiceConstants;
 import com.discoverylab.ripple.android.mqtt.MQTTServiceManager;
 import com.discoverylab.ripple.android.mqtt.PublishedMessage;
 import com.discoverylab.ripple.android.object.Patient;
 import com.discoverylab.ripple.android.object.Patients;
+import com.discoverylab.ripple.android.util.Util;
 import com.discoverylab.ripple.android.view.BannerPatientView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.JsonArray;
@@ -35,11 +39,13 @@ import com.google.gson.JsonObject;
 import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class ScenarioActivity extends FragmentActivity implements View.OnClickListener {
 
@@ -257,8 +263,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         // set id
         updateMsg.addProperty(JSONTag.RESPONDER_ID, Common.RESPONDER_ID);
         // set date of message
-        DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
-        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        DateFormat df = Util.getISOUTCFormatter();
         updateMsg.addProperty(JSONTag.DATE, df.format(new Date()));
 
         // set location
@@ -274,6 +279,27 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         // publish message
         this.publishMQTTMessage(Common.MQTT_TOPIC_RESPONDER_PING.replace(Common.MQTT_TOPIC_RESPONDER_ID_STRING, Common.RESPONDER_ID), updateMsg.toString());
 
+    }
+
+    private void requestPatientInfoFromBroker() {
+        ApiClient.RippleApiInterface apiClient = ApiClient.getRippleApiClient();
+        DateFormat df = Util.getISOUTCFormatter();
+        apiClient.requestCurrentPatientInfo("", new Callback<PatientInfoRequestData>() {
+            @Override
+            public void success(PatientInfoRequestData patientInfoRequestData, Response response) {
+                if (patientInfoRequestData.getResult().equalsIgnoreCase("success")) {
+                    Log.d(TAG, "Successful patient info request.");
+                    for (PatientInfo info : patientInfoRequestData.getPatients()) {
+
+                    }
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
+
+            }
+        });
     }
 
     /**
@@ -334,8 +360,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
             String patientId = patientInfoJson.get(JSONTag.PATIENT_ID).getAsString();
             String date = patientInfoJson.get(JSONTag.DATE).getAsString();
 
-            DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
-            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+            DateFormat df = Util.getISOUTCFormatter();
 
             // default to time received if date is invalid
             Date msgDate = new Date();
@@ -430,8 +455,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
             Date lastSeenDate = null;
             try {
                 // TODO: check on other systems than 4.4
-                DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
-                df.setTimeZone(TimeZone.getTimeZone("UTC"));
+                DateFormat df = Util.getISOUTCFormatter();
                 lastSeenDate = df.parse(lastSeenDateString);
                 Log.d(TAG, "Original String: " + lastSeenDateString + ", derived string: " + df.format(lastSeenDate));
             } catch (ParseException e) {
@@ -508,6 +532,8 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
                         activity.subscribeToTopic(Common.MQTT_TOPIC_BROKER_PING.replace(Common.MQTT_TOPIC_BROKER_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
                         // Subscribe to patient info updates
                         activity.subscribeToTopic(Common.MQTT_TOPIC_PATIENT_INFO_UPDATE.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
+                        // ensure patient info is up to date
+                        activity.requestPatientInfoFromBroker();
                         Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show();
                         // Clear old patient list
                         break;

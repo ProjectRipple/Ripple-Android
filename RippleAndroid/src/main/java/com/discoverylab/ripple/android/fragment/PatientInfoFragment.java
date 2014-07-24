@@ -23,15 +23,14 @@ import com.discoverylab.ripple.android.adapter.ui.PatientStatusSpinnerAdapter;
 import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.config.JSONTag;
 import com.discoverylab.ripple.android.object.Patient;
+import com.discoverylab.ripple.android.util.Util;
 import com.google.gson.JsonObject;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * Fragment to handle patient information entered by the user.
@@ -410,8 +409,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
                 updateMsg.addProperty(JSONTag.RESPONDER_ID, Common.RESPONDER_ID);
                 updateMsg.addProperty(JSONTag.PATIENT_ID, p.getPatientId());
 
-                DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
-                df.setTimeZone(TimeZone.getTimeZone("UTC"));
+                DateFormat df = Util.getISOUTCFormatter();
 
 
                 updateMsg.addProperty(JSONTag.DATE, df.format(updateTime));
