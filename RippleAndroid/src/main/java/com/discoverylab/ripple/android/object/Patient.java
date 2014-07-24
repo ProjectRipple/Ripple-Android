@@ -222,6 +222,14 @@ public class Patient implements Parcelable {
         this.lastSeenDate = lastSeenDate;
     }
 
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
     public Common.PATIENT_STATUS getStatus() {
         return status;
     }

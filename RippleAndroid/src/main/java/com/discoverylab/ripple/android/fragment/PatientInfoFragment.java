@@ -401,6 +401,9 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
             Patient p = ((ScenarioPatientFragment) getParentFragment()).getSelectedPatient();
             if (p != null) {
                 saveFieldsToPatient(p);
+                Date updateTime = new Date();
+                // set last updated time
+                p.setLastUpdated(updateTime);
 
                 JsonObject updateMsg = new JsonObject();
 
@@ -410,7 +413,9 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
                 DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
                 df.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-                updateMsg.addProperty(JSONTag.DATE, df.format(new Date()));
+
+                updateMsg.addProperty(JSONTag.DATE, df.format(updateTime));
+
 
                 updateMsg.addProperty(JSONTag.PATIENT_INFO_NAME, p.getName());
                 updateMsg.addProperty(JSONTag.PATIENT_INFO_AGE, p.getAge());
