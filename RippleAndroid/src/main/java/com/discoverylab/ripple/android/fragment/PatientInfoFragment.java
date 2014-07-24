@@ -176,7 +176,11 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (selectedPatient != null && !(selectedPatient.getAge() + "").equals(s.toString())) {
+                String compareString = "";
+                if (selectedPatient != null && selectedPatient.getAge() >= 0) {
+                    compareString  = selectedPatient.getAge() + "";
+                }
+                if (!compareString.equals(s.toString())) {
                     saveButton.setEnabled(true);
                     Log.d(TAG, "Age changed");
                 }
@@ -283,13 +287,28 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
 
         this.nbc.setSelection(selection);
         this.patientName.setText(p.getName());
-        this.patientAge.setText(p.getAge() + "");
+        if (p.getAge() >= 0) {
+            this.patientAge.setText(p.getAge() + "");
+        } else {
+            this.patientAge.setText("");
+        }
         Log.d(TAG, "fields set to patient values");
     }
 
     private void saveFieldsToPatient(Patient p) {
         p.setName(this.patientName.getText().toString());
-        p.setAge(Integer.parseInt(this.patientAge.getText().toString()));
+        try {
+            // try to read string from field
+            if (this.patientAge.getText().length() > 0) {
+                p.setAge(Integer.parseInt(this.patientAge.getText().toString()));
+            } else {
+                // nothing to parse
+                p.setAge(-1);
+            }
+        } catch (NumberFormatException nfe) {
+            // if fail to parse, set to -1
+            p.setAge(-1);
+        }
         p.setNbcContam((Common.NBC_CONTAMINATION_OPTIONS) this.nbc.getSelectedItem());
         p.setSex((String) this.patientSex.getSelectedItem());
         // assuming that array entries match
