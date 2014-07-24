@@ -14,6 +14,10 @@ public final class Util {
 
     private Util(){}
 
+    /**
+     * Get a DateFormat object setup for ISO 8601 formatted date-times in the UTC timezone.
+     * @return DateFormat object setup for ISO 8601 formatted date-times in the UTC timezone.
+     */
     public static DateFormat getISOUTCFormatter(){
         DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
         df.setTimeZone(TimeZone.getTimeZone("UTC"));

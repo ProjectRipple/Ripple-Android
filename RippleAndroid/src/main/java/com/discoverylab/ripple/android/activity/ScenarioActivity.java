@@ -256,6 +256,9 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         return this.isMqttConnected;
     }
 
+    /**
+     * Send an update on the responder's current position.
+     */
     private void sendResponderUpdate() {
         if (!this.isMqttConnected) {
             // don't bother with message if mqtt is not connected
@@ -283,6 +286,9 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
 
     }
 
+    /**
+     * Send a patient info request to the broker.
+     */
     private void requestPatientInfoFromBroker() {
         ApiClient.RippleApiInterface apiClient = ApiClient.getRippleApiClient();
         DateFormat df = Util.getISOUTCFormatter();
