@@ -410,7 +410,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
                 DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
                 df.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-                updateMsg.addProperty(JSONTag.BROKER_PING_DATE, df.format(new Date()));
+                updateMsg.addProperty(JSONTag.DATE, df.format(new Date()));
 
                 updateMsg.addProperty(JSONTag.PATIENT_INFO_NAME, p.getName());
                 updateMsg.addProperty(JSONTag.PATIENT_INFO_AGE, p.getAge());

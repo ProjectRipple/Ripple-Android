@@ -23,12 +23,7 @@ public final class JSONTag {
     public static final String RECORD_STATUS = "stat";
 
     // Broker ping keys
-    public static final String BROKER_PING_ID = "cid";
-    public static final String BROKER_PING_DATE = "date";
-    public static final String BROKER_PING_LOCATION = "location";
-    public static final String BROKER_PING_LOCATION_LAT = "lat";
-    public static final String BROKER_PING_LOCATION_LNG = "lng";
-    public static final String BROKER_PING_LOCATION_ALT = "alt";
+
     public static final String BROKER_PING_PATIENTS = "patients";
     public static final String BROKER_PING_PATIENTS_ID = "id";
     public static final String BROKER_PING_PATIENTS_IP = "ip";
@@ -42,11 +37,15 @@ public final class JSONTag {
     public static final String PATIENT_INFO_TRIAGE = "triage";
     public static final String PATIENT_INFO_STATUS = "status";
 
-
-
-
+    // More general tags
     public static final String RESPONDER_ID = "rid";
     public static final String PATIENT_ID = "pid";
+    public static final String BROKER_ID = "cid";
+    public static final String DATE = "date";
+    public static final String LOCATION = "location";
+    public static final String LOCATION_LAT = "lat";
+    public static final String LOCATION_LNG = "lng";
+    public static final String LOCATION_ALT = "alt";
 
     // PatientList WS tags
     public static final String PATIENTS = "patients";

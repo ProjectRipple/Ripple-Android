@@ -259,15 +259,15 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         // set date of message
         DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
-        updateMsg.addProperty(JSONTag.BROKER_PING_DATE, df.format(new Date()));
+        updateMsg.addProperty(JSONTag.DATE, df.format(new Date()));
 
         // set location
         JsonObject location = new JsonObject();
-        location.addProperty(JSONTag.BROKER_PING_LOCATION_LAT, Common.responderLatLng.latitude);
-        location.addProperty(JSONTag.BROKER_PING_LOCATION_LNG, Common.responderLatLng.longitude);
-        location.addProperty(JSONTag.BROKER_PING_LOCATION_ALT, Common.responderAltitude);
+        location.addProperty(JSONTag.LOCATION_LAT, Common.responderLatLng.latitude);
+        location.addProperty(JSONTag.LOCATION_LNG, Common.responderLatLng.longitude);
+        location.addProperty(JSONTag.LOCATION_ALT, Common.responderAltitude);
 
-        updateMsg.add(JSONTag.BROKER_PING_LOCATION, location);
+        updateMsg.add(JSONTag.LOCATION, location);
 
         Log.d(TAG, "Sending update: " + updateMsg.toString());
 
@@ -289,11 +289,33 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         } else if (topic.matches(Common.MQTT_TOPIC_MATCH_BROKER_PING)) {
             JsonObject pingJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
             this.processBrokerPing(pingJson);
+        } else if (topic.matches(Common.MQTT_TOPIC_MATCH_PATIENT_INFO_UPDATE)) {
+            JsonObject patientInfoJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
+            this.processPatientInfo(patientInfoJson);
         } else if (topic.matches(Common.MQTT_TOPIC_MATCH_ECG_STREAM)) {
             // TODO: Send to new note fragment when ready
             //this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_ECG_STREAM, msg).sendToTarget();
         } else {
             Log.d(Common.LOG_TAG, "Unknown MQTT topic recieved:" + topic);
+        }
+    }
+
+    /**
+     * Process an update message about a patient's basic information.
+     *
+     * @param patientInfoJson JSON message to process.
+     */
+    private void processPatientInfo(JsonObject patientInfoJson) {
+
+        String responderId = patientInfoJson.get(JSONTag.RESPONDER_ID).getAsString();
+        if(responderId.equals(Common.RESPONDER_ID)){
+            // message from self
+            // just update banner for now
+            this.patientBanner.refreshBanner();
+        } else {
+            String patientId = patientInfoJson.get(JSONTag.PATIENT_ID).getAsString();
+            String date = patientInfoJson.get(JSONTag.DATE).getAsString();
+
         }
     }
 
@@ -306,14 +328,14 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
 
         // TODO: filter by broker id
         // parse message
-        String brokerId = pingJson.get(JSONTag.BROKER_PING_ID).getAsString();
-        String date = pingJson.get(JSONTag.BROKER_PING_DATE).getAsString();
+        String brokerId = pingJson.get(JSONTag.BROKER_ID).getAsString();
+        String date = pingJson.get(JSONTag.DATE).getAsString();
 
         // Get location
-        JsonObject location = pingJson.get(JSONTag.BROKER_PING_LOCATION).getAsJsonObject();
-        double lat = location.get(JSONTag.BROKER_PING_LOCATION_LAT).getAsDouble();
-        double lng = location.get(JSONTag.BROKER_PING_LOCATION_LNG).getAsDouble();
-        double alt = location.get(JSONTag.BROKER_PING_LOCATION_ALT).getAsDouble();
+        JsonObject location = pingJson.get(JSONTag.LOCATION).getAsJsonObject();
+        double lat = location.get(JSONTag.LOCATION_LAT).getAsDouble();
+        double lng = location.get(JSONTag.LOCATION_LNG).getAsDouble();
+        double alt = location.get(JSONTag.LOCATION_ALT).getAsDouble();
 
         Common.brokerLatLng = new LatLng(lat, lng);
         Common.brokerAltitude = alt;
@@ -439,6 +461,8 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
                         activity.subscribeToTopic(Common.MQTT_TOPIC_VITALCAST.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
                         // Subscribe to ping messages from broker
                         activity.subscribeToTopic(Common.MQTT_TOPIC_BROKER_PING.replace(Common.MQTT_TOPIC_BROKER_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
+                        // Subscribe to patient info updates
+                        activity.subscribeToTopic(Common.MQTT_TOPIC_PATIENT_INFO_UPDATE.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
                         Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show();
                         // Clear old patient list
                         break;
