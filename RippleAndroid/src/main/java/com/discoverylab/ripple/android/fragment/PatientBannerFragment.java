@@ -105,9 +105,10 @@ public class PatientBannerFragment extends Fragment {
     /**
      * Add a new patient to the banner
      *
-     * @param p Patien to add
+     * @param p Patient to add
      */
     public void addPatient(Patient p) {
+        // TODO: maybe perform a more efficient search as this may get called a lot.
         if (this.viewLayout != null) {
             // make sure patient does not already have a view
             int childCount = this.viewLayout.getChildCount();

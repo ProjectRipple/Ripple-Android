@@ -277,6 +277,24 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
     }
 
     /**
+     * Get Patient object for given ID, creating it if needed.
+     *
+     * @param id Id of patient to retrieve
+     * @return Patient object for given patient ID
+     */
+    private synchronized Patient getPatient(String id){
+        Patients patients = Patients.getInstance();
+        Patient p = patients.getPatient(id);
+        if(p == null){
+            // no existing object, so create a new one
+            p = new Patient(id);
+            patients.addPatient(id, p);
+        }
+
+        return p;
+    }
+
+    /**
      * Processes message from MQTT client
      *
      * @param msg MQTT message to process
@@ -315,6 +333,8 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         } else {
             String patientId = patientInfoJson.get(JSONTag.PATIENT_ID).getAsString();
             String date = patientInfoJson.get(JSONTag.DATE).getAsString();
+
+            Patient p = this.getPatient(patientId);
 
         }
     }
@@ -359,13 +379,12 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
 
         // get patient list from broker
         JsonArray patientsArray = pingJson.get(JSONTag.BROKER_PING_PATIENTS).getAsJsonArray();
-        Patients patients = Patients.getInstance();
         // check that we have all patients in our cache
         for (JsonElement p : patientsArray) {
-            JsonObject patient = p.getAsJsonObject();
-            String id = patient.get(JSONTag.BROKER_PING_PATIENTS_ID).getAsString();
+            JsonObject patientJson = p.getAsJsonObject();
+            String id = patientJson.get(JSONTag.BROKER_PING_PATIENTS_ID).getAsString();
 
-            String lastSeenDateString = patient.get(JSONTag.BROKER_PING_PATIENTS_LAST_SEEN).getAsString();
+            String lastSeenDateString = patientJson.get(JSONTag.BROKER_PING_PATIENTS_LAST_SEEN).getAsString();
             Date lastSeenDate = null;
             try {
                 // TODO: check on other systems than 4.4
@@ -377,24 +396,14 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
                 e.printStackTrace();
             }
 
-            // add patient to list if patient does not exist
-            if (!patients.patientExists(id)) {
-                Log.d(TAG, "New patient " + id + " from ping message");
-                // get full IP address
-                String ip = patient.get(JSONTag.BROKER_PING_PATIENTS_IP).getAsString();
+            Patient patient = this.getPatient(id);
+            // get full IP address
+            String ip = patientJson.get(JSONTag.BROKER_PING_PATIENTS_IP).getAsString();
 
-                // create new patient
-                Patient newPatient = new Patient(id);
-                newPatient.setIpaddr(ip);
-                newPatient.setLastSeenDate(lastSeenDate);
-                patients.addPatient(id, newPatient);
-                // also add to banner
-                this.patientBanner.addPatient(newPatient);
-
-            } else {
-                // just update last seen
-                patients.getPatient(id).setLastSeenDate(lastSeenDate);
-            }
+            patient.setIpaddr(ip);
+            patient.setLastSeenDate(lastSeenDate);
+            // attempt to add patient to banner
+            this.patientBanner.addPatient(patient);
         }
 
 
@@ -406,9 +415,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
      * @param recordJson JSON message to process
      */
     private void processPatientUpdate(JsonObject recordJson) {
-        Patients patients = Patients.getInstance();
         Patient curPatient = null;
-
 
         String src = recordJson.get(JSONTag.RECORD_SOURCE).getAsString();
         int hr = recordJson.get(JSONTag.RECORD_HEART_RATE).getAsInt();
@@ -418,20 +425,16 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
 
 
         // find patient
-        curPatient = patients.getPatient(src);
-        if (curPatient == null) {
-            // Add patient
-            curPatient = new Patient(src);
-            patients.addPatient(src, curPatient);
-            // Inform banner of new patient
-            this.patientBanner.addPatient(curPatient);
-        }
+        curPatient = this.getPatient(src);
 
         // Update patient values
         curPatient.setO2(spO2);
         curPatient.setHeartRate(hr);
         curPatient.setTemperature(temperature);
         curPatient.setBreathsPerMin(resp_pm);
+
+        // Inform banner of potential new patient
+        this.patientBanner.addPatient(curPatient);
 
         if (curPatient == this.patientFragment.getSelectedPatient()) {
             // update vitals on screen for selected patient
