@@ -23,13 +23,13 @@ public class Patient implements Parcelable {
 
     private Common.TRIAGE_COLORS triageState;
     private Common.NBC_CONTAMINATION_OPTIONS nbcContam;
+    private Common.PATIENT_STATUS status;
 
     // string values of patient
     private String name;
     private String sex;
     private String type;
     private String ipaddr;
-    private String status;
     private String patientId;
 
     // date patient was last seen by system
@@ -52,7 +52,7 @@ public class Patient implements Parcelable {
         this.name = "John Doe";
         this.sex = "Unknown";
         this.type = "Unknown";
-        this.status = "Not Attended";
+        this.status = Common.PATIENT_STATUS.NOT_ATTENDED;
         this.ipaddr = "";
 
         this.isSelected = false;
@@ -72,7 +72,7 @@ public class Patient implements Parcelable {
         this.name = in.readString();
         this.sex = in.readString();
         this.type = in.readString();
-        this.status = in.readString();
+        this.status = (Common.PATIENT_STATUS) in.readSerializable();
         this.ipaddr = in.readString();
         this.patientId = in.readString();
 
@@ -95,7 +95,7 @@ public class Patient implements Parcelable {
         parcel.writeString(this.name);
         parcel.writeString(this.sex);
         parcel.writeString(this.type);
-        parcel.writeString(this.status);
+        parcel.writeSerializable(this.status);
         parcel.writeString(this.ipaddr);
         parcel.writeString(this.patientId);
 
@@ -217,11 +217,11 @@ public class Patient implements Parcelable {
         this.lastSeenDate = lastSeenDate;
     }
 
-    public String getStatus() {
+    public Common.PATIENT_STATUS getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Common.PATIENT_STATUS status) {
         this.status = status;
     }
 

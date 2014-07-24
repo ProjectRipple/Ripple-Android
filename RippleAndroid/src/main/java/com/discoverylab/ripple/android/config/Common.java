@@ -103,6 +103,30 @@ public final class Common {
 
     }
 
+    public enum PATIENT_STATUS {
+        // always ensure default is first in list
+        NOT_ATTENDED("Not Attended"), ATTENDED_ME("Attended (Me)"), ATTENDED_TEAM("Attended (Team)"),
+        ATTENDED_OTHER("Attended (Other)"), TRANSPORT_TEAM("Transport (Team)"), TRANSPORT_OTHER("Transport (Other)");
+
+        // String to print to user
+        // allow changing in case we wish to swap something like
+        // "Me" or "Team" for the user's actual name or team at runtime
+        private String printableString;
+
+        private PATIENT_STATUS(String s){
+            this.printableString = s;
+        }
+
+        public String getPrintableString(){
+            return printableString;
+        }
+
+        public void setPrintableString(String s){
+            this.printableString = s;
+        }
+
+    }
+
 
     // Vital constants
     public enum VITAL_TYPES {

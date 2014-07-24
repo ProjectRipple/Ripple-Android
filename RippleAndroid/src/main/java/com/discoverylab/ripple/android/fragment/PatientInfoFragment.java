@@ -18,6 +18,7 @@ import android.widget.SpinnerAdapter;
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.adapter.ui.ColorSpinnerAdapter;
 import com.discoverylab.ripple.android.adapter.ui.NBCSpinnerAdapter;
+import com.discoverylab.ripple.android.adapter.ui.PatientStatusSpinnerAdapter;
 import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.config.JSONTag;
 import com.discoverylab.ripple.android.object.Patient;
@@ -47,7 +48,6 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
     private Spinner nbc;
     private EditText patientName;
     private EditText patientAge;
-    private String[] colorsTextArray;
     // Reference to currently selected patient
     private Patient selectedPatient;
 
@@ -58,9 +58,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
      * @return A new instance of fragment PatientInfoFragment.
      */
     public static PatientInfoFragment newInstance() {
-        PatientInfoFragment fragment = new PatientInfoFragment();
-
-        return fragment;
+        return new PatientInfoFragment();
     }
 
     public PatientInfoFragment() {
@@ -101,10 +99,16 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
 
         // get status, sex, and nbc spinners
         this.status = (Spinner) v.findViewById(R.id.patient_status_spinner);
+        Common.PATIENT_STATUS[] statusArray = Common.PATIENT_STATUS.values();
+        List<Common.PATIENT_STATUS> statusList = new ArrayList<Common.PATIENT_STATUS>(statusArray.length);
+        Collections.addAll(statusList, statusArray);
+
+        // set adapter & listener
+        status.setAdapter(new PatientStatusSpinnerAdapter(getActivity(), statusList));
         status.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                onPatientStatusChanged((String) parent.getItemAtPosition(position));
+                onPatientStatusChanged((Common.PATIENT_STATUS) parent.getItemAtPosition(position));
             }
 
             @Override
@@ -233,8 +237,8 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
     private void setFieldsFromPatient(Patient p) {
         // Make sure selection 0 is always a default
         int selection = 0;
-        int count = 0;
-        int i = 0;
+        int count;
+        int i;
         SpinnerAdapter adapter;
 
         // set triage color field
@@ -248,14 +252,13 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         }
         this.triageColor.setSelection(selection);
 
-        // TODO: Change this selection method using strings to something better?
         // Set status field
         selection = 0;
         adapter = this.status.getAdapter();
         count = adapter.getCount();
-        for (i = 1; i < count; i++) {
-            String item = (String) adapter.getItem(i);
-            if (item.toLowerCase().equals(p.getStatus().toLowerCase())) {
+        for (i = 0; i < count; i++) {
+            Common.PATIENT_STATUS item = (Common.PATIENT_STATUS) adapter.getItem(i);
+            if (item == p.getStatus()) {
                 selection = i;
             }
         }
@@ -313,7 +316,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         p.setSex((String) this.patientSex.getSelectedItem());
         // assuming that array entries match
         p.setTriageState((Common.TRIAGE_COLORS) this.triageColor.getSelectedItem());
-        p.setStatus((String) this.status.getSelectedItem());
+        p.setStatus((Common.PATIENT_STATUS) this.status.getSelectedItem());
         Log.d(TAG, "saved fields to patient");
     }
 
@@ -369,8 +372,8 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    private void onPatientStatusChanged(String status) {
-        if (this.selectedPatient != null && !this.selectedPatient.getStatus().equalsIgnoreCase(status)) {
+    private void onPatientStatusChanged(Common.PATIENT_STATUS status) {
+        if (this.selectedPatient != null && this.selectedPatient.getStatus() != status) {
             this.saveButton.setEnabled(true);
             Log.d(TAG, "status changed");
         }
@@ -413,7 +416,7 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
                 updateMsg.addProperty(JSONTag.PATIENT_INFO_SEX, p.getSex());
                 updateMsg.addProperty(JSONTag.PATIENT_INFO_NBC, p.getNbcContam().toString());
                 updateMsg.addProperty(JSONTag.PATIENT_INFO_TRIAGE, p.getTriageState().toString());
-                updateMsg.addProperty(JSONTag.PATIENT_INFO_STATUS, p.getStatus());
+                updateMsg.addProperty(JSONTag.PATIENT_INFO_STATUS, p.getStatus().toString());
 
                 Log.d(TAG, "Patient info message: " + updateMsg.toString());
             }
