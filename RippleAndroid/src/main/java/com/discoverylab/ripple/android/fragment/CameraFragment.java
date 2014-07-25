@@ -76,7 +76,8 @@ public class CameraFragment extends Fragment {
     private static final String TAG = CameraFragment.class.getSimpleName();
 
     // tag for path of saved image in result intent
-    public static final String IMAGE_PATH_TAG = "savedImage";
+    public static final String IMAGE_PATH_TAG = "savedImagePath";
+    public static final String IMAGE_NAME_TAG = "savedImageName";
 
     // target width for picture (when in landscape orientation)
     public static final int TARGET_PICTURE_WIDTH = 1280;
@@ -500,6 +501,7 @@ public class CameraFragment extends Fragment {
                 // set activity result
                 Intent i = new Intent();
                 i.putExtra(IMAGE_PATH_TAG, pictureFile.getAbsolutePath());
+                i.putExtra(IMAGE_NAME_TAG, pictureFile.getName());
                 getActivity().setResult(Activity.RESULT_OK, i);
                 // tell activity to finish
                 getActivity().finish();

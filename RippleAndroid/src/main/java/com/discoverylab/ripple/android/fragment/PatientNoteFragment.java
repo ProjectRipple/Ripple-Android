@@ -3,6 +3,7 @@ package com.discoverylab.ripple.android.fragment;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,13 +26,19 @@ import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.activity.CameraActivity;
+import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.object.NoteItemImage;
 import com.discoverylab.ripple.android.object.NoteItemText;
 import com.discoverylab.ripple.android.object.Patient;
 import com.discoverylab.ripple.android.object.PatientNote;
 import com.discoverylab.ripple.android.util.PatientTagHelper;
 import com.discoverylab.ripple.android.util.PatientTagHelper.BODY_PARTS;
+import com.google.gson.JsonObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -165,6 +172,7 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
             case R.id.patient_note_done_btn:
                 finishCurrentNoteItem();
                 finishNote();
+                saveNote();
                 getDialog().dismiss();
                 break;
         }
@@ -239,15 +247,55 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
         }
     }
 
+    private void saveNote() {
+        // Assuming patient id is valid directory name
+        File noteDir = getActivity().getDir(Common.NOTES_DIR, Context.MODE_PRIVATE);
+        File patientNoteDir = new File(noteDir.getPath() + File.separator + this.mNote.getPatient().getPatientId());
+        if (!patientNoteDir.exists()) {
+            if (!patientNoteDir.mkdirs()) {
+                Log.e(TAG, "Failed to creates notes directory!");
+                return;
+            }
+        }
+
+        File outFile = new File(patientNoteDir.getPath() + File.separator + this.mNote.getNoteId().toString() + ".json");
+        JsonObject noteJson = this.mNote.getJsonObject();
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(outFile);
+            fos.write(noteJson.toString().getBytes());
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "Failed to open output stream.");
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to write file.");
+            e.printStackTrace();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "Failed to close fos.");
+                }
+            }
+        }
+
+
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK && data != null) {
                 String imagePath = data.getStringExtra(CameraFragment.IMAGE_PATH_TAG);
+                String imageName = data.getStringExtra(CameraFragment.IMAGE_NAME_TAG);
                 ImageView img = new ImageView(getActivity());
                 Bitmap imageFromFile = BitmapFactory.decodeFile(imagePath);
                 img.setImageBitmap(imageFromFile);
-                double ratio = imageFromFile.getWidth() / (double) imageFromFile.getHeight();
+
                 int sizePixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, getResources().getDisplayMetrics());
                 img.setMaxWidth(sizePixels);
                 img.setMaxHeight(sizePixels);
@@ -258,7 +306,7 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
                 img.setLayoutParams(params);
 
                 this.noteItemsLayout.addView(img);
-                this.mNote.addNoteItem(new NoteItemImage(imagePath));
+                this.mNote.addNoteItem(new NoteItemImage(imageName));
                 this.currentView = null;
             } else {
                 Toast.makeText(getActivity(), "No image taken.", Toast.LENGTH_SHORT).show();

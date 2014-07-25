@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * A collection of {@link NoteItem} to represent a note taken by a responder about a patient.
@@ -19,6 +20,8 @@ import java.util.List;
  */
 public class PatientNote {
 
+    // ID of this note
+    private final UUID noteId = UUID.randomUUID();
     // Reference to patient that this note is about
     private final Patient mPatient;
     // List of note items
@@ -125,6 +128,11 @@ public class PatientNote {
     public Patient getPatient() {
         return this.mPatient;
     }
+
+    public UUID getNoteId() {
+        return noteId;
+    }
+
 
     /**
      * Get a Json Object representing this note.

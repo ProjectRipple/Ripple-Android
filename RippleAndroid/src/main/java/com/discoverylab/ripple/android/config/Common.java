@@ -48,6 +48,7 @@ public final class Common {
 
     // Directory in picture directory to store photos from app
     public static final String PHOTO_DIR = "Ripple";
+    public static final String NOTES_DIR = "Notes";
 
     // Messaging What Constants
     public static final int RIPPLE_MSG_RECORD = 77;
