@@ -90,6 +90,9 @@ public class CameraFragment extends Fragment {
     // Reference to the containing view.
     private View mCameraView;
 
+    // String to add to image file name
+    private String patientId;
+
     /**
      * Default empty constructor.
      */
@@ -102,8 +105,13 @@ public class CameraFragment extends Fragment {
      *
      * @return New instance of CameraFragment
      */
-    public static CameraFragment newInstance() {
+    public static CameraFragment newInstance(String patientID) {
         CameraFragment fragment = new CameraFragment();
+        if (patientID != null && !patientID.equals("")) {
+            fragment.patientId = patientID;
+        } else {
+            fragment.patientId = "p";
+        }
         return fragment;
     }
 
@@ -337,14 +345,14 @@ public class CameraFragment extends Fragment {
 
                 // TODO: make this support different rotations correctly
                 Camera.Size picSize = parameters.getPictureSize();
-                if(picSize.width > picSize.height) {
+                if (picSize.width > picSize.height) {
                     if (picSize.width > TARGET_PICTURE_WIDTH) {
                         double scaleRatio = (double) TARGET_PICTURE_WIDTH / picSize.width;
                         picSize.width = (int) (picSize.width * scaleRatio);
                         picSize.height = (int) (picSize.height * scaleRatio);
                     }
                 } else {
-                    if(picSize.height > TARGET_PICTURE_WIDTH) {
+                    if (picSize.height > TARGET_PICTURE_WIDTH) {
                         double scaleRatio = (double) TARGET_PICTURE_WIDTH / picSize.height;
                         picSize.width = (int) (picSize.width * scaleRatio);
                         picSize.height = (int) (picSize.height * scaleRatio);
@@ -524,7 +532,7 @@ public class CameraFragment extends Fragment {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File mediaFile;
         mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                "IMG_" + timeStamp + ".jpg");
+                "IMG_" + patientId + "_" + timeStamp + ".jpg");
 
 
         return mediaFile;

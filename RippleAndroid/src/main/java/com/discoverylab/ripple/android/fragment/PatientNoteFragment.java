@@ -188,6 +188,7 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
 
     private void addImageNote() {
         Intent i = new Intent(getActivity(), CameraActivity.class);
+        i.putExtra(CameraActivity.ID_EXTRA, this.mNote.getPatient().getPatientId());
         startActivityForResult(i, CAMERA_REQUEST_CODE);
     }
 
