@@ -109,7 +109,7 @@ public class BannerPatientView extends RelativeLayout {
     public void updateViewFields() {
 
         // set patient status
-        this.patientStatusText.setText("Not Attended.");
+        this.patientStatusText.setText(mPatient.getStatus().getPrintableString());
 
         // check if patient is selected
         if (mPatient.isSelected()) {
