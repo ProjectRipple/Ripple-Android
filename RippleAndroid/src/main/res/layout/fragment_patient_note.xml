@@ -28,35 +28,40 @@
 
                 <ImageButton
                     android:id="@+id/patient_note_add_text"
-                    android:layout_width="75dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/add_note_item_button_width"
+                    android:layout_height="@dimen/add_note_item_button_height"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/ic_action_new_event" />
 
                 <ImageButton
                     android:id="@+id/patient_note_add_image"
-                    android:layout_width="75dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/add_note_item_button_width"
+                    android:layout_height="@dimen/add_note_item_button_height"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/ic_action_camera" />
 
                 <ImageButton
                     android:id="@+id/patient_note_add_voice"
-                    android:layout_width="75dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/add_note_item_button_width"
+                    android:layout_height="@dimen/add_note_item_button_height"
+                    android:scaleType="fitCenter"
                     android:src="@drawable/ic_action_mic" />
 
 
                 <Button
                     android:id="@+id/patient_note_add_drug"
-                    android:layout_width="75dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/add_note_item_button_width"
+                    android:layout_height="@dimen/add_note_item_button_height"
                     android:gravity="center"
+                    android:textSize="30sp"
                     android:text="Rx" />
 
                 <Button
                     android:id="@+id/patient_note_add_ecg"
-                    android:layout_width="75dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/add_note_item_button_width"
+                    android:layout_height="@dimen/add_note_item_button_height"
                     android:gravity="center"
+                    android:textSize="30sp"
                     android:text="ECG" />
 
 

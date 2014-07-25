@@ -37,4 +37,8 @@
 
     <!-- current vitals dimens-->
     <dimen name="current_vitals_image_size">40dp</dimen>
+
+    <!-- Add note dimens -->
+    <dimen name="add_note_item_button_width">125dp</dimen>
+    <dimen name="add_note_item_button_height">125dp</dimen>
 </resources>

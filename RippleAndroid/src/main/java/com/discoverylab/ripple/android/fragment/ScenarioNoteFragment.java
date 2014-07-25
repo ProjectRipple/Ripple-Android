@@ -67,6 +67,19 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
         addNote.setOnClickListener(this);
         viewNotes.setOnClickListener(this);
 
+        // TODO: remove long click listener when done testing
+        addNote.setLongClickable(true);
+        addNote.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // just launch note fragment with a dummy patient object
+                PatientNoteFragment noteFragment = PatientNoteFragment.newInstance(new Patient("Dummy1"));
+                noteFragment.setTargetFragment(ScenarioNoteFragment.this, ADD_NOTE_REQUEST_CODE);
+                noteFragment.show(getActivity().getSupportFragmentManager(), ADD_NOTE_FRAG_TAG);
+                return true;
+            }
+        });
+
         ImageView tag = (ImageView) v.findViewById(R.id.patient_tag);
         tag.setOnTouchListener(this);
 
