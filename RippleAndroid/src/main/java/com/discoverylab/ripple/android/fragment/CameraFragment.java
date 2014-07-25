@@ -51,9 +51,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Fragment to display a camera preview and capture button.
@@ -531,7 +533,9 @@ public class CameraFragment extends Fragment {
         }
 
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        DateFormat df = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String timeStamp = df.format(new Date());
         File mediaFile;
         mediaFile = new File(mediaStorageDir.getPath() + File.separator +
                 "IMG_" + patientId + "_" + timeStamp + ".jpg");
