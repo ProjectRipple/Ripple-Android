@@ -28,6 +28,7 @@ public class NoteItemImage implements NoteItem {
      * @return Full image path to the file.
      */
     public String getImagePath() {
+        // Make sure this matches the save path of images in CameraFragment
         return new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), Common.PHOTO_DIR).getPath()
                 + File.separator + imageName;
