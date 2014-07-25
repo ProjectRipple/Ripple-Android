@@ -27,6 +27,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
@@ -78,6 +79,9 @@ public class CameraFragment extends Fragment {
 
     // tag for path of saved image in result intent
     public static final String IMAGE_PATH_TAG = "savedImage";
+
+    // target width for picture (when in landscape orientation)
+    public static final int TARGET_PICTURE_WIDTH = 1280;
 
     // Native camera.
     private Camera mCamera;
@@ -332,6 +336,27 @@ public class CameraFragment extends Fragment {
                     Camera.Size previewSize = mPreviewSize;
                     parameters.setPreviewSize(previewSize.width, previewSize.height);
                 }
+
+                // TODO: make this support different rotations correctly
+                Camera.Size picSize = parameters.getPictureSize();
+                if(picSize.width > picSize.height) {
+                    if (picSize.width > TARGET_PICTURE_WIDTH) {
+                        double scaleRatio = (double) TARGET_PICTURE_WIDTH / picSize.width;
+                        picSize.width = (int) (picSize.width * scaleRatio);
+                        picSize.height = (int) (picSize.height * scaleRatio);
+                    }
+                } else {
+                    if(picSize.height > TARGET_PICTURE_WIDTH) {
+                        double scaleRatio = (double) TARGET_PICTURE_WIDTH / picSize.height;
+                        picSize.width = (int) (picSize.width * scaleRatio);
+                        picSize.height = (int) (picSize.height * scaleRatio);
+                    }
+                }
+
+                // set picture details
+                parameters.setJpegQuality(95);
+                parameters.setPictureFormat(ImageFormat.JPEG);
+                parameters.setPictureSize(picSize.width, picSize.height);
 
                 mCamera.setParameters(parameters);
                 mCamera.startPreview();
