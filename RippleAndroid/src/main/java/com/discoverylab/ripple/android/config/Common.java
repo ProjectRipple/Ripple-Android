@@ -46,6 +46,9 @@ public final class Common {
 
     public static final String ISO_DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
+    // Directory in picture directory to store photos from app
+    public static final String PHOTO_DIR = "Ripple";
+
     // Messaging What Constants
     public static final int RIPPLE_MSG_RECORD = 77;
     public static final int RIPPLE_MSG_ECG_STREAM = 88;

@@ -45,6 +45,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.config.Common;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -73,9 +74,6 @@ public class CameraFragment extends Fragment {
 
     // Log tag
     private static final String TAG = CameraFragment.class.getSimpleName();
-
-    // Directory photos are stored in
-    private static final String PHOTO_DIR = "Ripple";
 
     // tag for path of saved image in result intent
     public static final String IMAGE_PATH_TAG = "savedImage";
@@ -513,7 +511,7 @@ public class CameraFragment extends Fragment {
     private File getOutputMediaFile() {
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), PHOTO_DIR);
+                Environment.DIRECTORY_PICTURES), Common.PHOTO_DIR);
 
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {

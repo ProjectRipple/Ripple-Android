@@ -1,7 +1,12 @@
 package com.discoverylab.ripple.android.object;
 
+import android.os.Environment;
+
+import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.config.JSONTag;
 import com.google.gson.JsonObject;
+
+import java.io.File;
 
 /**
  * Note Item for an image note.
@@ -11,14 +16,25 @@ import com.google.gson.JsonObject;
 public class NoteItemImage implements NoteItem {
 
     // System path to image
-    private final String imagePath;
+    private final String imageName;
 
-    public NoteItemImage(String imagePath) {
-        this.imagePath = imagePath;
+    public NoteItemImage(String imageName) {
+        this.imageName = imageName;
     }
 
+    /**
+     * Get the full image path to the image file.
+     *
+     * @return Full image path to the file.
+     */
     public String getImagePath() {
-        return imagePath;
+        return new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), Common.PHOTO_DIR).getPath()
+                + File.separator + imageName;
+    }
+
+    public String getImageName() {
+        return imageName;
     }
 
     @Override
@@ -32,7 +48,7 @@ public class NoteItemImage implements NoteItem {
 
         object.addProperty(JSONTag.NOTE_ITEM_TYPE, this.getNoteType().toString());
 
-        object.addProperty(JSONTag.NOTE_ITEM_FILE, this.imagePath);
+        object.addProperty(JSONTag.NOTE_ITEM_FILE, this.imageName);
 
         return object;
     }
