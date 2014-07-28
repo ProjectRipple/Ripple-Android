@@ -3,28 +3,26 @@ package com.discoverylab.ripple.android.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.activity.ScenarioActivity;
+import com.discoverylab.ripple.android.adapter.ui.NoteListAdapter;
 import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.config.JSONTag;
 import com.discoverylab.ripple.android.object.Patient;
 import com.discoverylab.ripple.android.object.PatientNote;
 import com.discoverylab.ripple.android.object.PatientNotes;
-import com.discoverylab.ripple.android.util.PatientTagHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,6 +39,8 @@ public class ScenarioNoteFragment extends Fragment implements View.OnClickListen
     private static final String ADD_NOTE_FRAG_TAG = "AddNoteFragment";
     // Request code for adding a note
     private static final int ADD_NOTE_REQUEST_CODE = 2941;
+    // Reference to note list
+    private ExpandableListView noteList;
 
     /**
      * Use this factory method to create a new instance of
@@ -89,9 +89,31 @@ public class ScenarioNoteFragment extends Fragment implements View.OnClickListen
             }
         });
 
-        ExpandableListView noteList = (ExpandableListView) v.findViewById(R.id.scenario_note_list);
+        this.noteList = (ExpandableListView) v.findViewById(R.id.scenario_note_list);
+        this.noteList.setIndicatorBounds(0, 0);
+        // remove group indicator as we will use our own
+        this.noteList.setGroupIndicator(null);
 
         return v;
+    }
+
+    public void setPatient(Patient p) {
+        if (p != null) {
+            NoteListAdapter adapter = new NoteListAdapter(getActivity(), PatientNotes.getInstance().getNotesForPatient(p.getPatientId()));
+            this.noteList.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        } else {
+            // TODO: better way to clear list
+            NoteListAdapter adapter = new NoteListAdapter(getActivity(), new ArrayList<PatientNote>());
+            this.noteList.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    public void refreshNoteList() {
+        if (this.noteList.getExpandableListAdapter() != null) {
+            ((NoteListAdapter) this.noteList.getExpandableListAdapter()).notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -123,7 +145,8 @@ public class ScenarioNoteFragment extends Fragment implements View.OnClickListen
                                     newNote.getJsonObject().toString());
                 }
             }
-
+            // Should be adding a note for selected patient, so update data set
+            this.refreshNoteList();
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

@@ -91,7 +91,7 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
         ImageView text = (ImageView) v.findViewById(R.id.note_list_group_text);
         ImageView image = (ImageView) v.findViewById(R.id.note_list_group_image);
         ImageView voice = (ImageView) v.findViewById(R.id.note_list_group_voice);
-        ImageView rx = (ImageView) v.findViewById(R.id.note_list_group_rx);
+        TextView rx = (TextView) v.findViewById(R.id.note_list_group_rx);
         ImageView ecg = (ImageView) v.findViewById(R.id.note_list_group_ecg);
 
         text.setVisibility(View.INVISIBLE);
@@ -120,6 +120,14 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
                     ecg.setVisibility(View.VISIBLE);
                     break;
             }
+        }
+
+        ImageView indicator = (ImageView) v.findViewById(R.id.note_list_group_indicator);
+
+        if(isExpanded){
+            indicator.setImageResource(R.drawable.ic_action_collapse);
+        } else {
+            indicator.setImageResource(R.drawable.ic_action_expand);
         }
 
         return v;

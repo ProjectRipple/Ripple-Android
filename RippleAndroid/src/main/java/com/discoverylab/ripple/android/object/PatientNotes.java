@@ -54,6 +54,9 @@ public class PatientNotes {
      * @return List of notes for this patient or null if no notes have been added.
      */
     public List<PatientNote> getNotesForPatient(String patientId) {
+        if (!patientNotes.containsKey(patientId)) {
+            patientNotes.put(patientId, new ArrayList<PatientNote>(5));
+        }
         return patientNotes.get(patientId);
     }
 }
