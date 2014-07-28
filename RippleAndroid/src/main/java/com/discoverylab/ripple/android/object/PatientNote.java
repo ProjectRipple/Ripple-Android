@@ -45,8 +45,8 @@ public class PatientNote {
     // ID of responder that made the note.
     private String responderId = Common.RESPONDER_ID;
     // Location note was taken at
-    private LatLng latLng = new LatLng(-123456.0, -123456.0);
-    private double altitude = -123456.0;
+    private LatLng latLng = Common.DEFAULT_LATLNG;
+    private double altitude = Common.DEFAULT_ALT;
 
     public PatientNote(Patient p) {
         this.mPatient = p;
@@ -161,14 +161,14 @@ public class PatientNote {
     /**
      * Get the lat/lng this note was taken at
      *
-     * @return LatLng this note was taken at or (-123456.0, -123456.0) if location was not set.
+     * @return LatLng this note was taken at or {@value Common#DEFAULT_LATLNG} if location was not set.
      */
     public LatLng getLatLng() {
         return this.latLng;
     }
 
     /**
-     * @return Altitude note was taken at or -123456.0 if location was not set
+     * @return Altitude note was taken at or {@value Common#DEFAULT_ALT} if location was not set
      */
     public double getAltitude() {
         return this.altitude;

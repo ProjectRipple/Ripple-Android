@@ -21,13 +21,17 @@ public final class Common {
     // key for responder id preference
     public static final String RESPONDER_ID_PREF = "ResponderIdPref";
 
+    // default location information
+    public static final LatLng DEFAULT_LATLNG = new LatLng(0.0, 0.0);
+    public static final double DEFAULT_ALT = 0.0;
+
     // Saved broker location
-    public static LatLng brokerLatLng = new LatLng(0.0, 0.0);
-    public static double brokerAltitude = 0.0;
+    public static LatLng brokerLatLng = DEFAULT_LATLNG;
+    public static double brokerAltitude = DEFAULT_ALT;
 
     // Save responder location
-    public static LatLng responderLatLng = new LatLng(0.0, 0.0);
-    public static double responderAltitude = 0.0;
+    public static LatLng responderLatLng = DEFAULT_LATLNG;
+    public static double responderAltitude = DEFAULT_ALT;
 
     // Json Formatting
     public static final Gson GSON = new GsonBuilder().setDateFormat(Common.DATE_TIME_FORMAT).create();
