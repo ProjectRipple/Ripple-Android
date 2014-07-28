@@ -238,6 +238,7 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
         // set date and selected body part
         this.mNote.setDate(new Date());
         this.mNote.setSelectedBodyPart(this.selectedBodyPart);
+        this.mNote.setLatLngAlt(Common.responderLatLng, Common.responderAltitude);
         // call finish on the note
         this.mNote.finish();
 
