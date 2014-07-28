@@ -31,7 +31,7 @@ public class PatientNote {
     // Log tag
     private static final String TAG = PatientNote.class.getSimpleName();
     // ID of this note
-    private final UUID noteId = UUID.randomUUID();
+    private String noteId = UUID.randomUUID().toString();
     // Reference to patient that this note is about
     private final Patient mPatient;
     // List of note items
@@ -193,7 +193,7 @@ public class PatientNote {
         return this.mPatient;
     }
 
-    public UUID getNoteId() {
+    public String getNoteId() {
         return noteId;
     }
 
@@ -210,6 +210,7 @@ public class PatientNote {
 
         object.addProperty(JSONTag.RESPONDER_ID, this.responderId);
         object.addProperty(JSONTag.PATIENT_ID, this.mPatient.getPatientId());
+        object.addProperty(JSONTag.NOTE_ID, this.noteId);
         object.addProperty(JSONTag.DATE, df.format(this.mDateTime));
         object.addProperty(JSONTag.NOTE_BODY_PART, this.selectedBodyPart.toString());
 
@@ -241,12 +242,14 @@ public class PatientNote {
 
             String responderId = object.get(JSONTag.RESPONDER_ID).getAsString();
             String patientId = object.get(JSONTag.PATIENT_ID).getAsString();
+            String noteId = object.get(JSONTag.NOTE_ID).getAsString();
 
             // TODO: what is patient has not been created yet?
             Patient p = Patients.getInstance().getPatient(patientId);
 
             PatientNote note = new PatientNote(p);
             note.setResponderId(responderId);
+            note.noteId = noteId;
 
             Date noteDate = df.parse(object.get(JSONTag.DATE).getAsString());
 

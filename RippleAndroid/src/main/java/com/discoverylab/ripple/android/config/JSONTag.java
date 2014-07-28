@@ -51,6 +51,7 @@ public final class JSONTag {
     public static final String RESPONDER_ID = "rid";
     public static final String PATIENT_ID = "pid";
     public static final String BROKER_ID = "cid";
+    public static final String NOTE_ID = "nid";
     public static final String DATE = "date";
     public static final String LOCATION = "location";
     public static final String LOCATION_LAT = "lat";
