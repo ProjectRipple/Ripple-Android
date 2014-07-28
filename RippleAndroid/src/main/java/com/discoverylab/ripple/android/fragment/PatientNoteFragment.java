@@ -262,7 +262,7 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
             }
         }
 
-        File outFile = new File(patientNoteDir.getPath() + File.separator + this.mNote.getNoteId().toString() + ".json");
+        File outFile = new File(patientNoteDir.getPath() + File.separator + this.mNote.getNoteId() + ".json");
         JsonObject noteJson = this.mNote.getJsonObject();
 
         FileOutputStream fos = null;
