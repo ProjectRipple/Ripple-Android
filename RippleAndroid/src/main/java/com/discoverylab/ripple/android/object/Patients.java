@@ -41,12 +41,13 @@ public class Patients {
 
     /**
      * Get the patient object for given ID, creating it if needed.
+     *
      * @param id ID of patient to retrieve.
      * @return Patient object corresponding to given ID.
      */
     public synchronized Patient getPatient(String id) {
         Patient p = patientMap.get(id);
-        if(p == null){
+        if (p == null) {
             p = new Patient(id);
             patientMap.put(id, p);
         }

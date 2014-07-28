@@ -1,6 +1,7 @@
 package com.discoverylab.ripple.android.fragment;
 
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -15,8 +16,15 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.activity.ScenarioActivity;
+import com.discoverylab.ripple.android.config.Common;
+import com.discoverylab.ripple.android.config.JSONTag;
 import com.discoverylab.ripple.android.object.Patient;
+import com.discoverylab.ripple.android.object.PatientNote;
+import com.discoverylab.ripple.android.object.PatientNotes;
 import com.discoverylab.ripple.android.util.PatientTagHelper;
+
+import java.util.List;
 
 /**
  * Fragment to display note related information in the scenario view.
@@ -88,8 +96,34 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ADD_NOTE_REQUEST_CODE) {
-            // result from add note operation (nothing to do for now)
+        if (requestCode == ADD_NOTE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // result from add note operation
+            // New note was added
+            String noteId = data.getStringExtra(JSONTag.NOTE_ID);
+            String patientId = data.getStringExtra(JSONTag.PATIENT_ID);
+            List<PatientNote> notes = PatientNotes.getInstance().getNotesForPatient(patientId);
+            PatientNote newNote = null;
+            for (PatientNote note : notes) {
+                if (note.getNoteId().equals(noteId)) {
+                    newNote = note;
+                }
+            }
+
+            if (newNote == null) {
+                Log.e(TAG, "Error: could not find the newly added note!");
+            } else {
+                // Send out new note
+                // TODO: change this to upload all data to broker rather than just publish a message
+                if (getActivity() instanceof ScenarioActivity) {
+                    ((ScenarioActivity) getActivity())
+                            .publishMQTTMessage(
+                                    Common.MQTT_TOPIC_PATIENT_NOTE
+                                            .replace(Common.MQTT_TOPIC_PATIENT_ID_STRING,
+                                                    newNote.getPatient().getPatientId()),
+                                    newNote.getJsonObject().toString());
+                }
+            }
+
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -99,8 +133,8 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.scenario_note_add_note:
-                Patient p = ((ScenarioPatientFragment)getParentFragment()).getSelectedPatient();
-                if(p == null){
+                Patient p = ((ScenarioPatientFragment) getParentFragment()).getSelectedPatient();
+                if (p == null) {
                     Toast.makeText(getActivity(), "You must select a patient before creating a note.", Toast.LENGTH_SHORT).show();
                 } else {
                     PatientNoteFragment noteFragment = PatientNoteFragment.newInstance(p);

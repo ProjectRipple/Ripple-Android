@@ -82,6 +82,8 @@ public final class Common {
     public static final String MQTT_TOPIC_PATIENT_INFO_UPDATE = "P_Stats/" + MQTT_TOPIC_PATIENT_ID_STRING + "/info";
     public static final String MQTT_TOPIC_MATCH_PATIENT_INFO_UPDATE = "P_Stats/.*/info";
 
+    public static final String MQTT_TOPIC_PATIENT_NOTE = "P_Action/note/" + MQTT_TOPIC_PATIENT_ID_STRING;
+    public static final String MQTT_TOPIC_MATCH_PATIENT_NOTE = "P_Action/note/.*";
 
     public enum TRIAGE_COLORS {
         // Always ensure default options is first in list
