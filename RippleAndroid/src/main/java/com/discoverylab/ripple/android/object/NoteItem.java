@@ -1,6 +1,5 @@
 package com.discoverylab.ripple.android.object;
 
-import com.discoverylab.ripple.android.config.JSONTag;
 import com.google.gson.JsonObject;
 
 /**
