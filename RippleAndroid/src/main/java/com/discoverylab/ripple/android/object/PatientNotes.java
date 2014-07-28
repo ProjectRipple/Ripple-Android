@@ -23,7 +23,7 @@ public class PatientNotes {
         private static PatientNotes instance = new PatientNotes();
     }
 
-    public PatientNotes getInstance() {
+    public static PatientNotes getInstance() {
         return Loader.instance;
     }
 

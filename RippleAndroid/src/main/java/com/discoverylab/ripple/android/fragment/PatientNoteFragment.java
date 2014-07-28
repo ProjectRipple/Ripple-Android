@@ -31,6 +31,7 @@ import com.discoverylab.ripple.android.object.NoteItemImage;
 import com.discoverylab.ripple.android.object.NoteItemText;
 import com.discoverylab.ripple.android.object.Patient;
 import com.discoverylab.ripple.android.object.PatientNote;
+import com.discoverylab.ripple.android.object.PatientNotes;
 import com.discoverylab.ripple.android.util.PatientTagHelper;
 import com.discoverylab.ripple.android.util.PatientTagHelper.BODY_PARTS;
 import com.google.gson.JsonObject;
@@ -245,6 +246,7 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
 
         if (getTargetFragment() != null) {
             // TODO: save note somehow or make note parcelable and send via intent
+            PatientNotes.getInstance().addNote(this.mNote);
             getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, new Intent());
         }
     }
