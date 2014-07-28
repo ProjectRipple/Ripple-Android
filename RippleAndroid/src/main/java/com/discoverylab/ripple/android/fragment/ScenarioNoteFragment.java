@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -32,7 +33,7 @@ import java.util.List;
  * Use the {@link ScenarioNoteFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ScenarioNoteFragment extends Fragment implements View.OnTouchListener, View.OnClickListener {
+public class ScenarioNoteFragment extends Fragment implements View.OnClickListener {
 
     // Log tag
     private static final String TAG = ScenarioNoteFragment.class.getSimpleName();
@@ -88,8 +89,7 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
             }
         });
 
-        ImageView tag = (ImageView) v.findViewById(R.id.patient_tag);
-        tag.setOnTouchListener(this);
+        ExpandableListView noteList = (ExpandableListView) v.findViewById(R.id.scenario_note_list);
 
         return v;
     }
@@ -149,57 +149,5 @@ public class ScenarioNoteFragment extends Fragment implements View.OnTouchListen
                 Log.d(TAG, "Unknown item clicked.");
         }
     }
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-
-        final int action = event.getAction();
-        final int evX = (int) event.getX();
-        final int evY = (int) event.getY();
-
-        Log.d(TAG, "ACTION: " + action + " at (x,y) " + evX + ", " + evY);
-
-        switch (action) {
-            case MotionEvent.ACTION_UP:
-                break;
-            case MotionEvent.ACTION_DOWN:
-                if (evX >= 0 && evY >= 0) {
-                    ImageView img = (ImageView) getView().findViewById(R.id.patient_tag_painted);
-                    img.setDrawingCacheEnabled(true);
-                    Bitmap hotspots = Bitmap.createBitmap(img.getDrawingCache());
-                    img.setDrawingCacheEnabled(false);
-
-                    PatientTagHelper.BODY_PARTS partSelected = PatientTagHelper.getBodyPartSelected(hotspots, evX, evY);
-
-                    switch (partSelected) {
-                        case FRONT_HEAD:
-                            Toast.makeText(getActivity(), "Front Head touched.", Toast.LENGTH_SHORT).show();
-                            break;
-                        case FRONT_TORSO:
-                            Toast.makeText(getActivity(), "Front Torso touched.", Toast.LENGTH_SHORT).show();
-                            break;
-                        case FRONT_LEFT_ARM:
-                            Toast.makeText(getActivity(), "Front Left Arm touched.", Toast.LENGTH_SHORT).show();
-                            break;
-                        case FRONT_RIGHT_ARM:
-                            Toast.makeText(getActivity(), "Front Right Arm touched.", Toast.LENGTH_SHORT).show();
-                            break;
-                        case FRONT_LEFT_LEG:
-                            Toast.makeText(getActivity(), "Front Left Leg touched.", Toast.LENGTH_SHORT).show();
-                            break;
-                        case FRONT_RIGHT_LEG:
-                            Toast.makeText(getActivity(), "Front Right Leg touched.", Toast.LENGTH_SHORT).show();
-                            break;
-                        case NONE:
-                            break;
-                    }
-                }
-
-                break;
-        }
-
-        return true;
-    }
-
 
 }
