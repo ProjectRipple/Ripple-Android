@@ -164,7 +164,11 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
                 case IMAGE:
                     ImageView img = new ImageView(this.context);
                     Bitmap imageFromFile = BitmapFactory.decodeFile(((NoteItemImage)item).getImagePath());
-                    img.setImageBitmap(imageFromFile);
+                    if(imageFromFile != null) {
+                        img.setImageBitmap(imageFromFile);
+                    } else {
+                        img.setImageResource(R.drawable.image_placeholder);
+                    }
 
                     int sizePixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, this.context.getResources().getDisplayMetrics());
                     img.setMaxWidth(sizePixels);
