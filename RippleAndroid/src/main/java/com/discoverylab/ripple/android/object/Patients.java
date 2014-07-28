@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Singleton to hold global map of patients.
+ * <p/>
  * Created by james on 7/21/14.
  */
 public class Patients {
