@@ -39,8 +39,19 @@ public class Patients {
         patientMap.put(id, p);
     }
 
-    public Patient getPatient(String id) {
-        return patientMap.get(id);
+    /**
+     * Get the patient object for given ID, creating it if needed.
+     * @param id ID of patient to retrieve.
+     * @return Patient object corresponding to given ID.
+     */
+    public synchronized Patient getPatient(String id) {
+        Patient p = patientMap.get(id);
+        if(p == null){
+            p = new Patient(id);
+            patientMap.put(id, p);
+        }
+
+        return p;
     }
 
     public int getNumPatients() {
