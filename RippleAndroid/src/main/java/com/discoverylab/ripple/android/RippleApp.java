@@ -1,6 +1,7 @@
 package com.discoverylab.ripple.android;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -14,6 +15,16 @@ import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.config.WSConfig;
 import com.discoverylab.ripple.android.fragment.PrefsFragment;
 import com.discoverylab.ripple.android.object.Patient;
+import com.discoverylab.ripple.android.object.PatientNote;
+import com.discoverylab.ripple.android.object.PatientNotes;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * RippleApplication object initializes the connection preferences and stores global variables
@@ -64,6 +75,10 @@ public class RippleApp extends Application {
         Common.TRIAGE_COLORS.YELLOW.setColor(resources.getColor(R.color.triage_yellow));
         Common.TRIAGE_COLORS.RED.setColor(resources.getColor(R.color.triage_red));
         Common.TRIAGE_COLORS.BLACK.setColor(resources.getColor(R.color.triage_black));
+
+        // Load old notes into app
+        // TODO: is this something we always want? How to clear old patients?
+        loadCachedNotes();
 
         // test that patient is still parcelable
         Patient p = new Patient("hello");
@@ -125,6 +140,61 @@ public class RippleApp extends Application {
         } else {
             Log.d(Common.LOG_TAG, this.getClass().getName() + " -- Invalid ip loaded from preferences:" + brokerIP);
         }
+    }
+
+    private void loadCachedNotes() {
+        File noteDir = getDir(Common.NOTES_DIR, Context.MODE_PRIVATE);
+
+        if (!noteDir.exists()) {
+            // create notes directory and return as there are no notes
+            if (!noteDir.mkdirs()) {
+                Log.e(TAG, "Failed to create notes directory");
+            }
+            return;
+        }
+
+        PatientNotes notes = PatientNotes.getInstance();
+
+        for (File f : noteDir.listFiles()) {
+            if (f.isDirectory()) {
+                // dig deeper for notes
+                File[] jsonFiles = f.listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String filename) {
+                        return filename.contains(".json");
+                    }
+                });
+
+                for (File noteFile : jsonFiles) {
+                    try {
+                        FileInputStream fin = new FileInputStream(noteFile);
+                        String json = convertStreamToString(fin);
+
+                        PatientNote note = PatientNote.fromJson(json);
+                        if (note != null) {
+                            notes.addNote(note);
+                            Log.d(TAG, "Loaded note from cached file " + noteFile.getName());
+                        } else {
+                            Log.e(TAG, "Failed to parse file json for file " + noteFile.getName());
+                        }
+
+                    } catch (IOException ie) {
+                        Log.e(TAG, "Failed to read file " + noteFile.getName());
+                    }
+                }
+            }
+        }
+    }
+
+    private String convertStreamToString(InputStream is) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line).append("\n");
+        }
+        reader.close();
+        return sb.toString();
     }
 
     @Override
