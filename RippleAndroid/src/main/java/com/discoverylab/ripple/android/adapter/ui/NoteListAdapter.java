@@ -1,15 +1,21 @@
 package com.discoverylab.ripple.android.adapter.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.object.NoteItem;
+import com.discoverylab.ripple.android.object.NoteItemImage;
+import com.discoverylab.ripple.android.object.NoteItemText;
 import com.discoverylab.ripple.android.object.PatientNote;
 import com.discoverylab.ripple.android.util.Util;
 
@@ -102,8 +108,8 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
 
         // set visibility of icons if note has those types
         List<NoteItem> noteItems = note.getNoteItems();
-        for(NoteItem item : noteItems){
-            switch (item.getNoteType()){
+        for (NoteItem item : noteItems) {
+            switch (item.getNoteType()) {
                 case TEXT:
                     text.setVisibility(View.VISIBLE);
                     break;
@@ -124,7 +130,7 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
 
         ImageView indicator = (ImageView) v.findViewById(R.id.note_list_group_indicator);
 
-        if(isExpanded){
+        if (isExpanded) {
             indicator.setImageResource(R.drawable.ic_action_collapse);
         } else {
             indicator.setImageResource(R.drawable.ic_action_expand);
@@ -135,9 +141,55 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        TextView view = new TextView(this.context);
-        view.setText("Dummy note item.");
-        return view;
+        View v = convertView;
+
+        if (v == null) {
+            LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            v = inflater.inflate(R.layout.note_list_child, parent, false);
+        }
+
+        LinearLayout childLayout = (LinearLayout) v.findViewById(R.id.note_list_child_layout);
+        childLayout.removeAllViews();
+
+        PatientNote note = this.notes.get(groupPosition);
+
+        List<NoteItem> noteItems = note.getNoteItems();
+        for (NoteItem item : noteItems) {
+            switch (item.getNoteType()) {
+                case TEXT:
+                    TextView text = new TextView(this.context);
+                    text.setText(((NoteItemText)item).getNoteText());
+                    childLayout.addView(text);
+                    break;
+                case IMAGE:
+                    ImageView img = new ImageView(this.context);
+                    Bitmap imageFromFile = BitmapFactory.decodeFile(((NoteItemImage)item).getImagePath());
+                    img.setImageBitmap(imageFromFile);
+
+                    int sizePixels = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, this.context.getResources().getDisplayMetrics());
+                    img.setMaxWidth(sizePixels);
+                    img.setMaxHeight(sizePixels);
+
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    params.width = sizePixels;
+                    params.height = sizePixels;
+                    img.setLayoutParams(params);
+
+                    childLayout.addView(img);
+                    break;
+                case VOICE:
+
+                    break;
+                case DRUG:
+
+                    break;
+                case ECG:
+
+                    break;
+            }
+        }
+
+        return v;
     }
 
     @Override
