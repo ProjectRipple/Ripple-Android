@@ -233,16 +233,38 @@ public class PatientNote {
 
     }
 
+    /**
+     * Construct a patient note from the provided JSON string.
+     *
+     * @param jsonString JSON string containing patient note
+     * @return PatientNote represented by JSON string or null if string could not be parsed.
+     */
     public static PatientNote fromJson(String jsonString) {
-        Gson gson = new GsonBuilder().setDateFormat(Common.ISO_DATETIME_FORMAT).create();
-        DateFormat df = Util.getISOUTCFormatter();
+
         try {
+            Gson gson = new GsonBuilder().setDateFormat(Common.ISO_DATETIME_FORMAT).create();
             // may throw parse exception
             JsonObject object = gson.fromJson(jsonString, JsonObject.class);
 
-            String responderId = object.get(JSONTag.RESPONDER_ID).getAsString();
-            String patientId = object.get(JSONTag.PATIENT_ID).getAsString();
-            String noteId = object.get(JSONTag.NOTE_ID).getAsString();
+            return fromJsonObject(object);
+        } catch (JsonParseException jpe) {
+            Log.e(TAG, "Failed to parse note json.");
+        }
+        return null;
+    }
+
+    /**
+     * Construct a patient note from the provided JSON object.
+     *
+     * @param jsonObject JSON Object containing patient note
+     * @return PatientNote represented by JSON Object or null if object could not be parsed.
+     */
+    public static PatientNote fromJsonObject(JsonObject jsonObject) {
+        DateFormat df = Util.getISOUTCFormatter();
+        try {
+            String responderId = jsonObject.get(JSONTag.RESPONDER_ID).getAsString();
+            String patientId = jsonObject.get(JSONTag.PATIENT_ID).getAsString();
+            String noteId = jsonObject.get(JSONTag.NOTE_ID).getAsString();
 
             // TODO: what is patient has not been created yet?
             Patient p = Patients.getInstance().getPatient(patientId);
@@ -251,23 +273,23 @@ public class PatientNote {
             note.setResponderId(responderId);
             note.noteId = noteId;
 
-            Date noteDate = df.parse(object.get(JSONTag.DATE).getAsString());
+            Date noteDate = df.parse(jsonObject.get(JSONTag.DATE).getAsString());
 
             note.setDate(noteDate);
 
             PatientTagHelper.BODY_PARTS bodyPart =
-                    PatientTagHelper.BODY_PARTS.valueOf(object.get(JSONTag.NOTE_BODY_PART).getAsString());
+                    PatientTagHelper.BODY_PARTS.valueOf(jsonObject.get(JSONTag.NOTE_BODY_PART).getAsString());
 
             note.setSelectedBodyPart(bodyPart);
 
-            JsonObject location = object.get(JSONTag.LOCATION).getAsJsonObject();
+            JsonObject location = jsonObject.get(JSONTag.LOCATION).getAsJsonObject();
             double latitude = location.get(JSONTag.LOCATION_LAT).getAsDouble();
             double longitude = location.get(JSONTag.LOCATION_LNG).getAsDouble();
             double altitude = location.get(JSONTag.LOCATION_ALT).getAsDouble();
 
             note.setLatLngAlt(new LatLng(latitude, longitude), altitude);
 
-            JsonArray noteItems = object.get(JSONTag.NOTE_CONTENTS).getAsJsonArray();
+            JsonArray noteItems = jsonObject.get(JSONTag.NOTE_CONTENTS).getAsJsonArray();
 
             for (JsonElement je : noteItems) {
                 NoteItem item = noteItemFromJson(je.getAsJsonObject());
@@ -277,14 +299,18 @@ public class PatientNote {
             note.finish();
             // return the note
             return note;
-        } catch (JsonParseException jpe) {
-            Log.e(TAG, "Failed to parse note json.");
         } catch (ParseException pe) {
             Log.e(TAG, "Failed to parse note Date.");
         }
         return null;
     }
 
+    /**
+     * Build a patient note item from the provided JSON object
+     *
+     * @param json JSON Object to parse
+     * @return NoteItem represented by the json object.
+     */
     public static NoteItem noteItemFromJson(JsonObject json) {
         NoteItem.NOTE_TYPE type = NoteItem.NOTE_TYPE.valueOf(json.get(JSONTag.NOTE_ITEM_TYPE).getAsString());
         NoteItem rtnValue = null;

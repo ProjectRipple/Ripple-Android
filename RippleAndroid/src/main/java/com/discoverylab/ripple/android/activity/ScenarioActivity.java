@@ -28,6 +28,8 @@ import com.discoverylab.ripple.android.mqtt.MQTTServiceConstants;
 import com.discoverylab.ripple.android.mqtt.MQTTServiceManager;
 import com.discoverylab.ripple.android.mqtt.PublishedMessage;
 import com.discoverylab.ripple.android.object.Patient;
+import com.discoverylab.ripple.android.object.PatientNote;
+import com.discoverylab.ripple.android.object.PatientNotes;
 import com.discoverylab.ripple.android.object.Patients;
 import com.discoverylab.ripple.android.util.Util;
 import com.discoverylab.ripple.android.view.BannerPatientView;
@@ -567,7 +569,23 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
      * @param patientNoteJson JSON message to process.
      */
     private void processPatientNote(JsonObject patientNoteJson) {
+        PatientNote note = PatientNote.fromJsonObject(patientNoteJson);
+        if (note != null) {
+            // Make sure this is a new note
+            boolean newNote = true;
+            List<PatientNote> notesForPatient = PatientNotes.getInstance().getNotesForPatient(note.getPatient().getPatientId());
+            for (PatientNote oldNote : notesForPatient) {
+                // simple check against the note id for now
+                if (oldNote.getNoteId().equals(note.getNoteId())) {
+                    newNote = false;
+                }
+            }
 
+            if (newNote) {
+                PatientNotes.getInstance().addNote(note);
+            }
+
+        }
     }
 
     /**
