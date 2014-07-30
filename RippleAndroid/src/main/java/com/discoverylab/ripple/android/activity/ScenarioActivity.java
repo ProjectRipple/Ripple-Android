@@ -585,6 +585,10 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
                 Log.d(TAG, "New note for patient " + note.getPatient().getPatientId() + " from MQTT.");
                 PatientNotes.getInstance().addNote(note);
                 note.saveNoteToFile(this);
+                // check if note patient is selected
+                if(this.patientFragment.getSelectedPatient() == note.getPatient()){
+                    this.patientFragment.updatePatientNotes();
+                }
             } else {
                 Log.d(TAG, "Duplicate note received for patient " + note.getPatient().getPatientId());
             }
