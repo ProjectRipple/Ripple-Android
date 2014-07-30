@@ -39,7 +39,9 @@ import com.google.gson.JsonObject;
 import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -322,7 +324,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
                             Patient p = getPatient(info.getPid());
                             p.setName(info.getName());
                             Date lastUpdated;
-                            try{
+                            try {
                                 lastUpdated = df.parse(info.getDate());
                             } catch (ParseException e) {
                                 // just default to current time
@@ -385,6 +387,9 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         } else if (topic.matches(Common.MQTT_TOPIC_MATCH_PATIENT_INFO_UPDATE)) {
             JsonObject patientInfoJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
             this.processPatientInfo(patientInfoJson);
+        } else if (topic.matches(Common.MQTT_TOPIC_MATCH_PATIENT_NOTE)) {
+            JsonObject patientNoteJson = Common.GSON.fromJson(msg.getPayload(), JsonObject.class);
+            this.processPatientNote(patientNoteJson);
         } else if (topic.matches(Common.MQTT_TOPIC_MATCH_ECG_STREAM)) {
             // TODO: Send to new note fragment when ready
             //this.patLeft.getHandler().obtainMessage(Common.RIPPLE_MSG_ECG_STREAM, msg).sendToTarget();
@@ -503,7 +508,6 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
             String lastSeenDateString = patientJson.get(JSONTag.BROKER_PING_PATIENTS_LAST_SEEN).getAsString();
             Date lastSeenDate = null;
             try {
-                // TODO: check on other systems than 4.4
                 DateFormat df = Util.getISOUTCFormatter();
                 lastSeenDate = df.parse(lastSeenDateString);
                 Log.d(TAG, "Original String: " + lastSeenDateString + ", derived string: " + df.format(lastSeenDate));
@@ -525,7 +529,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
     }
 
     /**
-     * Process a message for a patient's vitals
+     * Process a message for a patient's vitals.
      *
      * @param recordJson JSON message to process
      */
@@ -558,13 +562,36 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
     }
 
     /**
+     * Process a message about a patient note.
+     *
+     * @param patientNoteJson JSON message to process.
+     */
+    private void processPatientNote(JsonObject patientNoteJson) {
+
+    }
+
+    /**
      * Class to handle messages from MQTT client
      */
     private static class MQTTHandler extends Handler {
+        // Reference to containing activity instance
         private WeakReference<ScenarioActivity> activityReference;
+
+        // Topics to subscribe to when connected
+        private List<String> subscribeTopics = new ArrayList<String>(5);
 
         public MQTTHandler(ScenarioActivity activity) {
             this.activityReference = new WeakReference<ScenarioActivity>(activity);
+            // populate topics list
+            subscribeTopics.clear();
+            // subscribe to all vitalcast messages
+            subscribeTopics.add(Common.MQTT_TOPIC_VITALCAST.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
+            // subscribe to all ping messages from any broker //TODO: filter by broker
+            subscribeTopics.add(Common.MQTT_TOPIC_BROKER_PING.replace(Common.MQTT_TOPIC_BROKER_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
+            // subscribe to all patient info updates
+            subscribeTopics.add(Common.MQTT_TOPIC_PATIENT_INFO_UPDATE.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
+            // subscribe to all patient note messages
+            subscribeTopics.add(Common.MQTT_TOPIC_PATIENT_NOTE.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
         }
 
         @Override
@@ -575,12 +602,9 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
                     case MQTTServiceConstants.MSG_CONNECTED:
                         // Set that we are connected
                         activity.setMqttConnected(true);
-                        // Subscribe to vitalcast messages
-                        activity.subscribeToTopic(Common.MQTT_TOPIC_VITALCAST.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
-                        // Subscribe to ping messages from broker
-                        activity.subscribeToTopic(Common.MQTT_TOPIC_BROKER_PING.replace(Common.MQTT_TOPIC_BROKER_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
-                        // Subscribe to patient info updates
-                        activity.subscribeToTopic(Common.MQTT_TOPIC_PATIENT_INFO_UPDATE.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, Common.MQTT_TOPIC_WILDCARD_SINGLE_LEVEL));
+                        for (String topic : subscribeTopics) {
+                            activity.subscribeToTopic(topic);
+                        }
                         // ensure patient info is up to date
                         activity.requestPatientInfoFromBroker();
                         Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show();
