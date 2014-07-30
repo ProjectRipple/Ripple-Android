@@ -257,42 +257,7 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
     }
 
     private void saveNote() {
-        // Assuming patient id is valid directory name
-        File noteDir = getActivity().getDir(Common.NOTES_DIR, Context.MODE_PRIVATE);
-        File patientNoteDir = new File(noteDir.getPath() + File.separator + this.mNote.getPatient().getPatientId());
-        if (!patientNoteDir.exists()) {
-            if (!patientNoteDir.mkdirs()) {
-                Log.e(TAG, "Failed to creates notes directory!");
-                return;
-            }
-        }
-
-        File outFile = new File(patientNoteDir.getPath() + File.separator + this.mNote.getNoteId() + ".json");
-        JsonObject noteJson = this.mNote.getJsonObject();
-
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(outFile);
-            fos.write(noteJson.toString().getBytes());
-            fos.close();
-        } catch (FileNotFoundException e) {
-            Log.e(TAG, "Failed to open output stream.");
-            e.printStackTrace();
-        } catch (IOException e) {
-            Log.e(TAG, "Failed to write file.");
-            e.printStackTrace();
-        } finally {
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (IOException e) {
-                    Log.e(TAG, "Failed to close fos.");
-                }
-            }
-        }
-
-
-
+        this.mNote.saveNoteToFile(getActivity());
     }
 
     @Override

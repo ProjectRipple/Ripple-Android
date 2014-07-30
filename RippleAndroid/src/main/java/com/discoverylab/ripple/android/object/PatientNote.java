@@ -1,5 +1,6 @@
 package com.discoverylab.ripple.android.object;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.discoverylab.ripple.android.config.Common;
@@ -14,6 +15,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -231,6 +236,62 @@ public class PatientNote {
 
         return object;
 
+    }
+
+
+    public boolean saveNoteToFile(Context context) {
+        if(context == null){
+            Log.e(TAG, "Null context passed to saveNoteToFile.");
+            return false;
+        }
+
+        // Assuming patient id is valid directory name
+        File noteDir = context.getDir(Common.NOTES_DIR, Context.MODE_PRIVATE);
+        File patientNoteDir = new File(noteDir.getPath() + File.separator + this.getPatient().getPatientId());
+        if (!patientNoteDir.exists()) {
+            if (!patientNoteDir.mkdirs()) {
+                Log.e(TAG, "Failed to creates notes directory!");
+                return false;
+            }
+        }
+
+        File outFile = new File(patientNoteDir.getPath() + File.separator + this.getNoteId() + ".json");
+        JsonObject noteJson = this.getJsonObject();
+
+        // File already exists
+        if(outFile.exists()){
+            // delete the old note file? it should be the same, but just in case.
+            boolean deleteResult = outFile.delete();
+            if(deleteResult) {
+                Log.d(TAG, "Deleted existing note file: " + outFile.getName());
+            } else {
+                Log.d(TAG, "Failed to delete existing note file: " + outFile.getName());
+            }
+        }
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(outFile);
+            fos.write(noteJson.toString().getBytes());
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Log.e(TAG, "Failed to open output stream.");
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to write file.");
+            e.printStackTrace();
+            return false;
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    Log.e(TAG, "Failed to close fos.");
+                }
+            }
+        }
+        return true;
     }
 
     /**

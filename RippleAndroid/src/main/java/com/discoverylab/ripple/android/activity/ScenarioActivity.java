@@ -583,6 +583,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
 
             if (newNote) {
                 PatientNotes.getInstance().addNote(note);
+                note.saveNoteToFile(this);
             }
 
         }
