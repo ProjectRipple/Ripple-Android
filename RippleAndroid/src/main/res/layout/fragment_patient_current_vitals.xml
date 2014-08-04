@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:textSize="30sp"
         android:gravity="center_horizontal"
-        android:text="Vitals"/>
+        android:text="@string/vitals"/>
 
     <View
         android:id="@+id/current_vitals_spacer_top"
@@ -34,7 +34,7 @@
         android:layout_height="@dimen/current_vitals_image_size"
         android:layout_below="@+id/current_vitals_spacer_top"
         android:src="@drawable/thermostat_white"
-        />
+        android:contentDescription="@string/thermometer" />
 
     <TextView
         android:id="@+id/current_vitals_temperature_value"
@@ -48,7 +48,7 @@
         android:textColor="@color/scenario_text_color"
         android:ems="5"
         android:maxEms="5"
-        android:text="100.5"
+        android:text="@string/vitals_temperature_value_default"
         />
 
     <TextView
@@ -59,7 +59,7 @@
         android:paddingTop="15dp"
         android:textSize="@dimen/patient_info_text_size"
         android:textStyle="bold"
-        android:text="Sp02"/>
+        android:text="@string/vitals_sp02_label"/>
 
 
     <TextView
@@ -71,7 +71,7 @@
         android:layout_alignParentRight="true"
         android:textSize="@dimen/patient_info_text_size"
         android:textColor="@color/scenario_text_color"
-        android:text="99%"/>
+        android:text="@string/vitals_sp02_value_default"/>
 
     <ImageView
         android:id="@+id/current_vitals_heartrate_label"
@@ -79,7 +79,8 @@
         android:layout_height="@dimen/current_vitals_image_size"
         android:layout_below="@+id/current_vitals_sp02_label"
         android:layout_marginTop="15dp"
-        android:src="@drawable/heart"/>
+        android:src="@drawable/heart"
+        android:contentDescription="@string/heart_rate" />
 
     <TextView
         android:id="@+id/current_vitals_heartrate_value"
@@ -92,7 +93,7 @@
         android:gravity="center_vertical"
         android:textSize="@dimen/patient_info_text_size"
         android:textColor="@color/scenario_text_color"
-        android:text="88"/>
+        android:text="@string/vitals_heartrate_value_default"/>
 
     <View
         android:id="@+id/current_vitals_spacer_blood_pressure"
@@ -111,7 +112,7 @@
         android:layout_below="@+id/current_vitals_spacer_blood_pressure"
         android:textSize="@dimen/patient_info_text_size"
         android:textStyle="bold"
-        android:text="SYS"/>
+        android:text="@string/vitals_systolic_label"/>
 
     <TextView
         android:id="@+id/current_vitals_systolic_value"
@@ -122,7 +123,7 @@
         android:layout_alignParentRight="true"
         android:textSize="@dimen/patient_info_text_size"
         android:textColor="@color/scenario_text_color"
-        android:text="135"/>
+        android:text="@string/vitals_systolic_value_default"/>
 
 
 
@@ -134,7 +135,7 @@
         android:paddingTop="15dp"
         android:textSize="@dimen/patient_info_text_size"
         android:textStyle="bold"
-        android:text="DIA"/>
+        android:text="@string/vitals_diastolic_label"/>
 
     <TextView
         android:id="@+id/current_vitals_diastolic_value"
@@ -145,7 +146,7 @@
         android:layout_alignParentRight="true"
         android:textSize="@dimen/patient_info_text_size"
         android:textColor="@color/scenario_text_color"
-        android:text="90"/>
+        android:text="@string/vitals_diastolic_value_default"/>
 
 
     <View
@@ -159,36 +160,36 @@
         android:background="@color/white"/>
 
     <TextView
-        android:id="@+id/current_vitals_resparation_label"
+        android:id="@+id/current_vitals_respiration_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/current_vitals_spacer_resp"
         android:textSize="@dimen/patient_info_text_size"
         android:textStyle="bold"
-        android:text="Respiration"/>
+        android:text="@string/vitals_respiration_label"/>
 
 
     <TextView
         android:id="@+id/current_vitals_respiration_value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/current_vitals_resparation_label"
+        android:layout_alignBottom="@+id/current_vitals_respiration_label"
         android:layout_alignLeft="@+id/current_vitals_temperature_value"
         android:layout_alignParentRight="true"
         android:textSize="@dimen/patient_info_text_size"
         android:textColor="@color/scenario_text_color"
-        android:text="15"/>
+        android:text="@string/vitals_respiration_value_default"/>
 
 
     <TextView
         android:id="@+id/current_vitals_pain_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/current_vitals_resparation_label"
+        android:layout_below="@+id/current_vitals_respiration_label"
         android:paddingTop="15dp"
         android:textSize="@dimen/patient_info_text_size"
         android:textStyle="bold"
-        android:text="Pain"/>
+        android:text="@string/vitals_pain_label"/>
 
     <TextView
         android:id="@+id/current_vitals_pain_value"
@@ -199,7 +200,7 @@
         android:layout_alignParentRight="true"
         android:textSize="@dimen/patient_info_text_size"
         android:textColor="@color/scenario_text_color"
-        android:text="Some"/>
+        android:text="@string/vitals_pain_value_default"/>
 
 
 </RelativeLayout>

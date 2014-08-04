@@ -30,7 +30,7 @@
     <string name="ip_address_title">IP address</string>
     <string name="ip_address_dialog_title">Enter IP address</string>
     <string name="invalid_input">Invalid Input</string>
-    <string name="ip_error_message">An IP address contains the format of:\n0-255.0-255.0-255.0-255 for IPv4\nOR [0-9,A-F]{1,4}::[0-9,A-F]{1,4} for IPv6 \nPlease try again.</string>
+    <string name="ip_error_message">An IP address contains the format of:\n0–255.0–255.0-255.0-255 for IPv4\nOR [0-9,A-F]{1,4}::[0-9,A-F]{1,4} for IPv6 \nPlease try again.</string>
     <string name="port_number_dialog_title">Enter port number</string>
     <string name="port_number_mqtt_summary">Enter port number for Broker\'s MQTT service</string>
     <string name="port_number_rest_summary">Enter port number for Broker\'s REST service</string>
@@ -74,5 +74,23 @@
     <string name="patient_info_save_changes">Save Changes</string>
     <string name="status_prompt">Choose a status</string>
     <string name="change_triage_color">Change Triage Color</string>
+
+    <!-- Patient Current Vitals fragment strings-->
+    <string name="vitals">Vitals</string>
+    <string name="thermometer">Thermometer</string>
+    <string name="vitals_temperature_value_default">@string/n_a</string>
+    <string name="vitals_sp02_label">Sp02</string>
+    <string name="vitals_sp02_value_default">@string/n_a</string>
+    <string name="heart_rate">Heart rate</string>
+    <string name="vitals_heartrate_value_default">@string/n_a</string>
+    <string name="vitals_systolic_label">SYS</string>
+    <string name="vitals_systolic_value_default">@string/n_a</string>
+    <string name="vitals_diastolic_label">DIA</string>
+    <string name="vitals_diastolic_value_default">@string/n_a</string>
+    <string name="vitals_respiration_label">Respiration</string>
+    <string name="vitals_respiration_value_default">@string/n_a</string>
+    <string name="vitals_pain_label">Pain</string>
+    <string name="vitals_pain_value_default">@string/n_a</string>
+
 
 </resources>
