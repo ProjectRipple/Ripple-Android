@@ -23,7 +23,7 @@
             android:textSize="@dimen/patient_info_label_text_size"
             android:paddingTop="10dp"
             android:layout_alignParentLeft="true"
-            android:text="Name: " />
+            android:text="@string/patient_name_label" />
 
         <EditText
             android:id="@+id/patient_name_text"
@@ -35,7 +35,7 @@
             android:textStyle="bold"
             android:inputType="textPersonName"
 
-            android:text="John Doe" />
+            android:text="@string/patient_name_text_default" />
 
         <TextView
             android:id="@+id/patient_age_label"
@@ -45,7 +45,7 @@
             android:layout_alignRight="@+id/patient_name_label"
             android:paddingTop="10dp"
             android:textSize="@dimen/patient_info_label_text_size"
-            android:text="Age: " />
+            android:text="@string/patient_age_label" />
 
         <EditText
             android:id="@+id/patient_age_text"
@@ -68,7 +68,7 @@
             android:layout_alignRight="@+id/patient_name_label"
             android:paddingTop="10dp"
             android:textSize="@dimen/patient_info_label_text_size"
-            android:text="NBC: " />
+            android:text="@string/patient_nbc_label" />
 
         <Spinner
             android:id="@+id/patient_nbc_spinner"
@@ -87,7 +87,7 @@
             android:layout_alignBottom="@+id/patient_age_label"
             android:paddingTop="10dp"
             android:textSize="@dimen/patient_info_label_text_size"
-            android:text="Sex: " />
+            android:text="@string/patient_sex_label" />
 
         <Spinner
             android:id="@+id/patient_sex_spinner"
@@ -112,7 +112,7 @@
             android:layout_height="wrap_content"
             android:paddingTop="15dp"
             android:textSize="@dimen/patient_info_label_text_size"
-            android:text="Triage Color:" />
+            android:text="@string/patient_triage_color_label" />
 
         <Spinner
             android:id="@+id/patient_triage_color_spinner"
@@ -133,7 +133,7 @@
             android:layout_alignRight="@+id/patient_triage_color_label"
             android:paddingTop="15dp"
             android:textSize="@dimen/patient_info_label_text_size"
-            android:text="Status:" />
+            android:text="@string/patient_status_label" />
 
         <Spinner
             android:id="@+id/patient_status_spinner"
@@ -152,7 +152,7 @@
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:textSize="@dimen/patient_info_label_text_size"
-        android:text="Save Changes"/>
+        android:text="@string/patient_info_save_changes"/>
 
 
 </LinearLayout>

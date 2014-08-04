@@ -9,7 +9,7 @@
     <!-- <string name="google_map_api_key">place actual value in keys.xml</string> -->
 
 
-    <!-- Patient fragment strings -->
+    <!-- Patient Details fragment strings -->
 
     <string name="name"><u>Name:</u></string>
     <string name="age"><u>Age:</u></string>
@@ -51,6 +51,7 @@
     <string name="History">History</string>
     <string name="patient_tag_view_description">Patient Image</string>
     <string name="paint_ok_btn">OK</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Launch fragment strings -->
     <string name="launch_settings">Settings</string>
@@ -59,10 +60,19 @@
     <string name="launch_action_plan">Action Plan</string>
 
     <!-- Activity labels -->
-    <string name="title_activity_scenerio">ScenerioActivity</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_scenario">ScenarioActivity</string>
+    <string name="title_activity_camera">CameraActivity</string>
+
+    <!-- Patient Info strings-->
+    <string name="patient_name_label">Name: </string>
+    <string name="patient_name_text_default">John Doe</string>
+    <string name="patient_age_label">Age: </string>
+    <string name="patient_nbc_label">NBC: </string>
+    <string name="patient_sex_label">Sex: </string>
+    <string name="patient_triage_color_label">Triage Color:</string>
+    <string name="patient_status_label">Status:</string>
+    <string name="patient_info_save_changes">Save Changes</string>
     <string name="status_prompt">Choose a status</string>
     <string name="change_triage_color">Change Triage Color</string>
-    <string name="title_activity_camera">CameraActivity</string>
 
 </resources>
