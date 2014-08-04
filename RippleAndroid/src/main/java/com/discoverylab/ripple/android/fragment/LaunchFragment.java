@@ -50,13 +50,13 @@ public class LaunchFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_launch, container, false);
         // get views
-        Button actionPlanBtn = (Button) v.findViewById(R.id.launch_action_plan);
+        Button beamDataBtn = (Button) v.findViewById(R.id.launch_beam_data);
         Button scenarioBtn = (Button) v.findViewById(R.id.launch_scenario);
         Button extraBtn = (Button) v.findViewById(R.id.launch_extra);
         Button settingsBtn = (Button) v.findViewById(R.id.launch_settings);
 
         // set buttons' on click
-        actionPlanBtn.setOnClickListener(this);
+        beamDataBtn.setOnClickListener(this);
         scenarioBtn.setOnClickListener(this);
         extraBtn.setOnClickListener(this);
         settingsBtn.setOnClickListener(this);
@@ -69,7 +69,7 @@ public class LaunchFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.launch_action_plan:
+            case R.id.launch_beam_data:
                 startActivity(new Intent(getActivity(), BeamActivity.class));
                 break;
             case R.id.launch_extra:

@@ -12,10 +12,10 @@
         android:layout_weight="1">
 
         <Button
-            android:id="@+id/launch_action_plan"
+            android:id="@+id/launch_beam_data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/launch_action_plan"
+            android:text="@string/launch_beam_data"
             android:layout_weight="1"
             android:layout_margin="20dp"
             android:textSize="40sp"
