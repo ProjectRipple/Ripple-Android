@@ -6,8 +6,7 @@
     <string name="hello_world">Hello world!</string>
     <string name="underline">This is an<u>underline</u>.</string>
 
-    <!-- <string name="google_map_api_key">place actual value in keys.xml</string> -->
-
+    <string name="google_map_api_key">place actual value in keys.xml</string>
 
     <!-- Patient fragment strings -->
 
@@ -51,6 +50,10 @@
     <string name="History">History</string>
     <string name="patient_tag_view_description">Patient Image</string>
     <string name="paint_ok_btn">OK</string>
+    <string name="note_network_name">Network Name</string>
+    <string name="note_encryption_code">Encryption Code</string>
+    <string name="note_pan_id">Pan ID</string>
+    <string name="note_chan_freq">Channel Frequency</string>
 
     <!-- Launch fragment strings -->
     <string name="launch_settings">Settings</string>
@@ -60,6 +63,7 @@
 
     <!-- Activity labels -->
     <string name="title_activity_scenerio">ScenerioActivity</string>
+    <string name="title_activity_beam">BeamActivity</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="status_prompt">Choose a status</string>
     <string name="change_triage_color">Change Triage Color</string>
