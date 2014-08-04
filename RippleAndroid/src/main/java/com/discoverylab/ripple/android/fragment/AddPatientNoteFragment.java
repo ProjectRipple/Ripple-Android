@@ -3,7 +3,6 @@ package com.discoverylab.ripple.android.fragment;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -35,22 +34,17 @@ import com.discoverylab.ripple.android.object.PatientNote;
 import com.discoverylab.ripple.android.object.PatientNotes;
 import com.discoverylab.ripple.android.util.PatientTagHelper;
 import com.discoverylab.ripple.android.util.PatientTagHelper.BODY_PARTS;
-import com.google.gson.JsonObject;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Date;
 
 /**
- * Use the {@link PatientNoteFragment#newInstance} factory method to
+ * Use the {@link AddPatientNoteFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PatientNoteFragment extends DialogFragment implements View.OnTouchListener, View.OnClickListener {
+public class AddPatientNoteFragment extends DialogFragment implements View.OnTouchListener, View.OnClickListener {
 
     // Log tag
-    private static final String TAG = PatientNoteFragment.class.getSimpleName();
+    private static final String TAG = AddPatientNoteFragment.class.getSimpleName();
     // Request code for camera
     private static final int CAMERA_REQUEST_CODE = 49234;
     // Image view used for highlighting the selected body part
@@ -70,13 +64,13 @@ public class PatientNoteFragment extends DialogFragment implements View.OnTouchL
      *
      * @return A new instance of fragment PatientNoteFragment.
      */
-    public static PatientNoteFragment newInstance(Patient p) {
-        PatientNoteFragment fragment = new PatientNoteFragment();
+    public static AddPatientNoteFragment newInstance(Patient p) {
+        AddPatientNoteFragment fragment = new AddPatientNoteFragment();
         fragment.mNote = new PatientNote(p);
         return fragment;
     }
 
-    public PatientNoteFragment() {
+    public AddPatientNoteFragment() {
         // Required empty public constructor
     }
 

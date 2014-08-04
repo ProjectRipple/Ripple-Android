@@ -14,10 +14,10 @@ import com.discoverylab.ripple.android.object.Patient;
 /**
  * Fragment to display the patient's current vitals in the Scenario view.
  * <p/>
- * Use the {@link PatientCurrentVitalsFragment#newInstance} factory method to
+ * Use the {@link ScenarioPatientCurrentVitalsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PatientCurrentVitalsFragment extends Fragment {
+public class ScenarioPatientCurrentVitalsFragment extends Fragment {
 
 
     private TextView temperatureText;
@@ -35,12 +35,12 @@ public class PatientCurrentVitalsFragment extends Fragment {
      *
      * @return A new instance of fragment PatientCurrentVitalsFragment.
      */
-    public static PatientCurrentVitalsFragment newInstance() {
-        PatientCurrentVitalsFragment fragment = new PatientCurrentVitalsFragment();
+    public static ScenarioPatientCurrentVitalsFragment newInstance() {
+        ScenarioPatientCurrentVitalsFragment fragment = new ScenarioPatientCurrentVitalsFragment();
         return fragment;
     }
 
-    public PatientCurrentVitalsFragment() {
+    public ScenarioPatientCurrentVitalsFragment() {
         // Required empty public constructor
     }
 

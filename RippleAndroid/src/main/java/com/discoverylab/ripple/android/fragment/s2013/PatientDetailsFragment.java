@@ -1,4 +1,4 @@
-package com.discoverylab.ripple.android.fragment;
+package com.discoverylab.ripple.android.fragment.s2013;
 
 
 import android.app.Activity;
@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
-import com.discoverylab.ripple.android.activity.MainActivity;
+import com.discoverylab.ripple.android.activity.s2013.PatientDetailsActivity;
 import com.discoverylab.ripple.android.activity.PrefsActivity;
 import com.discoverylab.ripple.android.adapter.ui.GraphHelper;
 import com.discoverylab.ripple.android.api.ApiClient;
@@ -141,10 +141,10 @@ public class PatientDetailsFragment extends Fragment {
             public void onClick(View v) {
                 // start or stop ECG request & change button text
                 if (connectButton.getText().equals(getActivity().getString(R.string.connect))) {
-                    ((MainActivity) getActivity()).startMQTTService();
+                    ((PatientDetailsActivity) getActivity()).startMQTTService();
                     connectButton.setText(R.string.disconnect);
                 } else if (connectButton.getText().equals(getActivity().getString(R.string.disconnect))) {
-                    ((MainActivity) getActivity()).stopMQTTService();
+                    ((PatientDetailsActivity) getActivity()).stopMQTTService();
                     connectButton.setText(R.string.connect);
                 }
             }
@@ -264,7 +264,7 @@ public class PatientDetailsFragment extends Fragment {
             // unsubscribe
             if (!this.curPatientSrc.equals("") && isMQTTConnected()) {
                 String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, this.curPatientSrc);
-                ((MainActivity) getActivity()).unsubscribeFromTopic(topic);
+                ((PatientDetailsActivity) getActivity()).unsubscribeFromTopic(topic);
             }
 
             graphHelper.stopPlotter();
@@ -281,7 +281,7 @@ public class PatientDetailsFragment extends Fragment {
             // unsubscribe from old patient stream (if any)
             if (!this.curPatientSrc.equals("") && isMQTTConnected()) {
                 String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, this.curPatientSrc);
-                ((MainActivity) getActivity()).unsubscribeFromTopic(topic);
+                ((PatientDetailsActivity) getActivity()).unsubscribeFromTopic(topic);
             }
             graphHelper.startPlotter();
 
@@ -290,7 +290,7 @@ public class PatientDetailsFragment extends Fragment {
 
             if (!this.curPatientSrc.equals("") && isMQTTConnected()) {
                 String topic = Common.MQTT_TOPIC_ECG_STREAM.replace(Common.MQTT_TOPIC_PATIENT_ID_STRING, this.curPatientSrc);
-                ((MainActivity) getActivity()).subscribeToTopic(topic);
+                ((PatientDetailsActivity) getActivity()).subscribeToTopic(topic);
             }
 
             patientName.setText(curPatientSrc);
@@ -307,8 +307,8 @@ public class PatientDetailsFragment extends Fragment {
     private boolean isMQTTConnected() {
         // TODO: make a better connection check as service running does not always mean MQTT is connected
         Activity activity = getActivity();
-        if (activity != null && activity instanceof MainActivity) {
-            return ((MainActivity) getActivity()).isMQTTServiceRunning();
+        if (activity != null && activity instanceof PatientDetailsActivity) {
+            return ((PatientDetailsActivity) getActivity()).isMQTTServiceRunning();
         } else {
             return false;
         }

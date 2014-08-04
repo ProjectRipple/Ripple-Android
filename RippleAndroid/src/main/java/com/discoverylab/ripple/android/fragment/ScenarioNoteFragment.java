@@ -82,7 +82,7 @@ public class ScenarioNoteFragment extends Fragment implements View.OnClickListen
             @Override
             public boolean onLongClick(View v) {
                 // just launch note fragment with a dummy patient object
-                PatientNoteFragment noteFragment = PatientNoteFragment.newInstance(new Patient("Dummy1"));
+                AddPatientNoteFragment noteFragment = AddPatientNoteFragment.newInstance(new Patient("Dummy1"));
                 noteFragment.setTargetFragment(ScenarioNoteFragment.this, ADD_NOTE_REQUEST_CODE);
                 noteFragment.show(getActivity().getSupportFragmentManager(), ADD_NOTE_FRAG_TAG);
                 return true;
@@ -160,7 +160,7 @@ public class ScenarioNoteFragment extends Fragment implements View.OnClickListen
                 if (p == null) {
                     Toast.makeText(getActivity(), "You must select a patient before creating a note.", Toast.LENGTH_SHORT).show();
                 } else {
-                    PatientNoteFragment noteFragment = PatientNoteFragment.newInstance(p);
+                    AddPatientNoteFragment noteFragment = AddPatientNoteFragment.newInstance(p);
                     noteFragment.setTargetFragment(this, ADD_NOTE_REQUEST_CODE);
                     noteFragment.show(getActivity().getSupportFragmentManager(), ADD_NOTE_FRAG_TAG);
                 }

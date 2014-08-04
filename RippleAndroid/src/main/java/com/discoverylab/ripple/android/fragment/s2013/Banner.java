@@ -1,4 +1,4 @@
-package com.discoverylab.ripple.android.fragment;
+package com.discoverylab.ripple.android.fragment.s2013;
 
 import android.app.Activity;
 import android.app.Fragment;

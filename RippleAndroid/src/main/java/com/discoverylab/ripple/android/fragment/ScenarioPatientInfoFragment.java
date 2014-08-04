@@ -34,12 +34,12 @@ import java.util.List;
 
 /**
  * Fragment to handle patient information entered by the user.
- * Use the {@link PatientInfoFragment#newInstance} factory method to
+ * Use the {@link ScenarioPatientInfoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PatientInfoFragment extends Fragment implements View.OnClickListener {
+public class ScenarioPatientInfoFragment extends Fragment implements View.OnClickListener {
 
-    private static final String TAG = PatientInfoFragment.class.getSimpleName();
+    private static final String TAG = ScenarioPatientInfoFragment.class.getSimpleName();
     // Temporary save button (until a better sync method is implemented)
     private Button saveButton;
     private Spinner triageColor;
@@ -57,11 +57,11 @@ public class PatientInfoFragment extends Fragment implements View.OnClickListene
      *
      * @return A new instance of fragment PatientInfoFragment.
      */
-    public static PatientInfoFragment newInstance() {
-        return new PatientInfoFragment();
+    public static ScenarioPatientInfoFragment newInstance() {
+        return new ScenarioPatientInfoFragment();
     }
 
-    public PatientInfoFragment() {
+    public ScenarioPatientInfoFragment() {
         // Required empty public constructor
     }
 

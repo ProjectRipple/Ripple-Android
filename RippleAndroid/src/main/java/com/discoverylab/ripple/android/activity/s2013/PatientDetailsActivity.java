@@ -1,4 +1,4 @@
-package com.discoverylab.ripple.android.activity;
+package com.discoverylab.ripple.android.activity.s2013;
 
 
 import android.app.Activity;
@@ -22,8 +22,8 @@ import android.widget.Toast;
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.config.WSConfig;
-import com.discoverylab.ripple.android.fragment.Banner;
-import com.discoverylab.ripple.android.fragment.PatientDetailsFragment;
+import com.discoverylab.ripple.android.fragment.s2013.Banner;
+import com.discoverylab.ripple.android.fragment.s2013.PatientDetailsFragment;
 import com.discoverylab.ripple.android.fragment.PrefsFragment;
 import com.discoverylab.ripple.android.mqtt.MQTTClientService;
 import com.discoverylab.ripple.android.mqtt.MQTTServiceConstants;
@@ -43,7 +43,7 @@ import java.lang.ref.WeakReference;
 /**
  * Main activity of application
  */
-public class MainActivity extends Activity implements LocationSource.OnLocationChangedListener, View.OnClickListener {
+public class PatientDetailsActivity extends Activity implements LocationSource.OnLocationChangedListener, View.OnClickListener {
 
     /*Inter-Fragment MGMT*/
     private Banner banner;
@@ -260,15 +260,15 @@ public class MainActivity extends Activity implements LocationSource.OnLocationC
      * Class to handle messages from MQTT client
      */
     private static class MQTTHandler extends Handler {
-        private WeakReference<MainActivity> activityReference;
+        private WeakReference<PatientDetailsActivity> activityReference;
 
-        public MQTTHandler(MainActivity activity) {
-            this.activityReference = new WeakReference<MainActivity>(activity);
+        public MQTTHandler(PatientDetailsActivity activity) {
+            this.activityReference = new WeakReference<PatientDetailsActivity>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            MainActivity activity = activityReference.get();
+            PatientDetailsActivity activity = activityReference.get();
             if (activity != null) {
                 switch (msg.what) {
                     case MQTTServiceConstants.MSG_CONNECTED:

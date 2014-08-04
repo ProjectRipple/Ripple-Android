@@ -20,7 +20,7 @@
             android:baselineAligned="false">
 
         <fragment
-                class="com.discoverylab.ripple.android.fragment.PatientDetailsFragment"
+                class="com.discoverylab.ripple.android.fragment.s2013.PatientDetailsFragment"
                 android:id="@+id/bottomleft"
                 android:layout_width="0px"
                 android:layout_height="match_parent"
