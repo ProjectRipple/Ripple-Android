@@ -19,9 +19,12 @@ import com.discoverylab.ripple.android.object.Patient;
  */
 public class ScenarioPatientCurrentVitalsFragment extends Fragment {
 
+    // text to display when a vital is not available
+    private static String VITAL_NOT_AVAILABLE = "N/A";
 
+    // View references
     private TextView temperatureText;
-    private TextView sp02Text;
+    private TextView spO2Text;
     private TextView heartRateText;
     private TextView systolicText;
     private TextView diastolicText;
@@ -36,8 +39,7 @@ public class ScenarioPatientCurrentVitalsFragment extends Fragment {
      * @return A new instance of fragment PatientCurrentVitalsFragment.
      */
     public static ScenarioPatientCurrentVitalsFragment newInstance() {
-        ScenarioPatientCurrentVitalsFragment fragment = new ScenarioPatientCurrentVitalsFragment();
-        return fragment;
+        return new ScenarioPatientCurrentVitalsFragment();
     }
 
     public ScenarioPatientCurrentVitalsFragment() {
@@ -57,7 +59,7 @@ public class ScenarioPatientCurrentVitalsFragment extends Fragment {
 
         // get views
         this.temperatureText = (TextView) v.findViewById(R.id.current_vitals_temperature_value);
-        this.sp02Text = (TextView) v.findViewById(R.id.current_vitals_sp02_value);
+        this.spO2Text = (TextView) v.findViewById(R.id.current_vitals_sp02_value);
         this.heartRateText = (TextView) v.findViewById(R.id.current_vitals_heartrate_value);
         this.systolicText = (TextView) v.findViewById(R.id.current_vitals_systolic_value);
         this.diastolicText = (TextView) v.findViewById(R.id.current_vitals_diastolic_value);
@@ -72,7 +74,7 @@ public class ScenarioPatientCurrentVitalsFragment extends Fragment {
         super.onDestroyView();
         // remove view references
         this.temperatureText = null;
-        this.sp02Text = null;
+        this.spO2Text = null;
         this.heartRateText = null;
         this.systolicText = null;
         this.diastolicText = null;
@@ -87,24 +89,47 @@ public class ScenarioPatientCurrentVitalsFragment extends Fragment {
         }
         if (p == null) {
             // set default values
-            this.temperatureText.setText("N/A");
-            this.sp02Text.setText("N/A");
-            this.heartRateText.setText("N/A");
-            this.systolicText.setText("N/A");
-            this.diastolicText.setText("N/A");
-            this.respirationText.setText("N/A");
-            this.painText.setText("N/A");
+            this.temperatureText.setText(VITAL_NOT_AVAILABLE);
+            this.spO2Text.setText(VITAL_NOT_AVAILABLE);
+            this.heartRateText.setText(VITAL_NOT_AVAILABLE);
+            this.systolicText.setText(VITAL_NOT_AVAILABLE);
+            this.diastolicText.setText(VITAL_NOT_AVAILABLE);
+            this.respirationText.setText(VITAL_NOT_AVAILABLE);
+            this.painText.setText(VITAL_NOT_AVAILABLE);
         } else {
             // get values from object
-            this.temperatureText.setText(p.getTemperature() + " F");
-            this.sp02Text.setText(p.getO2() + "%");
-            this.heartRateText.setText(p.getHeartRate() + " BPM");
+            int temperature = p.getTemperature();
+            if (temperature < 0 || temperature > 150) {
+                this.temperatureText.setText(VITAL_NOT_AVAILABLE);
+            } else {
+                this.temperatureText.setText(temperature + " F");
+            }
+
+            int o2 = p.getO2();
+            if (o2 < 0 || o2 > 100) {
+                this.spO2Text.setText(VITAL_NOT_AVAILABLE);
+            } else {
+                this.spO2Text.setText(o2 + "%");
+            }
+
+            int heartRate = p.getHeartRate();
+            if (heartRate < 0 || heartRate > 250) {
+                this.heartRateText.setText(VITAL_NOT_AVAILABLE);
+            } else {
+                this.heartRateText.setText(heartRate + " BPM");
+            }
             // TODO: add blood pressure values to patient
-            this.systolicText.setText("N/A");
-            this.diastolicText.setText("N/A");
-            this.respirationText.setText(p.getBreathsPerMin() + "");
+            this.systolicText.setText(VITAL_NOT_AVAILABLE);
+            this.diastolicText.setText(VITAL_NOT_AVAILABLE);
+
+            int respiration = p.getBreathsPerMin();
+            if (respiration < 0 || respiration > 70) {
+                this.respirationText.setText(VITAL_NOT_AVAILABLE);
+            } else {
+                this.respirationText.setText(p.getBreathsPerMin() + "");
+            }
             // TODO: add pain values to patient
-            this.painText.setText("N/A");
+            this.painText.setText(VITAL_NOT_AVAILABLE);
 
         }
     }
