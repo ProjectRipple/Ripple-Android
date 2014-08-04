@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class ColorSpinnerAdapter extends ArrayAdapter<Common.TRIAGE_COLORS> implements SpinnerAdapter {
     public ColorSpinnerAdapter(Context context, List<Common.TRIAGE_COLORS> objects) {
-        super(context, android.R.layout.simple_spinner_item, objects);
-        setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        super(context, R.layout.custom_simple_spinner_item, objects);
+        setDropDownViewResource(R.layout.custom_simple_spinner_dropdown_item);
     }
 
     @Override

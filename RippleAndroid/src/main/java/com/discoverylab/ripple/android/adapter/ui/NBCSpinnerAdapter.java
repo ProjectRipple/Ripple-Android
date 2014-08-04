@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
+import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.config.Common;
 
 import java.util.List;
@@ -17,8 +18,8 @@ import java.util.List;
  */
 public class NBCSpinnerAdapter extends ArrayAdapter<Common.NBC_CONTAMINATION_OPTIONS> implements SpinnerAdapter {
     public NBCSpinnerAdapter(Context context, List<Common.NBC_CONTAMINATION_OPTIONS> objects) {
-        super(context, android.R.layout.simple_spinner_item, objects);
-        setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        super(context, R.layout.custom_simple_spinner_item, objects);
+        setDropDownViewResource(R.layout.custom_simple_spinner_dropdown_item);
     }
 
 

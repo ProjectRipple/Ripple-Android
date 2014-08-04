@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -129,6 +130,10 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
                 // do nothing for now
             }
         });
+        ArrayAdapter patientSexAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.gender_options, R.layout.custom_simple_spinner_item);
+        patientSexAdapter.setDropDownViewResource(R.layout.custom_simple_spinner_dropdown_item);
+        patientSex.setAdapter(patientSexAdapter);
+
 
         this.nbc = (Spinner) v.findViewById(R.id.patient_nbc_spinner);
 

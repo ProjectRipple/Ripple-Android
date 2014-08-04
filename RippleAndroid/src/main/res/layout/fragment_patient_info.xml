@@ -31,7 +31,8 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/patient_name_label"
             android:layout_alignBottom="@+id/patient_name_label"
-            android:textSize="16sp"
+            android:textSize="@dimen/patient_info_entry_text_size"
+            android:textStyle="bold"
             android:inputType="textPersonName"
 
             android:text="John Doe" />
@@ -52,7 +53,8 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/patient_age_label"
             android:layout_alignBottom="@+id/patient_age_label"
-            android:textSize="16sp"
+            android:textSize="@dimen/patient_info_entry_text_size"
+            android:textStyle="bold"
             android:inputType="number"
             android:ems="3"
             android:maxEms="3"
@@ -74,6 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/patient_nbc_label"
             android:layout_alignBottom="@+id/patient_nbc_label"
+            android:textSize="@dimen/patient_info_entry_text_size"
             android:entries="@array/nbc_entries" />
 
         <TextView
@@ -92,6 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/patient_age_label"
             android:layout_alignParentRight="true"
+            android:textSize="@dimen/patient_info_entry_text_size"
             android:entries="@array/gender_options" />
 
 
@@ -117,6 +121,7 @@
             android:layout_toRightOf="@+id/patient_triage_color_label"
             android:layout_alignBottom="@+id/patient_triage_color_label"
             android:layout_alignRight="@+id/patient_status_spinner"
+            android:textSize="@dimen/patient_info_entry_text_size"
             android:prompt="@string/change_triage_color"
             android:entries="@array/triage_color_options_text" />
 
@@ -136,6 +141,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/patient_status_label"
             android:layout_alignBottom="@+id/patient_status_label"
+            android:textSize="@dimen/patient_info_entry_text_size"
             android:entries="@array/status_options"
             android:prompt="@string/status_prompt" />
 
