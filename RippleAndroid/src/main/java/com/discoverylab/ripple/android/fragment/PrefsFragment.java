@@ -39,6 +39,7 @@ public class PrefsFragment extends PreferenceFragment {
     public static final String IP_FROM_PREFS = "ipAddressPref";
     public static final String PORT_NUM_MQTT_PREFS = "portNumberMQTTPref";
     public static final String PORT_NUM_REST_PREFS = "portNumberRESTPref";
+    public static final String SEND_IMAGE_BASE64_PREF = "prefSendBase64Image";
 
 
     @Override
@@ -74,7 +75,7 @@ public class PrefsFragment extends PreferenceFragment {
         }
 
         // set preferences
-        addPreferencesFromResource(R.layout.fragment_settings);
+        addPreferencesFromResource(R.xml.fragment_prefs);
         // get text view references
         ipTextBox = (EditTextPreference) getPreferenceScreen().findPreference(IP_FROM_PREFS);
         portNumMqttTextBox = (EditTextPreference) getPreferenceScreen().findPreference(PORT_NUM_MQTT_PREFS);
