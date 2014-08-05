@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -80,8 +81,9 @@ public class PrefsFragment extends PreferenceFragment {
         ipTextBox = (EditTextPreference) getPreferenceScreen().findPreference(IP_FROM_PREFS);
         portNumMqttTextBox = (EditTextPreference) getPreferenceScreen().findPreference(PORT_NUM_MQTT_PREFS);
         portNumRestTextBox = (EditTextPreference) getPreferenceScreen().findPreference(PORT_NUM_REST_PREFS);
+        CheckBoxPreference imageBase64 = (CheckBoxPreference) getPreferenceScreen().findPreference(SEND_IMAGE_BASE64_PREF);
 
-        // Set on prefernce change listener for ip address
+        // Set on preference change listener for ip address
         ipTextBox.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
@@ -137,6 +139,17 @@ public class PrefsFragment extends PreferenceFragment {
                 return true;
             }
         });
+
+        imageBase64.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+
+                // set preference in common
+                Common.SEND_IMAGE_BASE64 = (Boolean) newValue;
+
+                return true;
+            }
+        });
     }
 
     @Override
@@ -154,8 +167,9 @@ public class PrefsFragment extends PreferenceFragment {
 
     /**
      * Update broker URL setting from new settings
+     *
      * @param hostAddress IP address of Broker
-     * @param restPort port of Broker's REST API
+     * @param restPort    port of Broker's REST API
      */
     private void updateBrokerUrl(String hostAddress, int restPort) {
         boolean validIPv4 = hostAddress.matches(IP_REG_EXPRESSION);

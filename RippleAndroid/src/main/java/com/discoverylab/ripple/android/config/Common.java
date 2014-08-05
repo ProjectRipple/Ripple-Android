@@ -54,6 +54,9 @@ public final class Common {
     public static final String PHOTO_DIR = "Ripple";
     public static final String NOTES_DIR = "Notes";
 
+    // True if image notes should be sent as Base64 string in MQTT messages
+    public static boolean SEND_IMAGE_BASE64 = false;
+
     // Messaging What Constants
     public static final int RIPPLE_MSG_RECORD = 77;
     public static final int RIPPLE_MSG_ECG_STREAM = 88;

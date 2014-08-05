@@ -1,11 +1,15 @@
 package com.discoverylab.ripple.android.object;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.util.Base64;
 
 import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.config.JSONTag;
 import com.google.gson.JsonObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 /**
@@ -50,6 +54,34 @@ public class NoteItemImage implements NoteItem {
         object.addProperty(JSONTag.NOTE_ITEM_TYPE, this.getNoteType().toString());
 
         object.addProperty(JSONTag.NOTE_ITEM_FILE, this.imageName);
+
+        if (Common.SEND_IMAGE_BASE64) {
+            // Grab image
+            Bitmap bm = BitmapFactory.decodeFile(getImagePath());
+            // check that image was decoded
+            if (bm != null) {
+
+                int orgHeight = bm.getHeight();
+                int orgWidth = bm.getWidth();
+
+                double aspectRatio = (double)orgWidth / orgHeight;
+
+                int targetWidth = 640;
+                int destHeight = (int) (targetWidth/aspectRatio);
+
+                // reduce image further
+                Bitmap scaledBm = Bitmap.createScaledBitmap(bm, targetWidth, destHeight, true);
+
+                // create byte array of image as jpeg
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                scaledBm.compress(Bitmap.CompressFormat.JPEG, 98, baos);
+                byte[] b = baos.toByteArray();
+                // encode image
+                String encodedImage = Base64.encodeToString(b, Base64.NO_WRAP);
+                // add image to json object
+                object.addProperty(JSONTag.NOTE_ITEM_IMG, encodedImage);
+            }
+        }
 
         return object;
     }

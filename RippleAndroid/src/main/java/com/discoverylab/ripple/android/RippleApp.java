@@ -80,6 +80,9 @@ public class RippleApp extends Application {
         // TODO: is this something we always want? How to clear old patients?
         loadCachedNotes();
 
+        // Load debug settings
+        loadDebugSettings();
+
         // test that patient is still parcelable
         Patient p = new Patient("hello");
         p.setTriageState(Common.TRIAGE_COLORS.RED);
@@ -184,6 +187,18 @@ public class RippleApp extends Application {
                 }
             }
         }
+    }
+
+    private void loadDebugSettings(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        SharedPreferences.Editor myEditor = prefs.edit();
+
+        // Pref to send image as base 64 string in MQTT message
+        Common.SEND_IMAGE_BASE64 = prefs.getBoolean(PrefsFragment.SEND_IMAGE_BASE64_PREF, false);
+        myEditor.putBoolean(PrefsFragment.SEND_IMAGE_BASE64_PREF, Common.SEND_IMAGE_BASE64);
+        myEditor.apply();
+
     }
 
     private String convertStreamToString(InputStream is) throws IOException {

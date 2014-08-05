@@ -44,6 +44,7 @@ public final class JSONTag {
     public static final String NOTE_ITEM_TYPE = "type";
     public static final String NOTE_ITEM_MESSAGE = "msg";
     public static final String NOTE_ITEM_FILE = "file";
+    public static final String NOTE_ITEM_IMG = "img";
 
 
 
