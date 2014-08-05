@@ -35,6 +35,8 @@
     <string name="port_number_mqtt_summary">Enter port number for Broker\'s MQTT service</string>
     <string name="port_number_rest_summary">Enter port number for Broker\'s REST service</string>
     <string name="port_number_title">Port number</string>
+    <string name="image_base64_summary">Enable sending image notes as Base64 strings.</string>
+    <string name="image_base64_title">Send Image as Base64</string>
 
     <!-- Other strings -->
 

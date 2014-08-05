@@ -32,8 +32,8 @@
 
     <PreferenceCategory android:title="Debug settings">
         <CheckBoxPreference
-            android:title="Send Image as Base64"
-            android:summary="Enable sending image notes as Base64 strings."
+            android:title="@string/image_base64_title"
+            android:summary="@string/image_base64_summary"
             android:key="prefSendBase64Image" />
     </PreferenceCategory>
 
