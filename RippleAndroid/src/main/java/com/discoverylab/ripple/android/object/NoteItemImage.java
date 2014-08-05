@@ -64,22 +64,36 @@ public class NoteItemImage implements NoteItem {
                 int orgHeight = bm.getHeight();
                 int orgWidth = bm.getWidth();
 
-                double aspectRatio = (double)orgWidth / orgHeight;
+                double aspectRatio = (double) orgWidth / orgHeight;
 
                 int targetWidth = 640;
-                int destHeight = (int) (targetWidth/aspectRatio);
-
-                // reduce image further
-                Bitmap scaledBm = Bitmap.createScaledBitmap(bm, targetWidth, destHeight, true);
+                int destHeight = (int) (targetWidth / aspectRatio);
 
                 // create byte array of image as jpeg
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                scaledBm.compress(Bitmap.CompressFormat.JPEG, 98, baos);
+                Bitmap scaledBm = null;
+
+                if (orgWidth > targetWidth) {
+                    // reduce image further
+                    scaledBm = Bitmap.createScaledBitmap(bm, targetWidth, destHeight, true);
+                    scaledBm.compress(Bitmap.CompressFormat.JPEG, 98, baos);
+                } else {
+                    // use original
+                    bm.compress(Bitmap.CompressFormat.JPEG, 98, baos);
+                }
+
+
                 byte[] b = baos.toByteArray();
                 // encode image
                 String encodedImage = Base64.encodeToString(b, Base64.NO_WRAP);
                 // add image to json object
                 object.addProperty(JSONTag.NOTE_ITEM_IMG, encodedImage);
+
+                // recycle bitmaps now that we are done
+                bm.recycle();
+                if (scaledBm != null) {
+                    scaledBm.recycle();
+                }
             }
         }
 
