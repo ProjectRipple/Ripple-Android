@@ -16,14 +16,14 @@ import com.discoverylab.ripple.android.R;
 public class BeamActivity extends Activity implements CreateNdefMessageCallback {
 
     //Initializing the NFC adapter
-    private NfcAdapter mNfcAdapter;
+    NfcAdapter mNfcAdapter;
 
     //Initializing each text view field for inputting data
-    private TextView checker;
-    private TextView net_name;
-    private TextView pan_id;
-    private TextView encryption_code;
-    private TextView chan_freq;
+    TextView checker;
+    TextView net_name;
+    TextView pan_id;
+    TextView encryption_code;
+    TextView chan_freq;
 
     //Initializing the string that will be the single record sent in the Ndef message
     private String message;
@@ -72,16 +72,14 @@ public class BeamActivity extends Activity implements CreateNdefMessageCallback 
         //Store the characters in the string in a byte array
         //stored as HEX values
         byte[] textBytes = message.getBytes();
-
         //Creating the actual record by defining the type of record,
         //the type of text for the record, and the actual byte array
         //containing the message
         NdefRecord textRecord = new NdefRecord(NdefRecord.TNF_MIME_MEDIA,
                 "text/plain".getBytes(), new byte[] {}, textBytes);
-
         //returns an Ndef message using the record created above
         //Can use multiple records because it uses an array of NdefRecords
         //but only uses one for easy manipulation in Arduino
-        return new NdefMessage(new NdefRecord[] { textRecord });
+                return new NdefMessage(new NdefRecord[] { textRecord });
     }
 }

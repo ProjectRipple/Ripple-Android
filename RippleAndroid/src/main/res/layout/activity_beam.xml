@@ -26,7 +26,6 @@
         android:hint="@string/note_network_name"
         android:inputType="textMultiLine" >
 
-        <requestFocus />
     </EditText>
     <TextView
         android:layout_width="match_parent"
@@ -42,7 +41,6 @@
         android:hint="@string/note_pan_id"
         android:inputType="textMultiLine" >
 
-        <requestFocus />
     </EditText>
     <TextView
         android:layout_width="match_parent"
@@ -58,7 +56,6 @@
         android:hint="@string/note_encryption_code"
         android:inputType="textMultiLine" >
 
-        <requestFocus />
     </EditText>
     <TextView
         android:layout_width="match_parent"
@@ -74,7 +71,6 @@
         android:hint="@string/note_chan_freq"
         android:inputType="textMultiLine" >
 
-        <requestFocus />
     </EditText>
 
 </LinearLayout>
