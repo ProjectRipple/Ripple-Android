@@ -209,6 +209,18 @@ public class PatientNote {
      * @return JsonObject representing this note.
      */
     public JsonObject getJsonObject() {
+        return this.getJsonObject(false);
+    }
+
+    /**
+     * Get a JsonObject representing this note, removing elements not needed when writing to a file
+     * if requested. Example of something to ignore is the base64 string representing a note's image
+     * as the image should be stored as a stand alone file.
+     *
+     * @param writingToFile True ignores extra elements that should not be written to the json file.
+     * @return JsonObject representing this note.
+     */
+    private JsonObject getJsonObject(boolean writingToFile) {
         JsonObject object = new JsonObject();
 
         DateFormat df = Util.getISOUTCFormatter();
@@ -229,18 +241,35 @@ public class PatientNote {
         JsonArray noteContents = new JsonArray();
 
         for (NoteItem i : this.noteItems) {
-            noteContents.add(i.getJsonObject());
+            if (writingToFile) {
+                // TODO: Figure out a better way to handle this
+                // Remove anything that should not be written to file
+                if (i instanceof NoteItemImage) {
+                    // Always ignore base64 image when writing to file
+                    noteContents.add(((NoteItemImage) i).getJsonObjectNoImage());
+                } else {
+                    // default just add full json object
+                    noteContents.add(i.getJsonObject());
+                }
+            } else {
+                noteContents.add(i.getJsonObject());
+            }
         }
 
         object.add(JSONTag.NOTE_CONTENTS, noteContents);
 
         return object;
-
     }
 
 
+    /**
+     * Save the this note to a file.
+     *
+     * @param context An application context for retrieving the storage directory
+     * @return true if save was successful, false otherwise.
+     */
     public boolean saveNoteToFile(Context context) {
-        if(context == null){
+        if (context == null) {
             Log.e(TAG, "Null context passed to saveNoteToFile.");
             return false;
         }
@@ -256,13 +285,13 @@ public class PatientNote {
         }
 
         File outFile = new File(patientNoteDir.getPath() + File.separator + this.getNoteId() + ".json");
-        JsonObject noteJson = this.getJsonObject();
+        JsonObject noteJson = this.getJsonObject(true);
 
         // File already exists
-        if(outFile.exists()){
+        if (outFile.exists()) {
             // delete the old note file? it should be the same, but just in case.
             boolean deleteResult = outFile.delete();
-            if(deleteResult) {
+            if (deleteResult) {
                 Log.d(TAG, "Deleted existing note file: " + outFile.getName());
             } else {
                 Log.d(TAG, "Failed to delete existing note file: " + outFile.getName());

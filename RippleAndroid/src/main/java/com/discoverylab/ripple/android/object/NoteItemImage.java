@@ -47,13 +47,25 @@ public class NoteItemImage implements NoteItem {
         return NOTE_TYPE.IMAGE;
     }
 
-    @Override
-    public JsonObject getJsonObject() {
+    /**
+     *
+     * @return JsonObject for this note item without image as base64.
+     */
+    public JsonObject getJsonObjectNoImage(){
         JsonObject object = new JsonObject();
 
         object.addProperty(JSONTag.NOTE_ITEM_TYPE, this.getNoteType().toString());
 
         object.addProperty(JSONTag.NOTE_ITEM_FILE, this.imageName);
+
+        return object;
+
+    }
+
+    @Override
+    public JsonObject getJsonObject() {
+
+        JsonObject object = getJsonObjectNoImage();
 
         if (Common.SEND_IMAGE_BASE64) {
             // Grab image
