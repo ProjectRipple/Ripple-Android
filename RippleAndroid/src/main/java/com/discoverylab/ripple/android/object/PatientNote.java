@@ -431,13 +431,13 @@ public class PatientNote {
     }
 
     private static void decodeBase64Image(String imageString, String imageName){
-        byte[] imgBytes = Base64.decode(imageString, Base64.NO_WRAP);
         File outFile = getImageOutputFile(imageName);
 
-        if (outFile != null) {
+        if (outFile != null && !outFile.exists()) {
             FileOutputStream fos = null;
             try {
                 fos = new FileOutputStream(outFile);
+                byte[] imgBytes = Base64.decode(imageString, Base64.NO_WRAP);
                 fos.write(imgBytes);
             } catch (IOException e) {
                 Log.e(TAG, "Exception when writing base64 image to file.");

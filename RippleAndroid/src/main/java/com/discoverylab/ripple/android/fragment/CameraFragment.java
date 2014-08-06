@@ -348,6 +348,12 @@ public class CameraFragment extends Fragment {
 
                 // TODO: make this support different rotations correctly
                 Camera.Size picSize = parameters.getPictureSize();
+
+                Log.d(TAG, "Supported picture sizes: ");
+                for(Camera.Size size : parameters.getSupportedPictureSizes()){
+                    Log.d(TAG, "width: " + size.width + ", height: " + size.height);
+                }
+
                 if (picSize.width > picSize.height) {
                     if (picSize.width > TARGET_PICTURE_WIDTH) {
                         double scaleRatio = (double) TARGET_PICTURE_WIDTH / picSize.width;
@@ -467,6 +473,10 @@ public class CameraFragment extends Fragment {
             }
 
             return optimalSize;
+        }
+
+        private Camera.Size getOptimalPictureSize(List<Camera.Size> pictureSizes, int desiredWidth) {
+            return null;
         }
     }
 
