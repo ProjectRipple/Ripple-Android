@@ -53,6 +53,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -349,11 +351,6 @@ public class CameraFragment extends Fragment {
                 // TODO: make this support different rotations correctly
                 Camera.Size picSize = parameters.getPictureSize();
 
-                Log.d(TAG, "Supported picture sizes: ");
-                for(Camera.Size size : parameters.getSupportedPictureSizes()){
-                    Log.d(TAG, "width: " + size.width + ", height: " + size.height);
-                }
-
                 if (picSize.width > picSize.height) {
                     if (picSize.width > TARGET_PICTURE_WIDTH) {
                         double scaleRatio = (double) TARGET_PICTURE_WIDTH / picSize.width;
@@ -366,6 +363,47 @@ public class CameraFragment extends Fragment {
                         picSize.width = (int) (picSize.width * scaleRatio);
                         picSize.height = (int) (picSize.height * scaleRatio);
                     }
+                }
+
+                // TODO: Check how this works with portrait orientation!
+                // check that new image size is supported
+                if (parameters.getSupportedPictureSizes().contains(picSize)) {
+                    Log.d(TAG, "Picture size is supported");
+                } else {
+                    // pick a size close to target that works
+                    List<Camera.Size> picSizes = parameters.getSupportedPictureSizes();
+                    // Sort sizes so we always know order (smallest to largest)
+                    Collections.sort(picSizes, new Comparator<Camera.Size>() {
+                        @Override
+                        public int compare(Camera.Size lhs, Camera.Size rhs) {
+                            if (lhs.width == rhs.width && lhs.height == rhs.height) {
+                                return 0;
+                            }
+                            if (lhs.width == rhs.width) {
+                                if (lhs.height < rhs.height) {
+                                    return -1;
+                                } else {
+                                    return 1;
+                                }
+                            }
+                            if (lhs.width < rhs.width) {
+                                return -1;
+                            } else {
+                                return 1;
+                            }
+                        }
+                    });
+                    Camera.Size tmpSize = picSize;
+                    Log.d(TAG, "Supported picture sizes: ");
+                    for (Camera.Size size : picSizes) {
+                        Log.d(TAG, "width: " + size.width + ", height: " + size.height);
+                        if (size.width <= picSize.width && size.height <= picSize.height) {
+                            // since it is sorted list, we will get the largest size smaller than our target
+                            tmpSize = size;
+                        }
+                    }
+                    Log.d(TAG, "Selected pic size -> width: " + tmpSize.width + ", height: " + tmpSize.height);
+                    picSize = tmpSize;
                 }
 
                 // set picture details
@@ -475,9 +513,6 @@ public class CameraFragment extends Fragment {
             return optimalSize;
         }
 
-        private Camera.Size getOptimalPictureSize(List<Camera.Size> pictureSizes, int desiredWidth) {
-            return null;
-        }
     }
 
     /**
