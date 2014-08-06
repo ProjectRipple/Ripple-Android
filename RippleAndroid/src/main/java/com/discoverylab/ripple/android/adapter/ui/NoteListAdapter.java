@@ -86,7 +86,8 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
             LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.note_list_group, parent, false);
         }
-
+        // Do not allow focus from keyboard
+        v.setFocusable(false);
 
         PatientNote note = this.notes.get(groupPosition);
 
@@ -147,6 +148,8 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
             LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = inflater.inflate(R.layout.note_list_child, parent, false);
         }
+        // Do not allow focus from keyboard
+        v.setFocusable(false);
 
         LinearLayout childLayout = (LinearLayout) v.findViewById(R.id.note_list_child_layout);
         childLayout.removeAllViews();
@@ -158,13 +161,13 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
             switch (item.getNoteType()) {
                 case TEXT:
                     TextView text = new TextView(this.context);
-                    text.setText(((NoteItemText)item).getNoteText());
+                    text.setText(((NoteItemText) item).getNoteText());
                     childLayout.addView(text);
                     break;
                 case IMAGE:
                     ImageView img = new ImageView(this.context);
-                    Bitmap imageFromFile = BitmapFactory.decodeFile(((NoteItemImage)item).getImagePath());
-                    if(imageFromFile != null) {
+                    Bitmap imageFromFile = BitmapFactory.decodeFile(((NoteItemImage) item).getImagePath());
+                    if (imageFromFile != null) {
                         img.setImageBitmap(imageFromFile);
                     } else {
                         img.setImageResource(R.drawable.image_placeholder);

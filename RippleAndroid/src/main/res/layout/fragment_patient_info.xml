@@ -55,6 +55,7 @@
             android:layout_alignBottom="@+id/patient_age_label"
             android:textSize="@dimen/patient_info_entry_text_size"
             android:textStyle="bold"
+            android:imeOptions="actionDone"
             android:inputType="number"
             android:ems="3"
             android:maxEms="3"
