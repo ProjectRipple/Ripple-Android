@@ -157,20 +157,24 @@ public class RippleApp extends Application {
         }
 
         PatientNotes notes = PatientNotes.getInstance();
+        File[] noteDirFiles = noteDir.listFiles();
+        File[] jsonFiles;
+        FilenameFilter jsonFilter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String filename) {
+                return filename.contains(".json");
+            }
+        };
+        FileInputStream fin = null;
 
-        for (File f : noteDir.listFiles()) {
+        for (File f : noteDirFiles) {
             if (f.isDirectory()) {
                 // dig deeper for notes
-                File[] jsonFiles = f.listFiles(new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String filename) {
-                        return filename.contains(".json");
-                    }
-                });
+                jsonFiles = f.listFiles(jsonFilter);
 
                 for (File noteFile : jsonFiles) {
                     try {
-                        FileInputStream fin = new FileInputStream(noteFile);
+                        fin = new FileInputStream(noteFile);
                         String json = convertStreamToString(fin);
 
                         PatientNote note = PatientNote.fromJson(json);
@@ -183,13 +187,22 @@ public class RippleApp extends Application {
 
                     } catch (IOException ie) {
                         Log.e(TAG, "Failed to read file " + noteFile.getName());
+                    } finally {
+                        if(fin != null){
+                            try {
+                                fin.close();
+                            } catch (IOException e) {
+                                Log.d(TAG, "Failed to close file input stream.");
+                            }
+                            fin = null;
+                        }
                     }
                 }
             }
         }
     }
 
-    private void loadDebugSettings(){
+    private void loadDebugSettings() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         SharedPreferences.Editor myEditor = prefs.edit();
