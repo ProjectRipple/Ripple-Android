@@ -53,9 +53,7 @@ public class ScenarioNoteFragment extends Fragment implements View.OnClickListen
      * @return A new instance of fragment ScenarioNoteFragment.
      */
     public static ScenarioNoteFragment newInstance() {
-        ScenarioNoteFragment fragment = new ScenarioNoteFragment();
-
-        return fragment;
+        return new ScenarioNoteFragment();
     }
 
     public ScenarioNoteFragment() {
@@ -97,28 +95,53 @@ public class ScenarioNoteFragment extends Fragment implements View.OnClickListen
         this.noteList.setIndicatorBounds(0, 0);
         // remove group indicator as we will use our own
         this.noteList.setGroupIndicator(null);
-        // set dummy array list for adapter
-        this.noteListAdapter = new NoteListAdapter(getActivity(), new ArrayList<PatientNote>(5));
+        if (this.selectedPatientsNotes == null) {
+            // set dummy array list for adapter
+            this.noteListAdapter = new NoteListAdapter(getActivity(), new ArrayList<PatientNote>(5));
+        } else {
+            this.noteListAdapter = new NoteListAdapter(getActivity(), this.selectedPatientsNotes);
+        }
         this.noteList.setAdapter(this.noteListAdapter);
 
         return v;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        // Remove view references
+        this.noteList = null;
+        // Destroy adapter so context reference may be recycled
+        this.noteListAdapter = null;
+    }
+
+    /**
+     * Set the patient who's notes should be shown.
+     *
+     * @param p Patient to show notes of or null if no notes should be shown.
+     */
     public void setPatient(Patient p) {
 
         if (p != null) {
             // Get new list of notes and set them for adapter
             this.selectedPatientsNotes = PatientNotes.getInstance().getNotesForPatient(p.getPatientId());
-            this.noteListAdapter.setNotes(this.selectedPatientsNotes);
+            if (this.noteListAdapter != null) {
+                this.noteListAdapter.setNotes(this.selectedPatientsNotes);
+            }
         } else {
             // remove reference to notes and clear note list
             this.selectedPatientsNotes = null;
-            this.noteListAdapter.clearList();
+            if (this.noteListAdapter != null) {
+                this.noteListAdapter.clearList();
+            }
         }
     }
 
+    /**
+     * Cause note list to refresh if a patient is selected.
+     */
     public void refreshNoteList() {
-        if (this.noteListAdapter != null) {
+        if (this.noteListAdapter != null && this.selectedPatientsNotes != null) {
             // Assume that there are new notes to show
             this.noteListAdapter.setNotes(this.selectedPatientsNotes);
         }
