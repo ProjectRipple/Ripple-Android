@@ -128,14 +128,6 @@ public class CameraFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_camera, container, false);
 
-        // Create our Preview view and set it as the content of our activity.
-        boolean opened = safeCameraOpenInView(view);
-
-        if (!opened) {
-            Log.d(TAG, "Error, Camera failed to open");
-            return view;
-        }
-
         // Trap the capture button.
         Button captureButton = (Button) view.findViewById(R.id.camera_capture);
         captureButton.setOnClickListener(
@@ -167,6 +159,7 @@ public class CameraFragment extends Fragment {
         if (qOpened) {
             mPreview = new CameraPreview(getActivity().getBaseContext(), mCamera, view);
             FrameLayout preview = (FrameLayout) view.findViewById(R.id.camera_preview);
+            preview.removeAllViews();
             preview.addView(mPreview);
             mPreview.startCameraPreview();
         }
@@ -189,8 +182,19 @@ public class CameraFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        boolean opened = safeCameraOpenInView(getView());
+
+        if (!opened) {
+            Log.d(TAG, "Error, Camera failed to open");
+        }
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
+        releaseCameraAndPreview();
     }
 
     @Override
@@ -302,7 +306,9 @@ public class CameraFragment extends Fragment {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             try {
-                mCamera.setPreviewDisplay(holder);
+                if (mCamera != null) {
+                    mCamera.setPreviewDisplay(holder);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
