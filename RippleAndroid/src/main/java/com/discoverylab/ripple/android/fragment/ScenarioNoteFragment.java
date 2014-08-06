@@ -128,6 +128,9 @@ public class ScenarioNoteFragment extends Fragment implements View.OnClickListen
             if (this.noteListAdapter != null) {
                 this.noteListAdapter.setNotes(this.selectedPatientsNotes);
             }
+            if (this.noteList != null) {
+                this.noteList.smoothScrollToPosition(0);
+            }
         } else {
             // remove reference to notes and clear note list
             this.selectedPatientsNotes = null;
@@ -178,6 +181,10 @@ public class ScenarioNoteFragment extends Fragment implements View.OnClickListen
             }
             // Should be adding a note for selected patient, so update data set
             this.refreshNoteList();
+            // scroll to new note
+            if (this.noteList != null) {
+                this.noteList.smoothScrollToPosition(0);
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
