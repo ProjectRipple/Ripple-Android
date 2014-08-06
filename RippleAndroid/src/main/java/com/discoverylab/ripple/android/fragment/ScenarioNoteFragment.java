@@ -41,6 +41,10 @@ public class ScenarioNoteFragment extends Fragment implements View.OnClickListen
     private static final int ADD_NOTE_REQUEST_CODE = 2941;
     // Reference to note list
     private ExpandableListView noteList;
+    // Reference to list adapter
+    private NoteListAdapter noteListAdapter;
+    // Reference to selected patient's note list
+    private List<PatientNote> selectedPatientsNotes = null;
 
     /**
      * Use this factory method to create a new instance of
@@ -93,26 +97,30 @@ public class ScenarioNoteFragment extends Fragment implements View.OnClickListen
         this.noteList.setIndicatorBounds(0, 0);
         // remove group indicator as we will use our own
         this.noteList.setGroupIndicator(null);
+        // set dummy array list for adapter
+        this.noteListAdapter = new NoteListAdapter(getActivity(), new ArrayList<PatientNote>(5));
+        this.noteList.setAdapter(this.noteListAdapter);
 
         return v;
     }
 
     public void setPatient(Patient p) {
+
         if (p != null) {
-            NoteListAdapter adapter = new NoteListAdapter(getActivity(), PatientNotes.getInstance().getNotesForPatient(p.getPatientId()));
-            this.noteList.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
+            // Get new list of notes and set them for adapter
+            this.selectedPatientsNotes = PatientNotes.getInstance().getNotesForPatient(p.getPatientId());
+            this.noteListAdapter.setNotes(this.selectedPatientsNotes);
         } else {
-            // TODO: better way to clear list
-            NoteListAdapter adapter = new NoteListAdapter(getActivity(), new ArrayList<PatientNote>());
-            this.noteList.setAdapter(adapter);
-            adapter.notifyDataSetChanged();
+            // remove reference to notes and clear note list
+            this.selectedPatientsNotes = null;
+            this.noteListAdapter.clearList();
         }
     }
 
     public void refreshNoteList() {
-        if (this.noteList.getExpandableListAdapter() != null) {
-            ((NoteListAdapter) this.noteList.getExpandableListAdapter()).notifyDataSetChanged();
+        if (this.noteListAdapter != null) {
+            // Assume that there are new notes to show
+            this.noteListAdapter.setNotes(this.selectedPatientsNotes);
         }
     }
 

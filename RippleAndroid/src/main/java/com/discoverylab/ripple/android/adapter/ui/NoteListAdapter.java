@@ -20,22 +20,60 @@ import com.discoverylab.ripple.android.object.PatientNote;
 import com.discoverylab.ripple.android.util.Util;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
+ * Adapter for Expandable List View of notes for the selected patient.
+ * <p/>
  * Created by james on 7/28/14.
  */
 public class NoteListAdapter extends BaseExpandableListAdapter {
 
+    // List of patient notes to show
     private final List<PatientNote> notes;
+    // Reference to context for inflater
     private final Context context;
+    // Date formatter for printing date
     private final DateFormat dateFormat;
+    // Comparator to sort patient notes by date
+    private final Comparator<PatientNote> noteDateComparator;
 
+    /**
+     * @param ctx   Context for this adapter
+     * @param notes List of notes for adapter to show. Adapter just copies
+     *              references from this list to its own internal List object.
+     */
     public NoteListAdapter(Context ctx, List<PatientNote> notes) {
         super();
         this.context = ctx;
-        this.notes = notes;
+        this.notes = new ArrayList<PatientNote>(notes.size());
+        this.notes.addAll(notes);
         this.dateFormat = Util.getISOUTCFormatter();
+        this.noteDateComparator = new NoteDateComparator();
+        Collections.sort(this.notes, this.noteDateComparator);
+    }
+
+    /**
+     * Clear adapter list and notify data set changed.
+     */
+    public void clearList() {
+        this.notes.clear();
+        this.notifyDataSetChanged();
+    }
+
+    /**
+     * Clear existing list, add all items from given list, and notify data set changed.
+     *
+     * @param notes List of notes to now show.
+     */
+    public void setNotes(List<PatientNote> notes) {
+        this.notes.clear();
+        this.notes.addAll(notes);
+        Collections.sort(this.notes, this.noteDateComparator);
+        this.notifyDataSetChanged();
     }
 
     @Override
@@ -89,6 +127,7 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
         // Do not allow focus from keyboard
         v.setFocusable(false);
 
+        // Get note
         PatientNote note = this.notes.get(groupPosition);
 
         TextView date = (TextView) v.findViewById(R.id.note_list_group_title);
@@ -152,6 +191,7 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
         v.setFocusable(false);
 
         LinearLayout childLayout = (LinearLayout) v.findViewById(R.id.note_list_child_layout);
+        // make sure not old views still there
         childLayout.removeAllViews();
 
         PatientNote note = this.notes.get(groupPosition);
@@ -160,11 +200,13 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
         for (NoteItem item : noteItems) {
             switch (item.getNoteType()) {
                 case TEXT:
+                    // Add text to layout
                     TextView text = new TextView(this.context);
                     text.setText(((NoteItemText) item).getNoteText());
                     childLayout.addView(text);
                     break;
                 case IMAGE:
+                    // Add image to layout
                     ImageView img = new ImageView(this.context);
                     Bitmap imageFromFile = BitmapFactory.decodeFile(((NoteItemImage) item).getImagePath());
                     if (imageFromFile != null) {
@@ -203,5 +245,31 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
     public boolean isChildSelectable(int groupPosition, int childPosition) {
         // no child is selectable at the moment
         return false;
+    }
+
+    /**
+     * Comparator to compare two {@link PatientNote} based on date so that
+     * the newest Note is at the top of the list.
+     */
+    private class NoteDateComparator implements Comparator<PatientNote> {
+
+        @Override
+        public int compare(PatientNote lhs, PatientNote rhs) {
+            long lhsTime = lhs.getDate().getTime();
+            long rhsTime = rhs.getDate().getTime();
+            if (lhsTime < rhsTime) {
+                // want newest at top, so return positive number for this comparison
+                return 1;
+            } else if (lhsTime > rhsTime) {
+                return -1;
+            } else {
+                return 0;
+            }
+        }
+
+        @Override
+        public boolean equals(Object object) {
+            return false;
+        }
     }
 }
