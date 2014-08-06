@@ -19,11 +19,11 @@ public class BeamActivity extends Activity implements CreateNdefMessageCallback 
     private NfcAdapter mNfcAdapter;
 
     //Initializing each text view field for inputting data
-    private TextView checker;
-    private TextView net_name;
-    private TextView pan_id;
-    private TextView encryption_code;
-    private TextView chan_freq;
+    TextView checker;
+    TextView net_name;
+    TextView pan_id;
+    TextView encryption_code;
+    TextView chan_freq;
 
     //Initializing the string that will be the single record sent in the Ndef message
     private String message;
