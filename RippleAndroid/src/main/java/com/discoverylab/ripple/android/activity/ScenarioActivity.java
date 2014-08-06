@@ -80,6 +80,9 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
     // true if periodic timer was started
     private boolean periodicTimerStarted = false;
 
+    // true if system is currently requesting an info update from the broker
+    private boolean infoRequestActive = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -294,6 +297,12 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
      * Send a patient info request to the broker.
      */
     private void requestPatientInfoFromBroker() {
+        if (this.infoRequestActive) {
+            Log.d(TAG, "Info request already active");
+            return;
+        }
+        // TODO: do not allow user to edit records until sync is finished OR save local edits and perform merge
+        Toast.makeText(this, "Syncing patient information...", Toast.LENGTH_SHORT).show();
         ApiClient.RippleApiInterface apiClient = ApiClient.getRippleApiClient();
         DateFormat df = Util.getISOUTCFormatter();
         // build message
@@ -312,9 +321,10 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         apiClient.requestCurrentPatientInfo(patientsArray.toString(), new Callback<PatientInfoRequestData>() {
             @Override
             public void success(PatientInfoRequestData patientInfoRequestData, Response response) {
-
+                infoRequestActive = false;
                 if (patientInfoRequestData.getResult().equalsIgnoreCase("success")) {
 
+                    Toast.makeText(ScenarioActivity.this, "Sync Successful!", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Successful patient info request.");
 
                     DateFormat df = Util.getISOUTCFormatter();
@@ -341,16 +351,24 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
                             p.setStatus(Common.PATIENT_STATUS.valueOf(info.getStatus()));
                             // inform banner of potentially new patient
                             patientBanner.addPatient(p);
+                            if (p == patientFragment.getSelectedPatient()) {
+                                // Inform fragment of new info update
+                                patientFragment.updatePatientInfo();
+                            }
                         }
                     }
                     // request a banner refresh
                     patientBanner.refreshBanner();
+                } else {
+                    Toast.makeText(ScenarioActivity.this, "Sync Failed!", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void failure(RetrofitError retrofitError) {
-
+                infoRequestActive = false;
+                Toast.makeText(ScenarioActivity.this, "Sync Failed!", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Info request error: " + retrofitError.getMessage());
             }
         });
     }
@@ -586,7 +604,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
                 PatientNotes.getInstance().addNote(note);
                 note.saveNoteToFile(this);
                 // check if note patient is selected
-                if(this.patientFragment.getSelectedPatient() == note.getPatient()){
+                if (this.patientFragment.getSelectedPatient() == note.getPatient()) {
                     this.patientFragment.updatePatientNotes();
                 }
             } else {
@@ -631,9 +649,9 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
                         for (String topic : subscribeTopics) {
                             activity.subscribeToTopic(topic);
                         }
+                        Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show();
                         // ensure patient info is up to date
                         activity.requestPatientInfoFromBroker();
-                        Toast.makeText(activity, "Connected", Toast.LENGTH_SHORT).show();
                         // Clear old patient list
                         break;
                     case MQTTServiceConstants.MSG_CANT_CONNECT:
