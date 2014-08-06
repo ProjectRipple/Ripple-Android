@@ -1,6 +1,8 @@
 package com.discoverylab.ripple.android.object;
 
 import android.content.Context;
+import android.os.Environment;
+import android.util.Base64;
 import android.util.Log;
 
 import com.discoverylab.ripple.android.config.Common;
@@ -410,6 +412,10 @@ public class PatientNote {
                 break;
             case IMAGE:
                 rtnValue = new NoteItemImage(json.get(JSONTag.NOTE_ITEM_FILE).getAsString());
+                if (json.has(JSONTag.NOTE_ITEM_IMG)) {
+                    String base64Image = json.get(JSONTag.NOTE_ITEM_IMG).getAsString();
+                    decodeBase64Image(base64Image, json.get(JSONTag.NOTE_ITEM_FILE).getAsString());
+                }
                 break;
             case VOICE:
                 rtnValue = new NoteItemVoice();
@@ -422,6 +428,44 @@ public class PatientNote {
                 break;
         }
         return rtnValue;
+    }
+
+    private static void decodeBase64Image(String imageString, String imageName){
+        byte[] imgBytes = Base64.decode(imageString, Base64.NO_WRAP);
+        File outFile = getImageOutputFile(imageName);
+
+        if (outFile != null) {
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(outFile);
+                fos.write(imgBytes);
+            } catch (IOException e) {
+                Log.e(TAG, "Exception when writing base64 image to file.");
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        Log.e(TAG, "Failed to close output stream.");
+                    }
+                }
+            }
+        }
+    }
+
+    private static File getImageOutputFile(String filename) {
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), Common.PHOTO_DIR);
+
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d(TAG, "Required media storage does not exist");
+                return null;
+            }
+        }
+
+        return new File(mediaStorageDir.getPath() + File.separator + filename);
+
     }
 
 }
