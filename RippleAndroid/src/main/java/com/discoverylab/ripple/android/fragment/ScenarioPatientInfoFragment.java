@@ -35,11 +35,13 @@ import java.util.List;
 
 /**
  * Fragment to handle patient information entered by the user.
+ * <p/>
  * Use the {@link ScenarioPatientInfoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class ScenarioPatientInfoFragment extends Fragment implements View.OnClickListener {
 
+    // Log tag
     private static final String TAG = ScenarioPatientInfoFragment.class.getSimpleName();
     // Temporary save button (until a better sync method is implemented)
     private Button saveButton;
@@ -50,7 +52,7 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
     private EditText patientName;
     private EditText patientAge;
     // Reference to currently selected patient
-    private Patient selectedPatient;
+    private Patient selectedPatient = null;
 
     /**
      * Use this factory method to create a new instance of
@@ -185,13 +187,15 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String compareString = "";
-                if (selectedPatient != null && selectedPatient.getAge() >= 0) {
-                    compareString = selectedPatient.getAge() + "";
-                }
-                if (!compareString.equals(s.toString())) {
-                    saveButton.setEnabled(true);
-                    Log.d(TAG, "Age changed");
+                if (selectedPatient != null) {
+                    String compareString = "";
+                    if (selectedPatient.getAge() >= 0) {
+                        compareString = selectedPatient.getAge() + "";
+                    }
+                    if (!compareString.equals(s.toString())) {
+                        saveButton.setEnabled(true);
+                        Log.d(TAG, "Age changed");
+                    }
                 }
             }
 
@@ -208,9 +212,19 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
         this.saveButton.setEnabled(false);
 
         this.resetAllFields();
+        // disable will not work here because of a check on getView, but view is currently being created
         this.disableAllFields();
 
         return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (this.selectedPatient == null) {
+            this.resetAllFields();
+            this.disableAllFields();
+        }
     }
 
     @Override
