@@ -12,20 +12,33 @@ import java.util.TimeZone;
  */
 public final class Util {
 
-    private Util(){}
+    private Util() {
+    }
 
     /**
      * Get a DateFormat object setup for ISO 8601 formatted date-times in the UTC timezone.
+     *
      * @return DateFormat object setup for ISO 8601 formatted date-times in the UTC timezone.
      */
-    public static DateFormat getISOUTCFormatter(){
+    public static DateFormat getISOUTCFormatter() {
         DateFormat df = new SimpleDateFormat(Common.ISO_DATETIME_FORMAT);
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
         return df;
     }
 
     /**
+     *
+     * @return DateFormat object setup for formatted date-times as described by {@value Common#DATE_TIME_FORMAT} in UTC timezone
+     */
+    public static DateFormat getBasicUTCFormatter() {
+        DateFormat df = new SimpleDateFormat(Common.DATE_TIME_FORMAT);
+        df.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return df;
+    }
+
+    /**
      * Converts the first 4 bytes of the array to a 4 byte unsigned int(returned as long)
+     *
      * @param bytes 4 bytes of unsigned int in Big Endian order
      * @return 4 byte unsigned int as long
      */
@@ -35,6 +48,7 @@ public final class Util {
 
     /**
      * Converts the first 4 bytes of the array to a 4 byte unsigned int(returned as long)
+     *
      * @param bytes 4 bytes of unsigned int in Little Endian order
      * @return 4 byte unsigned int as long
      */
@@ -44,6 +58,7 @@ public final class Util {
 
     /**
      * Converts the first 2 bytes of the array to a 2 byte unsigned int(returned as int)
+     *
      * @param bytes 2 bytes of unsigned int in Big Endian order
      * @return 2 byte unsigned int as int
      */
@@ -53,6 +68,7 @@ public final class Util {
 
     /**
      * Converts 2 bytes into a 2 byte unsigned int(returned as int)
+     *
      * @param b2 MSB of 2 byte value
      * @param b1 LSB of 2 byte value
      * @return 2 byte unsigned int as int
@@ -64,6 +80,7 @@ public final class Util {
 
     /**
      * Convert a String of hexidecimal digits to a byte array
+     *
      * @param s String of hexidecimal digits
      * @return byte array of values represented by hexidecimal string
      */

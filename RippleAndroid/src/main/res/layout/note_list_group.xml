@@ -3,7 +3,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingBottom="10dp">
 
     <TextView
         android:id="@+id/note_list_group_title"
@@ -11,14 +12,26 @@
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/note_list_group_indicator"
         android:textSize="18sp"
-        android:text="2014-07-28T17:53:55.901Z"/>
+        android:textStyle="bold"
+        android:text="2014-07-28 17:53:55Z"/>
+
+    <TextView
+        android:id="@+id/note_list_group_body_part"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/note_list_group_title"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="LEFT_ARM"/>
 
     <LinearLayout
+        android:id="@+id/note_list_group_item_layout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:orientation="horizontal"
-        android:layout_below="@+id/note_list_group_title"
-        android:layout_toLeftOf="@+id/note_list_group_indicator">
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/note_list_group_body_part"
+        android:layout_toLeftOf="@+id/note_list_group_body_part_image">
 
         <ImageView
             android:id="@+id/note_list_group_text"
@@ -70,5 +83,25 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:src="@drawable/ic_action_expand"/>
+
+    <ImageView
+        android:id="@+id/note_list_group_body_part_image"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/note_list_group_body_part"
+        android:layout_alignBottom="@+id/note_list_group_item_layout"
+        android:layout_toLeftOf="@+id/note_list_group_indicator"
+        android:src="@drawable/tag_small_original"/>
+
+    <ImageView
+        android:id="@+id/note_list_group_body_part_highlight"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/note_list_group_body_part_image"
+        android:layout_alignTop="@+id/note_list_group_body_part_image"
+        android:layout_alignBottom="@+id/note_list_group_body_part_image"
+        android:layout_alignRight="@+id/note_list_group_body_part_image"
+        android:layout_toLeftOf="@+id/note_list_group_indicator"
+        android:alpha="0"/>
 
 </RelativeLayout>

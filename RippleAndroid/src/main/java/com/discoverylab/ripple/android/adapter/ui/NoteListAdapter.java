@@ -3,6 +3,8 @@ package com.discoverylab.ripple.android.adapter.ui;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +53,7 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
         this.context = ctx;
         this.notes = new ArrayList<PatientNote>(notes.size());
         this.notes.addAll(notes);
-        this.dateFormat = Util.getISOUTCFormatter();
+        this.dateFormat = Util.getBasicUTCFormatter();
         this.noteDateComparator = new NoteDateComparator();
         Collections.sort(this.notes, this.noteDateComparator);
     }
@@ -133,6 +135,35 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
         TextView date = (TextView) v.findViewById(R.id.note_list_group_title);
 
         date.setText(this.dateFormat.format(note.getDate()));
+
+        TextView bodyPart = (TextView) v.findViewById(R.id.note_list_group_body_part);
+        bodyPart.setText(note.getSelectedBodyPart().getPrintableString());
+
+        ImageView bodyHighlight = (ImageView) v.findViewById(R.id.note_list_group_body_part_highlight);
+        bodyHighlight.setAlpha((float) 1.0);
+        switch (note.getSelectedBodyPart()) {
+            case FRONT_HEAD:
+                bodyHighlight.setImageResource(R.drawable.tag_small_highlight_front_head);
+                break;
+            case FRONT_TORSO:
+                bodyHighlight.setImageResource(R.drawable.tag_small_highlight_front_torso);
+                break;
+            case FRONT_LEFT_ARM:
+                bodyHighlight.setImageResource(R.drawable.tag_small_highlight_front_left_arm);
+                break;
+            case FRONT_RIGHT_ARM:
+                bodyHighlight.setImageResource(R.drawable.tag_small_highlight_front_right_arm);
+                break;
+            case FRONT_LEFT_LEG:
+                bodyHighlight.setImageResource(R.drawable.tag_small_highlight_front_left_leg);
+                break;
+            case FRONT_RIGHT_LEG:
+                bodyHighlight.setImageResource(R.drawable.tag_small_highlight_front_right_leg);
+                break;
+            case NONE:
+                bodyHighlight.setAlpha((float) 0.0);
+                break;
+        }
 
         ImageView text = (ImageView) v.findViewById(R.id.note_list_group_text);
         ImageView image = (ImageView) v.findViewById(R.id.note_list_group_image);

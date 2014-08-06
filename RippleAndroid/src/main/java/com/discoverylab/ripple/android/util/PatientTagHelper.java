@@ -4,11 +4,15 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 
 /**
+ * Helper class to determine what body part the user selected.
+ *
  * Created by james on 7/16/14.
  */
 public class PatientTagHelper {
 
+    // Tolerance of color match since get pixel may not return 100% exact color on every device
     private static final int COLOR_TOLERANCE = 25;
+    // Colors corresponding to each body part
     private static final int COLOR_FRONT_HEAD = Color.argb(255, 255, 255, 0);
     private static final int COLOR_FRONT_TORSO = Color.argb(255, 0, 255, 0);
     private static final int COLOR_FRONT_RIGHT_ARM = Color.argb(255, 255, 0, 0);
@@ -16,7 +20,22 @@ public class PatientTagHelper {
     private static final int COLOR_FRONT_RIGHT_LEG = Color.argb(255, 255, 0, 255);
     private static final int COLOR_FRONT_LEFT_LEG = Color.argb(255, 0, 255, 255);
 
-    public enum BODY_PARTS {NONE, FRONT_HEAD, FRONT_TORSO, FRONT_RIGHT_ARM, FRONT_LEFT_ARM, FRONT_RIGHT_LEG, FRONT_LEFT_LEG}
+    public enum BODY_PARTS {
+        NONE("None"), FRONT_HEAD("Head - Front"), FRONT_TORSO("Torso - Front"),
+        FRONT_RIGHT_ARM("Right Arm - Front"), FRONT_LEFT_ARM("Left Arm - Front"),
+        FRONT_RIGHT_LEG("Right Leg - Front"), FRONT_LEFT_LEG("Left Leg - Front");
+
+        private final String printableString;
+
+        private BODY_PARTS(String printableString){
+            this.printableString = printableString;
+        }
+
+        public String getPrintableString(){
+            return this.printableString;
+        }
+
+    }
 
     public static BODY_PARTS getBodyPartSelected(Bitmap image, int x, int y) {
         BODY_PARTS rtnValue = BODY_PARTS.NONE;
