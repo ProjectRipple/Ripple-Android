@@ -41,7 +41,7 @@ import com.google.gson.JsonObject;
 import java.lang.ref.WeakReference;
 
 /**
- * Main activity of application
+ * Displays interface from SATE2013 for patient information and a map
  */
 public class PatientDetailsActivity extends Activity implements LocationSource.OnLocationChangedListener, View.OnClickListener {
 

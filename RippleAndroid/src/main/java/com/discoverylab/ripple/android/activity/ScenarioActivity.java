@@ -53,6 +53,9 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
+/**
+ * Activity to display the scenario view of the application with patient information.
+ */
 public class ScenarioActivity extends FragmentActivity implements View.OnClickListener {
 
     // Log tag
@@ -74,7 +77,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
     // periodic task period
     private static final long PERIODIC_PERIOD = 10 * 1000;
 
-    // true if location was set by gps
+    // true if location was set by gps TODO: add GPS
     private boolean gpsLocationSet = false;
 
     // true if periodic timer was started
@@ -88,6 +91,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scenerio);
         if (savedInstanceState == null) {
+            // need to create new fragments
             this.patientBanner = PatientBannerFragment.newInstance();
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.banner_container, this.patientBanner)
@@ -151,7 +155,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // pass result to fragments
+        // pass result to fragments (may not be needed with support FragmentActivity)
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
@@ -160,6 +164,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         if (v instanceof BannerPatientView) {
+            // Handle click of patient view
             BannerPatientView bpv = (BannerPatientView) v;
             Patient p = bpv.getPatient();
             this.patientFragment.setSelectedPatient(p);

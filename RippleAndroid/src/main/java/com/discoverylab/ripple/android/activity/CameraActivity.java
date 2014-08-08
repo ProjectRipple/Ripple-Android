@@ -7,6 +7,9 @@ import android.os.Bundle;
 import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.fragment.CameraFragment;
 
+/**
+ * Activity to hold a {@link CameraFragment}
+ */
 public class CameraActivity extends Activity {
 
     // Key for sending a string in the intent extras
@@ -21,6 +24,7 @@ public class CameraActivity extends Activity {
         Bundle extras = getIntent().getExtras();
         String id = null;
         if(extras != null) {
+            // Get id to pass to camera fragment
             id = extras.getString(ID_EXTRA);
         }
 

@@ -11,6 +11,7 @@ import com.discoverylab.ripple.android.fragment.PrefsFragment;
  */
 public class PrefsActivity extends PreferenceActivity {
 
+    // Reference to preference fragment
     private PrefsFragment prefFragment;
 
     @Override
