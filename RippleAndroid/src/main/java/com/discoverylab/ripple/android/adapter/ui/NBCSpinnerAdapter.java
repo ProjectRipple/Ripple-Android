@@ -17,6 +17,8 @@ import java.util.List;
  * Created by james on 7/24/14.
  */
 public class NBCSpinnerAdapter extends ArrayAdapter<Common.NBC_CONTAMINATION_OPTIONS> implements SpinnerAdapter {
+
+
     public NBCSpinnerAdapter(Context context, List<Common.NBC_CONTAMINATION_OPTIONS> objects) {
         super(context, R.layout.custom_simple_spinner_item, objects);
         setDropDownViewResource(R.layout.custom_simple_spinner_dropdown_item);

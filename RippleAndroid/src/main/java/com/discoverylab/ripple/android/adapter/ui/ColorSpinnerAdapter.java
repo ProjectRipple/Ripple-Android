@@ -16,9 +16,12 @@ import java.util.List;
 
 /**
  * Adapter for a Spinner of colored views
+ * <p/>
  * Created by james on 7/17/14.
  */
 public class ColorSpinnerAdapter extends ArrayAdapter<Common.TRIAGE_COLORS> implements SpinnerAdapter {
+
+
     public ColorSpinnerAdapter(Context context, List<Common.TRIAGE_COLORS> objects) {
         super(context, R.layout.custom_simple_spinner_item, objects);
         setDropDownViewResource(R.layout.custom_simple_spinner_dropdown_item);

@@ -51,9 +51,12 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
     public NoteListAdapter(Context ctx, List<PatientNote> notes) {
         super();
         this.context = ctx;
+        // create an internal list object and add all from notes param
         this.notes = new ArrayList<PatientNote>(notes.size());
         this.notes.addAll(notes);
+
         this.dateFormat = Util.getBasicUTCFormatter();
+
         this.noteDateComparator = new NoteDateComparator();
         Collections.sort(this.notes, this.noteDateComparator);
     }
@@ -136,9 +139,12 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
 
         date.setText(this.dateFormat.format(note.getDate()));
 
+        // TODO: pick either a highlight on the patient image or text for showing selected body part
+        // Set text about which body part is selected
         TextView bodyPart = (TextView) v.findViewById(R.id.note_list_group_body_part);
         bodyPart.setText(note.getSelectedBodyPart().getPrintableString());
 
+        // set highlight image view based on what body part is selected(if any)
         ImageView bodyHighlight = (ImageView) v.findViewById(R.id.note_list_group_body_part_highlight);
         bodyHighlight.setAlpha((float) 1.0);
         switch (note.getSelectedBodyPart()) {
@@ -161,10 +167,12 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
                 bodyHighlight.setImageResource(R.drawable.tag_small_highlight_front_right_leg);
                 break;
             case NONE:
+                // make view transparent if no part selected
                 bodyHighlight.setAlpha((float) 0.0);
                 break;
         }
 
+        // Views for each type of note item
         ImageView text = (ImageView) v.findViewById(R.id.note_list_group_text);
         ImageView image = (ImageView) v.findViewById(R.id.note_list_group_image);
         ImageView voice = (ImageView) v.findViewById(R.id.note_list_group_voice);
@@ -199,6 +207,7 @@ public class NoteListAdapter extends BaseExpandableListAdapter {
             }
         }
 
+        // Handle indicator for if group is expanded or collapsed
         ImageView indicator = (ImageView) v.findViewById(R.id.note_list_group_indicator);
 
         if (isExpanded) {
