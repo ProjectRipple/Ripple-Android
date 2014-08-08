@@ -71,6 +71,12 @@ public class BeamActivity extends Activity implements CreateNdefMessageCallback 
     public NdefMessage createNdefMessage(NfcEvent event) {
         //Store the characters in the string in a byte array
         //stored as HEX values
+
+        message = net_name.getText().toString()+";"
+                +pan_id.getText().toString()+";"
+                +encryption_code.getText().toString()+";"
+                +chan_freq.getText().toString();
+
         byte[] textBytes = message.getBytes();
 
         //Creating the actual record by defining the type of record,
