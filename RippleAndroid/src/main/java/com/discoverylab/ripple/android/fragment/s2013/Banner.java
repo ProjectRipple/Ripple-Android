@@ -3,7 +3,6 @@ package com.discoverylab.ripple.android.fragment.s2013;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,7 +15,7 @@ import com.discoverylab.ripple.android.R;
 import com.discoverylab.ripple.android.config.Common;
 import com.discoverylab.ripple.android.config.JSONTag;
 import com.discoverylab.ripple.android.object.Patient;
-import com.discoverylab.ripple.android.view.PatientView;
+import com.discoverylab.ripple.android.view.s2013.PatientView;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;

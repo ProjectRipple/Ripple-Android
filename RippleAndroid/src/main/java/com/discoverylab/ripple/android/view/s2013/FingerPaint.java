@@ -1,4 +1,4 @@
-package com.discoverylab.ripple.android.view;
+package com.discoverylab.ripple.android.view.s2013;
 
 import android.content.Context;
 import android.graphics.Bitmap;

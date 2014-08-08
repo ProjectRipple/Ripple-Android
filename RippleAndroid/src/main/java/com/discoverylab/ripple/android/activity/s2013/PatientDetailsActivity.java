@@ -30,7 +30,7 @@ import com.discoverylab.ripple.android.mqtt.MQTTServiceConstants;
 import com.discoverylab.ripple.android.mqtt.MQTTServiceManager;
 import com.discoverylab.ripple.android.mqtt.PublishedMessage;
 import com.discoverylab.ripple.android.util.RandomPatient;
-import com.discoverylab.ripple.android.view.PatientView;
+import com.discoverylab.ripple.android.view.s2013.PatientView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
