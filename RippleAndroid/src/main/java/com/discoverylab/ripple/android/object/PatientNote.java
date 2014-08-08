@@ -430,6 +430,12 @@ public class PatientNote {
         return rtnValue;
     }
 
+    /**
+     * Decode a base64 image string and save it to a file.
+     *
+     * @param imageString Image string to decode
+     * @param imageName Name of image file
+     */
     private static void decodeBase64Image(String imageString, String imageName){
         File outFile = getImageOutputFile(imageName);
 
@@ -453,6 +459,12 @@ public class PatientNote {
         }
     }
 
+    /**
+     * Get the output file for image.
+     *
+     * @param filename Name of image file
+     * @return File to write image to or null if directory failed to create.
+     */
     private static File getImageOutputFile(String filename) {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), Common.PHOTO_DIR);

@@ -26,6 +26,11 @@ public final class RandomPatient {
 
     private RandomPatient(){}
 
+    /**
+     * Generates a random patient object from the provided arrays.
+     *
+     * @return A random patient
+     */
     public static Patient getRandomPatient() {
         Patient patient = new Patient(src[lastSrc]);
         patient.setTriageState(Common.TRIAGE_COLORS.values()[new Random().nextInt(Common.TRIAGE_COLORS.values().length)]);

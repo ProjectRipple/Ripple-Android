@@ -37,6 +37,14 @@ public class PatientTagHelper {
 
     }
 
+    /**
+     * Get the body part selected based on the image and touch coordinates.
+     *
+     * @param image Image to pick color from
+     * @param x X coordinate of touch point on image
+     * @param y Y coordinate of touch point on image
+     * @return Body part selected based on color at (x,y) or BODY_PARTS.NONE if no part was selected.
+     */
     public static BODY_PARTS getBodyPartSelected(Bitmap image, int x, int y) {
         BODY_PARTS rtnValue = BODY_PARTS.NONE;
         // get color of point user touched

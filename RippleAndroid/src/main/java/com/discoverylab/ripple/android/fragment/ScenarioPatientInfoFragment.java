@@ -45,6 +45,7 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
     private static final String TAG = ScenarioPatientInfoFragment.class.getSimpleName();
     // Temporary save button (until a better sync method is implemented)
     private Button saveButton;
+    // View references
     private Spinner triageColor;
     private Spinner status;
     private Spinner patientSex;
@@ -212,7 +213,7 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
         this.saveButton.setEnabled(false);
 
         this.resetAllFields();
-        // disable will not work here because of a check on getView, but view is currently being created
+        // disable will not work here because of a check on getView, but view is currently being created and thus null
         this.disableAllFields();
 
         return v;
@@ -222,6 +223,7 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
     public void onStart() {
         super.onStart();
         if (this.selectedPatient == null) {
+            // make sure fields are disabled
             this.resetAllFields();
             this.disableAllFields();
         }
@@ -241,6 +243,11 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
         this.saveButton = null;
     }
 
+    /**
+     * Set the selected patient for this fragment.
+     *
+     * @param p Patient to be selected.
+     */
     public void setPatient(Patient p) {
         this.selectedPatient = p;
         if (p == null) {
@@ -253,6 +260,11 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
         }
     }
 
+    /**
+     * Set the info fields based on the patient.
+     *
+     * @param p Patient who's record should be displayed.
+     */
     private void setFieldsFromPatient(Patient p) {
         // Make sure selection 0 is always a default
         int selection = 0;
@@ -317,6 +329,11 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
         Log.d(TAG, "fields set to patient values");
     }
 
+    /**
+     * Write the current field values to the patient object
+     *
+     * @param p Patient to write field values to
+     */
     private void saveFieldsToPatient(Patient p) {
         p.setName(this.patientName.getText().toString());
         try {
@@ -339,6 +356,9 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
         Log.d(TAG, "saved fields to patient");
     }
 
+    /**
+     * Disable all record fields
+     */
     private void disableAllFields() {
         if (getView() == null) {
             // no view (fragment view destroyed)
@@ -354,6 +374,9 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
         Log.d(TAG, "fields disabled");
     }
 
+    /**
+     * Enable all record fields
+     */
     private void enableAllFields() {
         if (getView() == null) {
             // no view (fragment view destroyed)
@@ -369,6 +392,9 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
         Log.d(TAG, "fields enabled");
     }
 
+    /**
+     * Reset all record fields to their default values.
+     */
     private void resetAllFields() {
         if (getView() == null) {
             // no view (fragment view destroyed)
@@ -384,6 +410,11 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
         Log.d(TAG, "Fields reset");
     }
 
+    /**
+     * Handle change in triage state field.
+     *
+     * @param triageState Newly selected triage state
+     */
     private void onTriageColorChanged(Common.TRIAGE_COLORS triageState) {
         if (this.selectedPatient != null && this.selectedPatient.getTriageState() != triageState) {
             this.saveButton.setEnabled(true);
@@ -391,6 +422,11 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
         }
     }
 
+    /**
+     * Handle change in patient status field
+     *
+     * @param status Newly selected status
+     */
     private void onPatientStatusChanged(Common.PATIENT_STATUS status) {
         if (this.selectedPatient != null && this.selectedPatient.getStatus() != status) {
             this.saveButton.setEnabled(true);
@@ -398,6 +434,11 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
         }
     }
 
+    /**
+     * Handle change in gender field
+     *
+     * @param gender Newly selected gender
+     */
     private void onGenderChanged(String gender) {
         if (this.selectedPatient != null && !this.selectedPatient.getSex().equalsIgnoreCase(gender)) {
             this.saveButton.setEnabled(true);
@@ -405,6 +446,11 @@ public class ScenarioPatientInfoFragment extends Fragment implements View.OnClic
         }
     }
 
+    /**
+     * Handle change in NBC field
+     *
+     * @param nbcStatus Newly selected NBC status
+     */
     private void onNbcChanged(Common.NBC_CONTAMINATION_OPTIONS nbcStatus) {
         if (this.selectedPatient != null && (nbcStatus != this.selectedPatient.getNbcContam())) {
             this.saveButton.setEnabled(true);

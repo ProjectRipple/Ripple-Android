@@ -49,6 +49,12 @@ public class BannerPatientView extends RelativeLayout {
         init(attrs, defStyle);
     }
 
+    /**
+     * Initialize the view
+     *
+     * @param attrs AttributeSet
+     * @param defStyle style
+     */
     private void init(AttributeSet attrs, int defStyle) {
         // get Resources object
         Resources resources = getResources();
@@ -89,10 +95,16 @@ public class BannerPatientView extends RelativeLayout {
 
     }
 
+    /**
+     * Set the patient that this view will display.
+     *
+     * @param patient Patient to display
+     */
     public void setPatient(Patient patient) {
         this.mPatient = patient;
         String id = this.mPatient.getPatientId();
         if (id != null) {
+            // Set id field
             if (id.length() > 6) {
                 this.patientIdText.setText(id.substring(id.length() - 6));
             } else {
@@ -106,6 +118,9 @@ public class BannerPatientView extends RelativeLayout {
         return this.mPatient;
     }
 
+    /**
+     * Force refresh of view fields.
+     */
     public void updateViewFields() {
 
         // set patient status

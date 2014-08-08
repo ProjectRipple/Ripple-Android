@@ -20,11 +20,14 @@ import com.discoverylab.ripple.android.object.Patient;
  */
 public class ScenarioPatientFragment extends Fragment {
 
+    // Tags for child fragments
     private static final String PATIENT_NOTE_FRAG_TAG = "ScenarioPatientNoteFrag";
     private static final String PATIENT_INFO_FRAG_TAG = "ScenarioPatientInfoFrag";
     private static final String PATIENT_CURRENT_VITALS_FRAG_TAG = "ScenarioPatientCurrentVitalsFrag";
+
     // Reference to currently selected patient
     private Patient selectedPatient = null;
+
     // Fragment references
     private ScenarioNoteFragment noteFragment;
     private ScenarioPatientInfoFragment infoFragment;
@@ -38,8 +41,7 @@ public class ScenarioPatientFragment extends Fragment {
      * @return A new instance of fragment ScenarioPatientFragment.
      */
     public static ScenarioPatientFragment newInstance() {
-        ScenarioPatientFragment fragment = new ScenarioPatientFragment();
-        return fragment;
+        return new ScenarioPatientFragment();
     }
 
     public ScenarioPatientFragment() {
@@ -118,7 +120,9 @@ public class ScenarioPatientFragment extends Fragment {
 
 
         if (this.selectedPatient != null) {
+            // de-select old patient
             this.selectedPatient.setSelected(false);
+            // if patient is the same, then de-select
             if (p != null && this.selectedPatient.getPatientId().equals(p.getPatientId())) {
                 p.setSelected(false);
                 // deselecting patient
@@ -132,6 +136,7 @@ public class ScenarioPatientFragment extends Fragment {
         }
 
         this.selectedPatient = p;
+        // update child fragments
         this.currentVitalsFragment.updateVitals(this.selectedPatient);
         this.infoFragment.setPatient(this.selectedPatient);
         this.noteFragment.setPatient(this.selectedPatient);
@@ -142,15 +147,24 @@ public class ScenarioPatientFragment extends Fragment {
         return this.selectedPatient;
     }
 
+    /**
+     * Force update of current patient vitals
+     */
     public void updatePatientVitals() {
         this.currentVitalsFragment.updateVitals(this.selectedPatient);
     }
 
+    /**
+     * Force update of current patient info
+     */
     public void updatePatientInfo() {
         // TODO: do this in a way that merges with local edit if possible.
         this.infoFragment.setPatient(this.selectedPatient);
     }
 
+    /**
+     * Force update of the patient note list
+     */
     public void updatePatientNotes() {
         this.noteFragment.refreshNoteList();
     }

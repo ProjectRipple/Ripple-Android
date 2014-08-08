@@ -4,6 +4,8 @@ import com.discoverylab.ripple.android.config.JSONTag;
 import com.google.gson.JsonObject;
 
 /**
+ * Note item for a medication note.
+ *
  * Created by james on 7/16/14.
  */
 public class NoteItemDrug implements NoteItem {

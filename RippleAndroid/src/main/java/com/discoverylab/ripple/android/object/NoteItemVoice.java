@@ -4,6 +4,8 @@ import com.discoverylab.ripple.android.config.JSONTag;
 import com.google.gson.JsonObject;
 
 /**
+ * Voice note.
+ * <p/>
  * Created by james on 7/16/14.
  */
 public class NoteItemVoice implements NoteItem {

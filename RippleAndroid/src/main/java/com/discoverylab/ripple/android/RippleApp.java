@@ -29,7 +29,6 @@ import java.io.InputStreamReader;
 /**
  * RippleApplication object initializes the connection preferences and stores global variables
  * <p/>
- * <p/>
  * Created by matt on 6/20/13.
  */
 public class RippleApp extends Application {
@@ -145,6 +144,9 @@ public class RippleApp extends Application {
         }
     }
 
+    /**
+     * Load patient notes from local cache.
+     */
     private void loadCachedNotes() {
         File noteDir = getDir(Common.NOTES_DIR, Context.MODE_PRIVATE);
 
@@ -156,9 +158,11 @@ public class RippleApp extends Application {
             return;
         }
 
+        // Get patient notes instance
         PatientNotes notes = PatientNotes.getInstance();
         File[] noteDirFiles = noteDir.listFiles();
         File[] jsonFiles;
+        // Filter on .json files
         FilenameFilter jsonFilter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String filename) {
@@ -174,9 +178,10 @@ public class RippleApp extends Application {
 
                 for (File noteFile : jsonFiles) {
                     try {
+                        // Read file to string
                         fin = new FileInputStream(noteFile);
                         String json = convertStreamToString(fin);
-
+                        // Parse note
                         PatientNote note = PatientNote.fromJson(json);
                         if (note != null) {
                             notes.addNote(note);
@@ -202,6 +207,9 @@ public class RippleApp extends Application {
         }
     }
 
+    /**
+     * Load debug settings from shared preferences
+     */
     private void loadDebugSettings() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -214,6 +222,13 @@ public class RippleApp extends Application {
 
     }
 
+    /**
+     * Convert an input stream to a string
+     *
+     * @param is Input stream to read
+     * @return String from input stream.
+     * @throws IOException If error while reading input stream
+     */
     private String convertStreamToString(InputStream is) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
         StringBuilder sb = new StringBuilder();

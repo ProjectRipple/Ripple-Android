@@ -73,6 +73,7 @@ public class LaunchFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.launch_extra:
                 Toast.makeText(getActivity(), "Surprise!", Toast.LENGTH_SHORT).show();
+                // Currently launch the old interface
                 startActivity(new Intent(getActivity(), PatientDetailsActivity.class));
                 break;
             case R.id.launch_scenario:
