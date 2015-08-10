@@ -93,6 +93,7 @@
     <string name="vitals_respiration_value_default">@string/n_a</string>
     <string name="vitals_pain_label">Pain</string>
     <string name="vitals_pain_value_default">@string/n_a</string>
+    <string name="title_activity_nfc">NfcActivity</string>
 
 
 </resources>

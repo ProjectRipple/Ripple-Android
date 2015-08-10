@@ -27,7 +27,7 @@ public class PatientTagHelper {
 
         private final String printableString;
 
-        private BODY_PARTS(String printableString){
+        BODY_PARTS(String printableString){
             this.printableString = printableString;
         }
 

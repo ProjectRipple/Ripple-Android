@@ -109,7 +109,7 @@ public final class Common {
 
         private final String printableString;
 
-        private NBC_CONTAMINATION_OPTIONS(String s) {
+        NBC_CONTAMINATION_OPTIONS(String s) {
             this.printableString = s;
         }
 
@@ -129,7 +129,7 @@ public final class Common {
         // "Me" or "Team" for the user's actual name or team at runtime
         private String printableString;
 
-        private PATIENT_STATUS(String s) {
+        PATIENT_STATUS(String s) {
             this.printableString = s;
         }
 

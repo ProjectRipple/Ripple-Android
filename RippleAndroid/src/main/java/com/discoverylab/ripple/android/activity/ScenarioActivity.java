@@ -1,11 +1,30 @@
 package com.discoverylab.ripple.android.activity;
 
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.os.Message;
+import android.widget.Button;
+
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
+import android.nfc.NfcManager;
+import android.nfc.tech.NdefFormatable;
+import android.support.v7.app.ActionBarActivity;
+
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -38,12 +57,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -57,6 +79,8 @@ import retrofit.client.Response;
  * Activity to display the scenario view of the application with patient information.
  */
 public class ScenarioActivity extends FragmentActivity implements View.OnClickListener {
+
+
 
     // Log tag
     private static final String TAG = ScenarioActivity.class.getSimpleName();
@@ -80,16 +104,21 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
     // true if location was set by gps TODO: add GPS
     private boolean gpsLocationSet = false;
 
+
     // true if periodic timer was started
     private boolean periodicTimerStarted = false;
 
     // true if system is currently requesting an info update from the broker
     private boolean infoRequestActive = false;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scenerio);
+
+
         if (savedInstanceState == null) {
             // need to create new fragments
             this.patientBanner = PatientBannerFragment.newInstance();
@@ -128,17 +157,22 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
     @Override
     protected void onResume() {
         super.onResume();
+
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
     }
+
 
     @Override
     protected void onDestroy() {
@@ -171,6 +205,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
             this.patientBanner.refreshBanner();
         }
     }
+
 
     /**
      * Start MQTT service with current connection preferences
@@ -618,6 +653,7 @@ public class ScenarioActivity extends FragmentActivity implements View.OnClickLi
 
         }
     }
+
 
     /**
      * Class to handle messages from MQTT client

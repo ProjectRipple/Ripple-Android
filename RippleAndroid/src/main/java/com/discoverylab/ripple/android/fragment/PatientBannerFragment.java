@@ -6,12 +6,22 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.app.AlertDialog;
 import android.view.LayoutInflater;
+
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+
+import android.content.Intent;
+
+
 import com.discoverylab.ripple.android.R;
+//import com.discoverylab.ripple.android.activity.NfcActivity;
+import com.discoverylab.ripple.android.activity.NfcActivity;
 import com.discoverylab.ripple.android.object.Patient;
 import com.discoverylab.ripple.android.object.Patients;
 import com.discoverylab.ripple.android.util.RandomPatient;
@@ -40,6 +50,10 @@ public class PatientBannerFragment extends Fragment {
     // Runnable to refresh all patient views
     private Runnable refreshRunnable = new RefreshBannerRunnable();
 
+    private AlertDialog.Builder dialogBuilder;
+
+    Button nfcButton;
+
 
     // set to true to populate banner with dummy patients
     private static boolean randomTestPatients = false;
@@ -61,14 +75,27 @@ public class PatientBannerFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_patient_banner, container, false);
+
+
+        nfcButton = (Button) v.findViewById(R.id.banner_program_NFC);
+
+        nfcButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getActivity(), NfcActivity.class));
+            }
+        });
 
         this.viewLayout = (LinearLayout) v.findViewById(R.id.patient_banner_view_layout);
 
@@ -94,6 +121,8 @@ public class PatientBannerFragment extends Fragment {
 
         return v;
     }
+
+
 
     @Override
     public void onDestroyView() {

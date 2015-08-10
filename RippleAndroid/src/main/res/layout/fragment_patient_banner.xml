@@ -22,6 +22,14 @@
     </HorizontalScrollView>
 
 
+    <Button
+        android:id="@+id/banner_program_NFC"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:scaleType="fitCenter"
+        android:text="Program\nSensor\nPacket"
+        android:layout_weight="0.05" />
+
     <ImageButton
         android:id="@+id/banner_add_patient"
         android:layout_width="wrap_content"

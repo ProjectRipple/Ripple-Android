@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.discoverylab.ripple.android.R;
+import com.discoverylab.ripple.android.activity.NfcActivity;
 import com.discoverylab.ripple.android.activity.s2013.PatientDetailsActivity;
 import com.discoverylab.ripple.android.activity.PrefsActivity;
 import com.discoverylab.ripple.android.activity.ScenarioActivity;

@@ -34,14 +34,14 @@ public class DatabaseAdapter {
      * table format and may use different methods for accessing and exporting
      * the data.
      */
-    public static enum TableType {
+    public enum TableType {
         PATIENT, VITAL, INTERVENTION, TRAUMA
     }
 
     /**
      * Column descriptors for the Patient table
      */
-    public static enum PatientTableColumn {
+    public enum PatientTableColumn {
         ID, IP_ADDR, FISRT_NAME, LAST_NAME, SSN, AGE, SEX, NBC_CONTAMINATION, TYPE
     }
 

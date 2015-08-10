@@ -9,7 +9,7 @@ import com.discoverylab.ripple.android.fragment.PrefsFragment;
  * Activity for application preferences
  * Created by james on 8/7/13.
  */
-public class PrefsActivity extends PreferenceActivity {
+public class  PrefsActivity extends PreferenceActivity {
 
     // Reference to preference fragment
     private PrefsFragment prefFragment;

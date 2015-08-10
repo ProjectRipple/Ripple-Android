@@ -9,9 +9,9 @@ import com.google.gson.JsonObject;
  */
 public interface NoteItem {
 
-    public enum NOTE_TYPE {TEXT, IMAGE, VOICE, DRUG, ECG}
+    enum NOTE_TYPE {TEXT, IMAGE, VOICE, DRUG, ECG}
 
-    public NOTE_TYPE getNoteType();
+    NOTE_TYPE getNoteType();
 
-    public JsonObject getJsonObject();
+    JsonObject getJsonObject();
 }
